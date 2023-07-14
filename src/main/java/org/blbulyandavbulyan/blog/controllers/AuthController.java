@@ -2,9 +2,9 @@ package org.blbulyandavbulyan.blog.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.JWTTokenUtils;
-import org.blbulyandavbulyan.blog.dtos.JwtRequest;
-import org.blbulyandavbulyan.blog.dtos.JwtResponse;
-import org.blbulyandavbulyan.blog.dtos.RegistrationUser;
+import org.blbulyandavbulyan.blog.dtos.authorization.JwtRequest;
+import org.blbulyandavbulyan.blog.dtos.authorization.JwtResponse;
+import org.blbulyandavbulyan.blog.dtos.authorization.RegistrationUser;
 import org.blbulyandavbulyan.blog.exceptions.AppError;
 import org.blbulyandavbulyan.blog.services.UserService;
 import org.springframework.http.HttpStatus;
