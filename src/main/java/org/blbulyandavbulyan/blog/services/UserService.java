@@ -1,5 +1,6 @@
 package org.blbulyandavbulyan.blog.services;
 
+import org.blbulyandavbulyan.blog.dtos.UserRegistrationRequest;
 import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,5 +22,9 @@ public class UserService {
         User user = new User(userName, passwordEncoder.encode(password));
         userRepository.save(user);
         return user;
+    }
+
+    public User registerUser(UserRegistrationRequest userRegistrationRequest) {
+        return registerUser(userRegistrationRequest.username(), userRegistrationRequest.password());
     }
 }
