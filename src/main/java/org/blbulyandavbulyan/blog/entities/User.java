@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -22,6 +23,7 @@ public class User {
     private String name;
     @OneToMany(mappedBy = "publisher", cascade = CascadeType.PERSIST)
     private List<Article> articles;
+    @CreationTimestamp
     @Column(name = "registration_date")
     private ZonedDateTime registrationDate;
     public User(String name, List<Article> articles, ZonedDateTime registrationDate) {
@@ -33,5 +35,9 @@ public class User {
     public User(String name, ZonedDateTime registrationDate) {
         this.name = name;
         this.registrationDate = registrationDate;
+    }
+
+    public User(String name) {
+        this.name = name;
     }
 }
