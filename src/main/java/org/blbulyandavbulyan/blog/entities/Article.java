@@ -33,6 +33,5 @@ public class Article {
     public Article(User publisher, String text) {
         this.publisher = publisher;
         this.text = text;
-        this.publishDate = Instant.now();
     }
 }
