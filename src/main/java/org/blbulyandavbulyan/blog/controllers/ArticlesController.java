@@ -2,6 +2,7 @@ package org.blbulyandavbulyan.blog.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.ArticleForPublishing;
+import org.blbulyandavbulyan.blog.dtos.ArticlePublished;
 import org.blbulyandavbulyan.blog.exceptions.AppError;
 import org.blbulyandavbulyan.blog.exceptions.ArticleNotFoundException;
 import org.blbulyandavbulyan.blog.exceptions.UserNotFoundException;
@@ -31,8 +32,8 @@ public class ArticlesController {
     @ResponseBody
     public ResponseEntity<?> publishArticle(@RequestBody ArticleForPublishing articleForPublishing, Principal principal){
         try {
-            articlesService.publishArticle(articleForPublishing, principal.getName());
-            return ResponseEntity.ok("article was published!");
+            ArticlePublished articlePublished = articlesService.publishArticle(articleForPublishing, principal.getName());
+            return new ResponseEntity<>(articlePublished, HttpStatus.CREATED);
         }
         catch (UserNotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
