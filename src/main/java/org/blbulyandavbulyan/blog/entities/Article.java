@@ -22,6 +22,8 @@ public class Article {
     @ManyToOne
     @JoinColumn(name = "author_id")
     private User publisher;
+    @Column(name = "title")
+    private String title;
     @Column(name = "text", length = 2000)
     private String text;
     @OneToMany(mappedBy = "article")
@@ -29,9 +31,9 @@ public class Article {
     @Column(name = "publish_date")
     @CreationTimestamp
     private Instant publishDate;
-
-    public Article(User publisher, String text) {
+    public Article(User publisher, String title, String text) {
         this.publisher = publisher;
+        this.title = title;
         this.text = text;
     }
 }
