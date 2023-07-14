@@ -7,17 +7,16 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.support.SimpleValueWrapper;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.security.Key;
 import java.time.Duration;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class JWTTokenUtils {
@@ -45,5 +44,13 @@ public class JWTTokenUtils {
     }
     public Claims getAllClaimsFromToken(String token){
         return parser.parseClaimsJwt(token).getBody();
+    }
+
+    public String getUserName(String token) {
+        return getAllClaimsFromToken(token).getSubject();
+    }
+
+    public List<String> getRoles(String token) {
+        return getAllClaimsFromToken(token).get("roles", List.class);
     }
 }
