@@ -1,6 +1,7 @@
 package org.blbulyandavbulyan.blog.services;
 
 import org.blbulyandavbulyan.blog.entities.User;
+import org.blbulyandavbulyan.blog.exceptions.UserNotFoundException;
 import org.blbulyandavbulyan.blog.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,5 +36,9 @@ public class UserService implements UserDetailsService {
 
     public boolean exists(String username) {
         return userRepository.existsByName(username);
+    }
+
+    public User findByName(String userName) {
+        return userRepository.findByName(userName).orElseThrow(()->new UserNotFoundException("user with " + userName + "was not found!"));
     }
 }
