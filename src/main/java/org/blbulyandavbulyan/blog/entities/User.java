@@ -16,17 +16,22 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "user_id")
     private Long userId;
     @Column(name = "name")
     private String name;
-    @OneToMany
+    @OneToMany(mappedBy = "publisher", cascade = CascadeType.PERSIST)
     private List<Article> articles;
     @Column(name = "registration_date")
     private ZonedDateTime registrationDate;
     public User(String name, List<Article> articles, ZonedDateTime registrationDate) {
         this.name = name;
         this.articles = articles;
+        this.registrationDate = registrationDate;
+    }
+
+    public User(String name, ZonedDateTime registrationDate) {
+        this.name = name;
         this.registrationDate = registrationDate;
     }
 }

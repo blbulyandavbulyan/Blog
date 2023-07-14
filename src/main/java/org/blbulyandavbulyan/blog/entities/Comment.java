@@ -15,8 +15,12 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
     private Long commentId;
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "author_id")
     private User author;
+    @ManyToOne
+    @JoinColumn(name = "article")
+    private Article article;
     @Column(name = "text", length = 5000)
     private String text;
     @Column(name = "publish_date")
