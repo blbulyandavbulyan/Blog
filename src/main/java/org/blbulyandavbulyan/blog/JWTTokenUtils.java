@@ -43,7 +43,7 @@ public class JWTTokenUtils {
                 .signWith(secretKey).compact();
     }
     public Claims getAllClaimsFromToken(String token){
-        return parser.parseClaimsJwt(token).getBody();
+        return parser.parseClaimsJws(token).getBody();
     }
 
     public String getUserName(String token) {
