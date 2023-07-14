@@ -38,7 +38,7 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@RequestBody RegistrationUser registrationUser){
         if(!userService.exists(registrationUser.username())){//если пользователя не существует, можем регистрировать
             userService.registerUser(registrationUser.username(), registrationUser.password());
-            return ResponseEntity.ok("user was successfully registered");
+            return new ResponseEntity<>("user was successfully registered!", HttpStatus.CREATED);
         }
         else return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "User already registered!"), HttpStatus.BAD_REQUEST);
     }
