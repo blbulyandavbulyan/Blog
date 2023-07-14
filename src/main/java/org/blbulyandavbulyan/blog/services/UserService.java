@@ -4,11 +4,14 @@ import org.blbulyandavbulyan.blog.dtos.UserRegistrationRequest;
 import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -26,5 +29,11 @@ public class UserService {
 
     public User registerUser(UserRegistrationRequest userRegistrationRequest) {
         return registerUser(userRegistrationRequest.username(), userRegistrationRequest.password());
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByName(username)
+                .orElseThrow(()->new UsernameNotFoundException("user with given username not found!"));
     }
 }
