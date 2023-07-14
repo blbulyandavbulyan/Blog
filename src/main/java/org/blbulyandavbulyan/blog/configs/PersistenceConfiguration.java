@@ -2,7 +2,7 @@ package org.blbulyandavbulyan.blog.configs;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import jakarta.persistence.EntityManagerFactory;
+import javax.persistence.EntityManagerFactory;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
