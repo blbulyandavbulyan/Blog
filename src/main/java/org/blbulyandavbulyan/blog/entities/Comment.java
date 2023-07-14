@@ -3,6 +3,7 @@ package org.blbulyandavbulyan.blog.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.ZonedDateTime;
 
@@ -24,5 +25,6 @@ public class Comment {
     @Column(name = "text", length = 5000)
     private String text;
     @Column(name = "publish_date")
+    @CreationTimestamp
     private ZonedDateTime publishDate;
 }
