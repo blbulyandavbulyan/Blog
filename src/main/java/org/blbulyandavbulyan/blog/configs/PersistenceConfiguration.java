@@ -3,6 +3,7 @@ package org.blbulyandavbulyan.blog.configs;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -17,6 +18,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
+@EntityScan(basePackages = "org.blbulyandavbulyan.blog.entities")
 @EnableJpaRepositories(basePackages = "org.blbulyandavbulyan.blog.repositories")
 public class PersistenceConfiguration {
     @Bean(destroyMethod = "close")
@@ -35,7 +37,7 @@ public class PersistenceConfiguration {
         LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactoryBean.setDataSource(dataSource);
         entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        entityManagerFactoryBean.setPackagesToScan("net.petrikainulainen.springdata.jpa.todo");
+        entityManagerFactoryBean.setPackagesToScan("org.blbulyandavbulyan.blog.entities");
 
         Properties jpaProperties = new Properties();
 
