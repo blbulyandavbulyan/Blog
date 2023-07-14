@@ -21,6 +21,8 @@ public class User {
     private Long userId;
     @Column(name = "name")
     private String name;
+    @Column(name = "password_hash")
+    private String passwordHash;
     @OneToMany(mappedBy = "publisher", cascade = CascadeType.PERSIST)
     private List<Article> articles;
     @CreationTimestamp
@@ -31,13 +33,7 @@ public class User {
         this.articles = articles;
         this.registrationDate = registrationDate;
     }
-
-    public User(String name, ZonedDateTime registrationDate) {
-        this.name = name;
-        this.registrationDate = registrationDate;
-    }
-
-    public User(String name) {
+    public User(String name, String passwordHash) {
         this.name = name;
     }
 }
