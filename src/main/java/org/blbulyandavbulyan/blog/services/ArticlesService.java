@@ -16,10 +16,7 @@ public class ArticlesService {
     private final ArticleRepository articleRepository;
     private final UserService userService;
     public ArticlePublished publishArticle(String title, String text, User publisher){
-        Article article = new Article();
-        article.setTitle(title);
-        article.setText(text);
-        article.setPublisher(publisher);
+        Article article = new Article(publisher, title, text);
         articleRepository.save(article);
         return new ArticlePublished(article.getArticleId());
     }
