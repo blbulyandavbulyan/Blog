@@ -29,7 +29,7 @@ public class User implements UserDetails {
     private String passwordHash;
     @ManyToMany
     @JoinTable(
-            name = "users_privileges",
+            name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
