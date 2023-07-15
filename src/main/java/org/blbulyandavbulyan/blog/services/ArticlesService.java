@@ -1,9 +1,9 @@
 package org.blbulyandavbulyan.blog.services;
 
 import lombok.RequiredArgsConstructor;
-import org.blbulyandavbulyan.blog.dtos.ArticleDto;
-import org.blbulyandavbulyan.blog.dtos.ArticleForPublishing;
-import org.blbulyandavbulyan.blog.dtos.ArticlePublished;
+import org.blbulyandavbulyan.blog.dtos.article.ArticleDto;
+import org.blbulyandavbulyan.blog.dtos.article.ArticleForPublishing;
+import org.blbulyandavbulyan.blog.dtos.article.ArticlePublished;
 import org.blbulyandavbulyan.blog.entities.Article;
 import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.exceptions.ArticleNotFoundException;

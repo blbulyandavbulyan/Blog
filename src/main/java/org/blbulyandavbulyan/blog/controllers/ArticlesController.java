@@ -1,8 +1,8 @@
 package org.blbulyandavbulyan.blog.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.blbulyandavbulyan.blog.dtos.ArticleForPublishing;
-import org.blbulyandavbulyan.blog.dtos.ArticlePublished;
+import org.blbulyandavbulyan.blog.dtos.article.ArticleForPublishing;
+import org.blbulyandavbulyan.blog.dtos.article.ArticlePublished;
 import org.blbulyandavbulyan.blog.exceptions.AppError;
 import org.blbulyandavbulyan.blog.exceptions.ArticleNotFoundException;
 import org.blbulyandavbulyan.blog.exceptions.UserNotFoundException;

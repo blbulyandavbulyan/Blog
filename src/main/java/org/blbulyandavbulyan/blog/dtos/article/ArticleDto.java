@@ -1,4 +1,4 @@
-package org.blbulyandavbulyan.blog.dtos;
+package org.blbulyandavbulyan.blog.dtos.article;
 
 /**
  * Данный класс предназначен для отображения пользователю статьи
