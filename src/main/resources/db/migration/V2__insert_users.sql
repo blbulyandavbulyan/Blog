@@ -1,1 +1,0 @@
-INSERT INTO users(name, password_hash, registration_date) VALUES('david', '$2a$12$hF488/kVTC7sCU0BRuwRLOnTHW/G1PnTn8Tu9qbJ42gA/9QZ3uZhG', CURRENT_TIMESTAMP);
