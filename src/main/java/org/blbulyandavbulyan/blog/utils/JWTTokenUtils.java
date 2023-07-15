@@ -1,4 +1,4 @@
-package org.blbulyandavbulyan.blog;
+package org.blbulyandavbulyan.blog.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;

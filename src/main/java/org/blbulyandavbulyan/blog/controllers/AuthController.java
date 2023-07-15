@@ -1,7 +1,7 @@
 package org.blbulyandavbulyan.blog.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.blbulyandavbulyan.blog.JWTTokenUtils;
+import org.blbulyandavbulyan.blog.utils.JWTTokenUtils;
 import org.blbulyandavbulyan.blog.dtos.authorization.JwtRequest;
 import org.blbulyandavbulyan.blog.dtos.authorization.JwtResponse;
 import org.blbulyandavbulyan.blog.dtos.authorization.RegistrationUser;
