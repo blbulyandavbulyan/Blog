@@ -27,6 +27,13 @@ public class User implements UserDetails {
     private String name;
     @Column(name = "password_hash")
     private String passwordHash;
+    @ManyToMany
+    @JoinTable(
+            name = "users_privileges",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<Role> roles;
     @OneToMany(mappedBy = "publisher", cascade = CascadeType.PERSIST)
     private List<Article> articles;
     @CreationTimestamp
