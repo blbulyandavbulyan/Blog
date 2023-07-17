@@ -17,6 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Данный фильтр управляет jwt аутентификацией
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j
