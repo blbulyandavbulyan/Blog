@@ -1,6 +1,7 @@
 package org.blbulyandavbulyan.blog.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.blbulyandavbulyan.blog.dtos.article.ArticleDto;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleForPublishing;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleInfoDTO;
 import org.blbulyandavbulyan.blog.dtos.article.ArticlePublished;
@@ -20,8 +21,8 @@ public class ArticlesController {
     private final ArticlesService articlesService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(articlesService.getById(id));
+    public ArticleDto getById(@PathVariable Long id) {
+        return articlesService.getById(id);
     }
 
     @Secured("ROLE_ADMIN")
@@ -33,9 +34,9 @@ public class ArticlesController {
 
     @Secured("ROLE_PUBLISHER")
     @PostMapping
-    public ResponseEntity<?> publishArticle(@RequestBody ArticleForPublishing articleForPublishing, Principal principal) {
-        ArticlePublished articlePublished = articlesService.publishArticle(articleForPublishing, principal.getName());
-        return new ResponseEntity<>(articlePublished, HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public ArticlePublished publishArticle(@RequestBody ArticleForPublishing articleForPublishing, Principal principal) {
+        return articlesService.publishArticle(articleForPublishing, principal.getName());
     }
 
     @GetMapping("/info/all")
