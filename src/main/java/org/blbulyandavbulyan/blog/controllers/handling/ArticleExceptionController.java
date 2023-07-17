@@ -1,4 +1,4 @@
-package org.blbulyandavbulyan.blog.exceptions.handling;
+package org.blbulyandavbulyan.blog.controllers.handling;
 
 import org.blbulyandavbulyan.blog.exceptions.AppError;
 import org.blbulyandavbulyan.blog.exceptions.articles.ArticleNotFoundException;

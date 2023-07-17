@@ -1,6 +1,7 @@
 package org.blbulyandavbulyan.blog.services;
 
 import org.blbulyandavbulyan.blog.entities.User;
+import org.blbulyandavbulyan.blog.exceptions.users.UserAlreadyExistsException;
 import org.blbulyandavbulyan.blog.exceptions.users.UserNotFoundException;
 import org.blbulyandavbulyan.blog.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,12 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
     public User registerUser(String userName, String password){
-        User user = new User(userName, passwordEncoder.encode(password));
-        userRepository.save(user);
-        return user;
+        if(!exists(userName)) {
+            User user = new User(userName, passwordEncoder.encode(password));
+            userRepository.save(user);
+            return user;
+        }
+        else throw new UserAlreadyExistsException("User with name '" + userName + "' already exists!");
     }
 
     @Override
