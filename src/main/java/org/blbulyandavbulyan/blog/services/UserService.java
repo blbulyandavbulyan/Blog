@@ -1,5 +1,6 @@
 package org.blbulyandavbulyan.blog.services;
 
+import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.exceptions.users.UserAlreadyExistsException;
 import org.blbulyandavbulyan.blog.exceptions.users.UserNotFoundException;
@@ -12,17 +13,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-    @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
     public User registerUser(String userName, String password){
         if(!exists(userName)) {
             User user = new User(userName, passwordEncoder.encode(password));
