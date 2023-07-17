@@ -22,7 +22,8 @@ public class UserController {
 
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public void deleteUserById(@PathVariable Long id) {
-        // TODO: 17.07.2023 Реализовать удаления пользователя по ИД для админов
+        userService.deleteById(id);
     }
 }
