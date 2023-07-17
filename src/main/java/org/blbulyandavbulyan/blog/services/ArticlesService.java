@@ -37,11 +37,8 @@ public class ArticlesService {
         return articleRepository.findAllPagesBy(ArticleInfoDTO.class, PageRequest.of(pageNumber, pageSize));
     }
 
-    public boolean deleteById(Long id) {
-        if(articleRepository.existsById(id)){
-            articleRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void deleteById(Long id) {
+        if(articleRepository.existsById(id)) articleRepository.deleteById(id);
+        else throw new ArticleNotFoundException("Article with id " + id + " not found");
     }
 }
