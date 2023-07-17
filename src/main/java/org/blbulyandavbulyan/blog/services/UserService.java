@@ -1,7 +1,7 @@
 package org.blbulyandavbulyan.blog.services;
 
 import org.blbulyandavbulyan.blog.entities.User;
-import org.blbulyandavbulyan.blog.exceptions.UserNotFoundException;
+import org.blbulyandavbulyan.blog.exceptions.users.UserNotFoundException;
 import org.blbulyandavbulyan.blog.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
