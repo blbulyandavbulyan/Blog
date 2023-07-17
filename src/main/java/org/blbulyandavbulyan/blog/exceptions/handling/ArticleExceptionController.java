@@ -1,7 +1,7 @@
 package org.blbulyandavbulyan.blog.exceptions.handling;
 
 import org.blbulyandavbulyan.blog.exceptions.AppError;
-import org.blbulyandavbulyan.blog.exceptions.ArticleNotFoundException;
+import org.blbulyandavbulyan.blog.exceptions.articles.ArticleNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

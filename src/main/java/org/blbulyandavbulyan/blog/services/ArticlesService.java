@@ -7,7 +7,7 @@ import org.blbulyandavbulyan.blog.dtos.article.ArticleInfoDTO;
 import org.blbulyandavbulyan.blog.dtos.article.ArticlePublished;
 import org.blbulyandavbulyan.blog.entities.Article;
 import org.blbulyandavbulyan.blog.entities.User;
-import org.blbulyandavbulyan.blog.exceptions.ArticleNotFoundException;
+import org.blbulyandavbulyan.blog.exceptions.articles.ArticleNotFoundException;
 import org.blbulyandavbulyan.blog.repositories.ArticleRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
