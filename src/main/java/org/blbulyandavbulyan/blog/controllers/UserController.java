@@ -6,10 +6,8 @@ import org.blbulyandavbulyan.blog.exceptions.AppError;
 import org.blbulyandavbulyan.blog.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
@@ -23,5 +21,10 @@ public class UserController {
             return new ResponseEntity<>("user was successfully registered!", HttpStatus.CREATED);
         }
         else return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "User already registered!"), HttpStatus.BAD_REQUEST);
+    }
+    @Secured("ROLE_ADMIN")
+    @DeleteMapping("/{id}")
+    public void deleteUserById(@PathVariable Long id){
+        // TODO: 17.07.2023 Реализовать удаления пользователя по ИД для админов
     }
 }
