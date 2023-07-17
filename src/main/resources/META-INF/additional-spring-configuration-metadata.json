@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "jwt.lifetime",
+      "type": "java.time.Duration",
+      "description": "Life time for jwt tokens"
+    }
+  ]
+}
