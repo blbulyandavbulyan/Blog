@@ -13,17 +13,32 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
+/**
+ * Контроллер для статей
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/articles")
 public class ArticlesController {
+    /**
+     * Ссылка на сервис для статей
+     */
     private final ArticlesService articlesService;
 
+    /**
+     * Получает статью по ИД
+     * @param id ид статьи
+     * @return найденную статью типа ArticleDto
+     */
     @GetMapping("/{id}")
     public ArticleDto getById(@PathVariable Long id) {
         return articlesService.getById(id);
     }
 
+    /**
+     * Удаляет статью по ид
+     * @param id ид статьи, которую нужно удалить
+     */
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -31,6 +46,12 @@ public class ArticlesController {
         articlesService.deleteById(id);
     }
 
+    /**
+     * Публикует статью
+     * @param articleForPublishing статья, которую нужно опубликовать
+     * @param principal ссылка на Principal, в котором содержатся данные об авторизованном пользователе
+     * @return информацию об опубликованной статье
+     */
     @Secured("ROLE_PUBLISHER")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -38,6 +59,12 @@ public class ArticlesController {
         return articlesService.publishArticle(articleForPublishing, principal.getName());
     }
 
+    /**
+     * Получает краткую информацию о всех статьях в виде страницы
+     * @param pageSize размер страницы
+     * @param pageNumber номер страницы
+     * @return найденную страницу с краткой информацией о статьях
+     */
     @GetMapping("/info/all")
     public Page<ArticleInfoDTO> getInfoAboutAllArticles(@RequestParam(defaultValue = "5") Integer pageSize, @RequestParam(defaultValue = "0") Integer pageNumber) {
         return articlesService.getInfoAboutAll(pageSize, pageNumber);
