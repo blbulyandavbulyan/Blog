@@ -8,18 +8,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Контроллер для управления пользователями
+ */
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
+    /**
+     * Сервис для управления пользователями
+     */
     private final UserService userService;
 
+    /**
+     * Метод обрабатывает запрос о регистрации пользователя
+     * @param registrationUser запрос на регистрацию пользователя, с необходимыми данными
+     */
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody RegistrationUser registrationUser) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public void registerUser(@RequestBody RegistrationUser registrationUser) {
         userService.registerUser(registrationUser.username(), registrationUser.password());
-        return new ResponseEntity<>("user was successfully registered!", HttpStatus.CREATED);
     }
 
+    /**
+     * Обрабатывает запрос на удаления пользователя(доступно только админам)
+     * @param id ИД пользователя, которого нужно удалить
+     */
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
