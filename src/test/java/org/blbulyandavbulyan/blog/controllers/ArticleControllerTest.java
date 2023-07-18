@@ -2,11 +2,14 @@ package org.blbulyandavbulyan.blog.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.blbulyandavbulyan.blog.dtos.article.ArticleDto;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleForPublishing;
+import org.blbulyandavbulyan.blog.dtos.article.ArticlePublished;
 import org.blbulyandavbulyan.blog.dtos.authorization.JwtRequest;
 import org.blbulyandavbulyan.blog.dtos.authorization.JwtResponse;
 import org.blbulyandavbulyan.blog.entities.Role;
 import org.blbulyandavbulyan.blog.entities.User;
+import org.blbulyandavbulyan.blog.services.ArticlesService;
 import org.blbulyandavbulyan.blog.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,9 +35,11 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
@@ -47,9 +52,10 @@ public class ArticleControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private UserService userService;
+    @MockBean
+    private ArticlesService articlesService;
     @Autowired
     private ObjectMapper objectMapper;
-
     @BeforeEach
     public void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
@@ -86,5 +92,15 @@ public class ArticleControllerTest {
     @WithMockUser(username = "david", roles = {"COMMENTER"})
     public void createArticleWhenUserIsNotAPublisher() throws Exception {
         createArticle(status().isForbidden());
+    }
+    @Test
+    @WithMockUser(username = "david", roles = {"COMMENTER", "PUBLISHER"})
+    public void getArticleByIdIfArticleExists() throws Exception {
+        ArticleDto articleDto = new ArticleDto("My test article", "Something very long", "david");
+        Mockito.when(articlesService.getById(1L)).thenReturn(articleDto);
+        mockMvc.perform(get("/api/v1/articles/{id}", 1L)).andExpect(status().isOk()).andExpect(result -> {
+            ArticleDto receivedArticleDTO = objectMapper.readValue(result.getResponse().getContentAsString(), ArticleDto.class);
+            assertThat(articleDto).isEqualTo(receivedArticleDTO);
+        });
     }
 }
