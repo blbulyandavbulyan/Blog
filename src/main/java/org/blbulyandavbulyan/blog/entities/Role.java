@@ -19,6 +19,11 @@ public class Role implements GrantedAuthority {
     private Long id;
     @Column(name = "name")
     private String roleName;
+
+    public Role(String roleName) {
+        this.roleName = roleName;
+    }
+
     @Override
     public String getAuthority() {
         return roleName;
