@@ -29,8 +29,8 @@ public class ArticlesService {
     }
 
     public ArticlePublished publishArticle(ArticleForPublishing articleForPublishing, String publisherName) {
-        User user = userService.findByName(publisherName);
-        return publishArticle(articleForPublishing.title(), articleForPublishing.text(), user);
+        return publishArticle(articleForPublishing.title(), articleForPublishing.text(),
+                userService.getReferenceByName(publisherName));
     }
 
     public Page<ArticleInfoDTO> getInfoAboutAll(int pageSize, int pageNumber) {
@@ -44,5 +44,9 @@ public class ArticlesService {
 
     public Article getReferenceById(Long articleId) {
         return articleRepository.getReferenceById(articleId);
+    }
+
+    public boolean existsById(Long id) {
+        return articleRepository.existsById(id);
     }
 }
