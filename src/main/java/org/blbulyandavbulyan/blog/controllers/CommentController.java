@@ -5,6 +5,7 @@ import org.blbulyandavbulyan.blog.dtos.comment.CommentDTOForPublishing;
 import org.blbulyandavbulyan.blog.dtos.comment.CommentDto;
 import org.blbulyandavbulyan.blog.services.CommentService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ public class CommentController {
     }
     @Secured({"ROLE_COMMENTER"})
     @PostMapping("/article")
+    @ResponseStatus(HttpStatus.CREATED)
     public void publishComment(@RequestBody CommentDTOForPublishing commentForPublishing, Principal principal ){
         commentService.publishComment(principal.getName(), commentForPublishing.articleId(), commentForPublishing.text());
     }
