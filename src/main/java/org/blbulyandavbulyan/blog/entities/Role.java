@@ -18,14 +18,14 @@ public class Role implements GrantedAuthority {
     @Column(name = "role_id", nullable = false)
     private Long id;
     @Column(name = "name")
-    private String roleName;
+    private String name;
 
-    public Role(String roleName) {
-        this.roleName = roleName;
+    public Role(String name) {
+        this.name = name;
     }
 
     @Override
     public String getAuthority() {
-        return roleName;
+        return name;
     }
 }
