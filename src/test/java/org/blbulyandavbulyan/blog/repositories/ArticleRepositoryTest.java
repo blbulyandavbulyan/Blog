@@ -44,17 +44,17 @@ class ArticleRepositoryTest {
         Article article = new Article(publisher, "Test title", "Test text");
         underTest.save(article);
         //when
-        Optional<ArticleDto> articleDtoOptional = underTest.findArticleDtoById(article.getArticleId());
+        Optional<ArticleDto> articleDtoOptional = underTest.findByArticleId(article.getArticleId(), ArticleDto.class);
         //then
         assertThat(articleDtoOptional).isPresent();
         ArticleDto articleDto = articleDtoOptional.get();
-        assertThat(articleDto.authorName()).isEqualTo(publisher.getName());
+        assertThat(articleDto.publisherName()).isEqualTo(publisher.getName());
         assertThat(articleDto.text()).isEqualTo(article.getText());
         assertThat(articleDto.title()).isEqualTo(article.getTitle());
     }
     @Test
     void findArticleDtoByIdShouldReturnEmptyOptionalIfArticleDoesNotExists(){
-        Optional<ArticleDto> articleDtoOptional = underTest.findArticleDtoById(2L);
+        Optional<ArticleDto> articleDtoOptional = underTest.findByArticleId(2L, ArticleDto.class);
         assertThat(articleDtoOptional).isNotPresent();
     }
     @Test
