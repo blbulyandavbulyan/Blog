@@ -25,7 +25,7 @@ public class ArticlesService {
     }
 
     public ArticleDto getById(Long id) {
-        return articleRepository.findArticleDtoById(id).orElseThrow(()->new ArticleNotFoundException("Article with id " + id + " not found"));
+        return articleRepository.findByArticleId(id, ArticleDto.class).orElseThrow(()->new ArticleNotFoundException("Article with id " + id + " not found"));
     }
 
     public ArticlePublished publishArticle(ArticleForPublishing articleForPublishing, String publisherName) {
