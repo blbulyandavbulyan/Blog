@@ -5,9 +5,12 @@ import org.blbulyandavbulyan.blog.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -51,13 +54,21 @@ public class SecurityConfig{
         daoAuthenticationProvider.setUserDetailsService(userService);
         return daoAuthenticationProvider;
     }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .cors().disable()
-                .authorizeRequests().antMatchers("/api/articles/publish").authenticated()
-                .antMatchers("/api/comments/publish").authenticated()
+                .antMatcher("/api/**")
+                .authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/api/v1/articles/**").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/v1/articles/**").authenticated()
+                .antMatchers(HttpMethod.PUT, "/api/v1/articles/**").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/v1/comments/**").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/v1/comments/**").authenticated()
+                .antMatchers(HttpMethod.PUT, "/api/v1/comments/**").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/v1/users/**").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/v1/users/**").authenticated()
+                .antMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
