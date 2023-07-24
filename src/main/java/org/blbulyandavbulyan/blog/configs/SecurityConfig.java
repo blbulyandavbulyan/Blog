@@ -66,6 +66,7 @@ public class SecurityConfig{
                 .antMatchers(HttpMethod.POST, "/api/v1/comments/**").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/api/v1/comments/**").authenticated()
                 .antMatchers(HttpMethod.PUT, "/api/v1/comments/**").authenticated()
+                .antMatchers("/api/v1/users/register").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/users/**").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/api/v1/users/**").authenticated()
                 .antMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated()
