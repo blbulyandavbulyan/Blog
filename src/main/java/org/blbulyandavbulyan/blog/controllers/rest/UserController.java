@@ -1,4 +1,4 @@
-package org.blbulyandavbulyan.blog.controllers;
+package org.blbulyandavbulyan.blog.controllers.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.authorization.RegistrationUser;
