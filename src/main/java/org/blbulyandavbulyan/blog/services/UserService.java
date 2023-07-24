@@ -45,4 +45,8 @@ public class UserService implements UserDetailsService {
         if(userRepository.existsById(id)) userRepository.deleteById(id);
         else throw new UserNotFoundException("User with id " + id + " not found!");
     }
+
+    public User getReferenceByName(String name) {
+        return userRepository.getReferenceByName(name);
+    }
 }
