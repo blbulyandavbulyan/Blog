@@ -70,6 +70,7 @@ public class SecurityConfig{
                 .antMatchers(HttpMethod.POST, "/api/v1/users/**").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/api/v1/users/**").authenticated()
                 .antMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated()
+                .antMatchers(HttpMethod.GET, "/api/v1/users/info").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
