@@ -41,4 +41,8 @@ public class ArticlesService {
         if(articleRepository.existsById(id)) articleRepository.deleteById(id);
         else throw new ArticleNotFoundException("Article with id " + id + " not found");
     }
+
+    public Article getReferenceById(Long articleId) {
+        return articleRepository.getReferenceById(articleId);
+    }
 }
