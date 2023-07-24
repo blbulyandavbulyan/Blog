@@ -2,6 +2,7 @@ package org.blbulyandavbulyan.blog.controllers.handling;
 
 import org.blbulyandavbulyan.blog.exceptions.AppError;
 import org.blbulyandavbulyan.blog.exceptions.BlogException;
+import org.blbulyandavbulyan.blog.exceptions.IllegalRoleNameException;
 import org.blbulyandavbulyan.blog.exceptions.users.UserAlreadyExistsException;
 import org.blbulyandavbulyan.blog.exceptions.users.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -14,5 +15,9 @@ public class UserExceptionController {
     @ExceptionHandler({UserNotFoundException.class, UserAlreadyExistsException.class})
     public ResponseEntity<AppError> processNotFoundAndExistsException(BlogException e){
         return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler({IllegalRoleNameException.class})
+    public ResponseEntity<AppError> processIllegalRoleException (IllegalRoleNameException e){
+        return new ResponseEntity<AppError>(new AppError(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 }
