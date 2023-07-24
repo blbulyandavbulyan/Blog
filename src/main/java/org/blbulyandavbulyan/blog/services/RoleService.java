@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 public class RoleService {
     private final RoleRepository roleRepository;
     public Role getReferenceByRoleName(String roleName){
-        return roleRepository.getReferenceByRoleName(roleName);
+        return roleRepository.getReferenceByName(roleName);
     }
     public boolean existsByRoleName(String roleName){
-        return roleRepository.existsByRoleName(roleName);
+        return roleRepository.existsByName(roleName);
     }
 }
