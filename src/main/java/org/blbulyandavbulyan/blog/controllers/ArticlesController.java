@@ -66,7 +66,7 @@ public class ArticlesController {
      * @return найденную страницу с краткой информацией о статьях
      */
     @GetMapping("/info/all")
-    public Page<ArticleInfoDTO> getInfoAboutAllArticles(@RequestParam(defaultValue = "5") Integer pageSize, @RequestParam(defaultValue = "0") Integer pageNumber) {
-        return articlesService.getInfoAboutAll(pageSize, pageNumber);
+    public Page<ArticleInfoDTO> getInfoAboutAllArticles(@RequestParam(defaultValue = "5") Integer pageSize, @RequestParam(defaultValue = "1") Integer pageNumber) {
+        return articlesService.getInfoAboutAll(pageSize, pageNumber - 1);
     }
 }
