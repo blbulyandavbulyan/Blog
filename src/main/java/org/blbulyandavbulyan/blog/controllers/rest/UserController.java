@@ -3,6 +3,7 @@ package org.blbulyandavbulyan.blog.controllers.rest;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.authorization.RegistrationUser;
 import org.blbulyandavbulyan.blog.dtos.user.UserCreateRequest;
+import org.blbulyandavbulyan.blog.dtos.user.UserInfoDTO;
 import org.blbulyandavbulyan.blog.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
@@ -51,4 +52,10 @@ public class UserController {
     public void createUser(@RequestBody UserCreateRequest userCreateRequest){
         userService.createUser(userCreateRequest);
     }
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/{id}")
+    public UserInfoDTO getUserInfo(@PathVariable Long id){
+        return userService.getUserInfo(id);
+    }
+
 }
