@@ -9,8 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-
 /**
  * Контроллер для управления пользователями
  */
@@ -52,6 +50,12 @@ public class UserController {
     public void createUser(@RequestBody UserCreateRequest userCreateRequest){
         userService.createUser(userCreateRequest);
     }
+
+    /**
+     * Метод получает информацию о пользователя для администраторов
+     * @param id ИД пользователя, о котором нужно узнать информацию
+     * @return информацию о пользователе для администратора
+     */
     @Secured("ROLE_ADMIN")
     @GetMapping("/{id}")
     public UserInfoDTO getUserInfo(@PathVariable Long id){
