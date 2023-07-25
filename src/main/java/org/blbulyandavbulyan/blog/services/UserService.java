@@ -2,6 +2,7 @@ package org.blbulyandavbulyan.blog.services;
 
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.user.UserCreateRequest;
+import org.blbulyandavbulyan.blog.dtos.user.UserInfoDTO;
 import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.exceptions.IllegalRoleNameException;
 import org.blbulyandavbulyan.blog.exceptions.users.UserAlreadyExistsException;
@@ -60,5 +61,9 @@ public class UserService implements UserDetailsService {
             if(!roleService.existsByRoleName(roleName))throw new IllegalRoleNameException("Role with name + " + roleName + " not found!");
         }
         user.setRoles(userCreateRequest.roleNames().stream().map(roleService::getReferenceByRoleName).toList());
+    }
+
+    public UserInfoDTO getUserInfo(Long userId) {
+        return userRepository.findByUserId(userId, UserInfoDTO.class);
     }
 }
