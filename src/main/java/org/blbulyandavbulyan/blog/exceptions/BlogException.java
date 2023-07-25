@@ -1,5 +1,8 @@
 package org.blbulyandavbulyan.blog.exceptions;
 
+/**
+ * Общий класс исключений для моего приложения
+ */
 public class BlogException extends RuntimeException{
     public BlogException() {
     }
