@@ -9,19 +9,44 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
+/**
+ * Сервис для работы с комментариями
+ */
 @Service
 @RequiredArgsConstructor
 public class CommentService {
+    /**
+     * Репозиторий с комментариями
+     */
     private final CommentRepository commentRepository;
+    /**
+     * Сервис для работы с пользователями
+     */
     private final UserService userService;
+    /**
+     * Сервис для работы со статьями
+     */
     private final ArticlesService articlesService;
-    public Page<CommentDto> getCommentDTOsForArticleId(Long id, int pageNumber, int pageSize){
-        if(!articlesService.existsById(id))
-            throw new ArticleNotFoundException("Article with id " + id + " not found!");
-        return commentRepository.findAllByArticleArticleId(id, PageRequest.of(pageNumber, pageSize), CommentDto.class);
+
+    /**
+     * Получает комментарии для определённой статьи
+     * @param articleId ИД статьи
+     * @param pageNumber номер страницы(начиная с нуля)
+     * @param pageSize размер страницы
+     * @return страница, содержащая искомые комментарии
+     */
+    public Page<CommentDto> getCommentDTOsForArticleId(Long articleId, int pageNumber, int pageSize){
+        if(!articlesService.existsById(articleId))
+            throw new ArticleNotFoundException("Article with articleId " + articleId + " not found!");
+        return commentRepository.findAllByArticleArticleId(articleId, PageRequest.of(pageNumber, pageSize), CommentDto.class);
     }
+
+    /**
+     * Публикует комментарий к заданной статьи от заданного автора
+     * @param publisherName имя публикующего пользователя
+     * @param articleId ИД статьи, для которой нужно опубликовать комментарий
+     * @param text текст комментария
+     */
     public void publishComment(String publisherName, Long articleId, String text){
         Comment comment = new Comment();
         comment.setText(text);
