@@ -2,5 +2,15 @@ package org.blbulyandavbulyan.blog.dtos.user;
 
 import java.util.List;
 
-public record UserInfoDTO(Long userId, String name, List<String> roleNames) {
+public interface UserInfoDTO {
+
+    Long getUserId();
+
+    String getName();
+
+    List<RoleDto> getRoles();
+    interface RoleDto{
+        String getName();
+    }
+
 }
