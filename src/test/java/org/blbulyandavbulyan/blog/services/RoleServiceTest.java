@@ -39,8 +39,8 @@ public class RoleServiceTest {
     public void getReferenceByNameWhenRoleExists(){
         String roleName = "ADMIN";
         Role expectedRole = new Role(roleName);
-        Mockito.when(roleService.getReferenceByRoleName(roleName)).thenReturn(expectedRole);
+        Mockito.when(roleRepository.getReferenceByName(roleName)).thenReturn(expectedRole);
         assertEquals(expectedRole, roleService.getReferenceByRoleName(roleName));
-        Mockito.verify(roleService).getReferenceByRoleName(roleName);
+        Mockito.verify(roleRepository).getReferenceByName(roleName);
     }
 }
