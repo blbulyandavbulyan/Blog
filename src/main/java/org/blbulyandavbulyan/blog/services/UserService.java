@@ -116,8 +116,9 @@ public class UserService implements UserDetailsService {
      * Возвращает информацию о пользователе
      * @param userId ИД пользователя, информацию о котором нужно получить
      * @return искомую информацию о пользователе
+     * @throws UserNotFoundException если пользователь не найден
      */
     public UserInfoDTO getUserInfo(Long userId) {
-        return userRepository.findByUserId(userId, UserInfoDTO.class);
+        return userRepository.findByUserId(userId, UserInfoDTO.class).orElseThrow(()->new UserNotFoundException("User with id " + " not found!"));
     }
 }

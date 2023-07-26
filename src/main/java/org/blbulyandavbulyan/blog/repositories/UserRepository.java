@@ -13,5 +13,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User getReferenceByName(String name);
 
-    <T> T findByUserId(Long userId, Class<T> dtoClass);
+    <T> Optional<T> findByUserId(Long userId, Class<T> dtoClass);
 }
