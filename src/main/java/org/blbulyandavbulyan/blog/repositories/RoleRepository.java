@@ -3,6 +3,8 @@ package org.blbulyandavbulyan.blog.repositories;
 import org.blbulyandavbulyan.blog.entities.Role;
 import org.springframework.data.repository.Repository;
 
+import java.util.Optional;
+
 /**
  * Репозиторий ролей<br>
  * Не имеет модифицирующих методов, т.к. имеющиеся роли нельзя модифицировать
@@ -20,5 +22,5 @@ public interface RoleRepository extends Repository<Role, Long> {
      * @param roleName имя роли
      * @return искомая ссылка на роль
      */
-    Role getReferenceByName(String roleName);
+    Optional<Role> getReferenceByName(String roleName);
 }

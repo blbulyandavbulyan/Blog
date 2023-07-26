@@ -2,6 +2,7 @@ package org.blbulyandavbulyan.blog.services;
 
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.entities.Role;
+import org.blbulyandavbulyan.blog.exceptions.IllegalRoleNameException;
 import org.blbulyandavbulyan.blog.repositories.RoleRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +21,10 @@ public class RoleService {
      * Получает ссылку на роль по имени роли
      * @param roleName имя роли, которую нужно получить
      * @return найденную ссылку на роль
+     * @throws IllegalRoleNameException если роль не найдена
      */
     public Role getReferenceByRoleName(String roleName){
-        return roleRepository.getReferenceByName(roleName);
+        return roleRepository.getReferenceByName(roleName).orElseThrow(()-> new IllegalRoleNameException("role with name " + roleName + " not found!"));
     }
 
     /**
