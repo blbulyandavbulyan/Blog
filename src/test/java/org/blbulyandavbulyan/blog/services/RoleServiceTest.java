@@ -1,5 +1,6 @@
 package org.blbulyandavbulyan.blog.services;
 
+import org.blbulyandavbulyan.blog.entities.Role;
 import org.blbulyandavbulyan.blog.repositories.RoleRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,8 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {RoleService.class})
@@ -21,17 +21,26 @@ public class RoleServiceTest {
     @DisplayName("exist by role name, when role exists")
     @Test
     public void existByRoleNameWhenUserExists(){
-        String userName = "david";
-        Mockito.when(roleRepository.existsByName(userName)).thenReturn(true);
-        assertTrue(roleService.existsByRoleName(userName));
-        Mockito.verify(roleRepository).existsByName(userName);
+        String roleName = "ADMIN";
+        Mockito.when(roleRepository.existsByName(roleName)).thenReturn(true);
+        assertTrue(roleService.existsByRoleName(roleName));
+        Mockito.verify(roleRepository).existsByName(roleName);
     }
     @DisplayName("exist by role name, when role doesn't exist")
     @Test
     public void existByRoleNameWhenUserDoesNotExist(){
-        String userName = "david";
-        Mockito.when(roleRepository.existsByName(userName)).thenReturn(false);
-        assertFalse(roleService.existsByRoleName(userName));
-        Mockito.verify(roleRepository).existsByName(userName);
+        String roleName = "ADMIN";
+        Mockito.when(roleRepository.existsByName(roleName)).thenReturn(false);
+        assertFalse(roleService.existsByRoleName(roleName));
+        Mockito.verify(roleRepository).existsByName(roleName);
+    }
+    @DisplayName("get reference by name when role exists")
+    @Test
+    public void getReferenceByNameWhenRoleExists(){
+        String roleName = "ADMIN";
+        Role expectedRole = new Role(roleName);
+        Mockito.when(roleService.getReferenceByRoleName(roleName)).thenReturn(expectedRole);
+        assertEquals(expectedRole, roleService.getReferenceByRoleName(roleName));
+        Mockito.verify(roleService).getReferenceByRoleName(roleName);
     }
 }
