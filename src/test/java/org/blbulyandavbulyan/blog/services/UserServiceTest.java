@@ -192,4 +192,31 @@ class UserServiceTest {
         });
 
     }
+    @DisplayName("delete by id, when user exists")
+    @Test
+    public void deleteByIdWhenUserExists(){
+        Long id = 1L;
+        Mockito.when(userRepository.existsById(id)).thenReturn(true);
+        userService.deleteById(id);
+        Mockito.verify(userRepository).existsById(id);
+        Mockito.verify(userRepository).deleteById(id);
+    }
+    @DisplayName("delete by id, when user doesn't exist")
+    @Test
+    public void deleteByIdWhenUserDoesNotExist(){
+        Long id = 1L;
+        Mockito.when(userRepository.existsById(id)).thenReturn(false);
+        assertThrows(UserNotFoundException.class, ()->userService.deleteById(id));
+        Mockito.verify(userRepository).existsById(id);
+    }
+    @DisplayName("get reference by name")
+    @Test
+    public void getReferenceForExistingUser(){
+        User expected = new User();
+        expected.setName("david");
+        Mockito.when(userRepository.getReferenceByName(expected.getName())).thenReturn(expected);
+        User actual = userService.getReferenceByName(expected.getName());
+        Mockito.verify(userRepository).getReferenceByName(expected.getName());
+        assertEquals(expected, actual);
+    }
 }
