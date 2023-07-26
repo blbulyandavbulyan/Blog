@@ -1,5 +1,6 @@
 package org.blbulyandavbulyan.blog.services;
 
+import org.blbulyandavbulyan.blog.dtos.user.UserInfoDTO;
 import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.exceptions.users.UserAlreadyExistsException;
 import org.blbulyandavbulyan.blog.exceptions.users.UserNotFoundException;
@@ -21,6 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -128,5 +130,37 @@ class UserServiceTest {
         String userName = "david";
         Mockito.when(userRepository.findByName(userName)).thenReturn(Optional.empty());
         assertThrows(UserNotFoundException.class, ()->userService.findByName(userName));
+    }
+    @DisplayName("get user info by id, when user exists")
+    @Test
+    public void getUserInfoByIdWhenUserExists(){
+        UserInfoDTO expected = new UserInfoDTO() {
+            @Override
+            public Long getUserId() {
+                return 1L;
+            }
+
+            @Override
+            public String getName() {
+                return "david";
+            }
+
+            @Override
+            public List<RoleDto> getRoles() {
+                return Collections.emptyList();
+            }
+        };
+        Mockito.when(userRepository.findByUserId(expected.getUserId(), UserInfoDTO.class)).thenReturn(Optional.of(expected));
+        UserInfoDTO actual = userService.getUserInfo(expected.getUserId());
+        Mockito.verify(userRepository).findByUserId(expected.getUserId(), UserInfoDTO.class);
+        assertEquals(expected, actual);
+    }
+    @DisplayName("get user info by id, when user doesn't exist")
+    @Test
+    public void getUserInfoWhenUserDoesNotExists(){
+        Long userId = 1L;
+        Mockito.when(userRepository.findByUserId(userId, UserInfoDTO.class)).thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class, ()->userService.getUserInfo(userId));
+        Mockito.verify(userRepository).findByUserId(userId, UserInfoDTO.class);
     }
 }
