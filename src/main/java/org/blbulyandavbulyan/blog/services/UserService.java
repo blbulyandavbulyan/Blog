@@ -43,8 +43,7 @@ public class UserService implements UserDetailsService {
     public User registerUser(String userName, String password){
         if(!exists(userName)) {
             User user = new User(userName, passwordEncoder.encode(password));
-            userRepository.save(user);
-            return user;
+            return userRepository.save(user);
         }
         else throw new UserAlreadyExistsException("User with name '" + userName + "' already exists!");
     }
