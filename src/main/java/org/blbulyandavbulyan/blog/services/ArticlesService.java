@@ -84,8 +84,11 @@ public class ArticlesService {
      * Получает ссылку на статью
      * @param articleId ИД статьи, на которую нужно получить ссылку
      * @return ссылку на статью, по заданному ИД
+     * @throws ArticleNotFoundException если статья не найдена по данному ИД
      */
     public Article getReferenceById(Long articleId) {
+        if(!existsById(articleId))
+            throw new ArticleNotFoundException("Article with id " + articleId + " not found!");
         return articleRepository.getReferenceById(articleId);
     }
 
