@@ -2,6 +2,7 @@ package org.blbulyandavbulyan.blog.services;
 
 import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.exceptions.users.UserAlreadyExistsException;
+import org.blbulyandavbulyan.blog.exceptions.users.UserNotFoundException;
 import org.blbulyandavbulyan.blog.repositories.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
@@ -39,7 +41,7 @@ class UserServiceTest {
     static class TestConfig {
 
         @Bean
-        public PasswordEncoder meterRegistry() {
+        public PasswordEncoder passwordEncoder() {
             return new BCryptPasswordEncoder();
         }
 
@@ -101,5 +103,30 @@ class UserServiceTest {
         assertEquals(user.getName(), userDetails.getUsername());
         assertEquals(user.getPassword(), userDetails.getPassword());
         assertEquals(user.getAuthorities(), userDetails.getAuthorities());
+    }
+    @DisplayName("loadUserByUsername throw UserNotFoundException, if the user was not found")
+    @Test
+    public void loadUserByUsernameShouldThrowUserNotFoundExceptionIfUserWasNotFound(){
+        String userName = "david";
+        Mockito.when(userRepository.findByName(userName)).thenReturn(Optional.empty());
+        Mockito.when(userRepository.existsByName(userName)).thenReturn(false);
+        assertThrows(UsernameNotFoundException.class, ()->userService.loadUserByUsername(userName));
+    }
+    @DisplayName("find by name should not throw exception, when user is exists")
+    @Test
+    public void findByNameWhenUserExists(){
+        User expected = new User();
+        expected.setName("david");
+        Mockito.when(userRepository.findByName(expected.getName())).thenReturn(Optional.of(expected));
+        User actual = userService.findByName(expected.getName());
+        Mockito.verify(userRepository).findByName(expected.getName());
+        assertEquals(expected, actual);
+    }
+    @DisplayName("find by name should throw UserNotFoundException, if user doesn't exist")
+    @Test
+    public void findByNameWhenUserDoesNotExist(){
+        String userName = "david";
+        Mockito.when(userRepository.findByName(userName)).thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class, ()->userService.findByName(userName));
     }
 }
