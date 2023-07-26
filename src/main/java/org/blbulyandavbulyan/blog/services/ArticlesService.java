@@ -86,6 +86,7 @@ public class ArticlesService {
      * @return ссылку на статью, по заданному ИД
      */
     public Article getReferenceById(Long articleId) {
+        // TODO: 26.07.2023 Сделать чтобы articleRepository.getReferenceById возвращал optional и добавить обработку здесь
         return articleRepository.getReferenceById(articleId);
     }
 

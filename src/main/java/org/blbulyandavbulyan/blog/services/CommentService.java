@@ -48,6 +48,8 @@ public class CommentService {
      * @param text текст комментария
      */
     public void publishComment(String publisherName, Long articleId, String text){
+        // FIXME: 26.07.2023 Баг с 500-ой ошибкой, из-за того что не проверяется существование статьи
+        // FIXME: 26.07.2023 Так же возможен аналогичный баг, если пользователя не существует
         Comment comment = new Comment();
         comment.setText(text);
         comment.setAuthor(userService.getReferenceByName(publisherName));

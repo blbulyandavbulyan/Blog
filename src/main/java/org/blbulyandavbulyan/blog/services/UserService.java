@@ -95,6 +95,8 @@ public class UserService implements UserDetailsService {
      * @return полученную ссылку на пользователя
      */
     public User getReferenceByName(String name) {
+        // TODO: 26.07.2023 Сделать чтобы userRepository.getReferenceByName возвращал optional
+        // TODO: 26.07.2023 Добавить обработку optional здесь от userRepository.getReferenceByName
         return userRepository.getReferenceByName(name);
     }
 
