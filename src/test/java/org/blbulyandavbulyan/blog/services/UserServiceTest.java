@@ -1,6 +1,8 @@
 package org.blbulyandavbulyan.blog.services;
 
+import org.blbulyandavbulyan.blog.dtos.user.UserCreateRequest;
 import org.blbulyandavbulyan.blog.dtos.user.UserInfoDTO;
+import org.blbulyandavbulyan.blog.entities.Role;
 import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.exceptions.users.UserAlreadyExistsException;
 import org.blbulyandavbulyan.blog.exceptions.users.UserNotFoundException;
@@ -8,6 +10,8 @@ import org.blbulyandavbulyan.blog.repositories.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatcher;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -162,5 +166,30 @@ class UserServiceTest {
         Mockito.when(userRepository.findByUserId(userId, UserInfoDTO.class)).thenReturn(Optional.empty());
         assertThrows(UserNotFoundException.class, ()->userService.getUserInfo(userId));
         Mockito.verify(userRepository).findByUserId(userId, UserInfoDTO.class);
+    }
+    @DisplayName("create not existing user")
+    @Test
+    public void createNotExistingUser(){
+        List<String> rolesNames = List.of("ADMIN", "USER");
+        User expectedUser = new User();
+        expectedUser.setUserId(1L);
+        expectedUser.setName("david");
+        expectedUser.setRoles(rolesNames.stream().map(Role::new).toList());
+        String password = "1234";
+        expectedUser.setPasswordHash(passwordEncoder.encode(password));
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(expectedUser);
+        Mockito.when(userRepository.existsByName(expectedUser.getName())).thenReturn(false);
+        Mockito.when(roleService.existsByRoleName(Mockito.argThat(rolesNames::contains))).thenReturn(true);
+        UserCreateRequest userCreateRequest = new UserCreateRequest(expectedUser.getName(), password, rolesNames);
+        userService.createUser(userCreateRequest);
+        Mockito.verify(userRepository).existsByName(expectedUser.getName());
+        Mockito.verify(userRepository).save(
+                Mockito.argThat(user -> passwordEncoder.matches(password, user.getPassword()))
+        );
+        rolesNames.forEach(roleName->{
+            Mockito.verify(roleService).existsByRoleName(roleName);
+            Mockito.verify(roleService).getReferenceByRoleName(roleName);
+        });
+
     }
 }
