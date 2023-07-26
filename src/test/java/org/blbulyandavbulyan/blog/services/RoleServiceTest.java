@@ -1,6 +1,7 @@
 package org.blbulyandavbulyan.blog.services;
 
 import org.blbulyandavbulyan.blog.entities.Role;
+import org.blbulyandavbulyan.blog.exceptions.IllegalRoleNameException;
 import org.blbulyandavbulyan.blog.repositories.RoleRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,8 +42,15 @@ public class RoleServiceTest {
     public void getReferenceByNameWhenRoleExists(){
         String roleName = "ADMIN";
         Role expectedRole = new Role(roleName);
-        Mockito.when(roleRepository.getReferenceByName(roleName)).thenReturn(expectedRole);
+        Mockito.when(roleRepository.getReferenceByName(roleName)).thenReturn(Optional.of(expectedRole));
         assertEquals(expectedRole, roleService.getReferenceByRoleName(roleName));
         Mockito.verify(roleRepository).getReferenceByName(roleName);
+    }
+    @DisplayName("get reference by name when role doesn't exist")
+    @Test
+    public void getReferenceByNameWhenRoleDoesNotExist(){
+        String roleName = "NOTFOUND";
+        Mockito.when(roleRepository.getReferenceByName(roleName)).thenReturn(Optional.empty());
+        assertThrows(IllegalRoleNameException.class, ()->roleService.getReferenceByRoleName(roleName));
     }
 }
