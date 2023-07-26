@@ -46,6 +46,8 @@ public class CommentService {
      * @param publisherName имя публикующего пользователя
      * @param articleId ИД статьи, для которой нужно опубликовать комментарий
      * @param text текст комментария
+     * @throws ArticleNotFoundException если статья не найдена
+     * @throws org.blbulyandavbulyan.blog.exceptions.users.UserNotFoundException если не найден публикатор
      */
     public void publishComment(String publisherName, Long articleId, String text){
         Comment comment = new Comment();
