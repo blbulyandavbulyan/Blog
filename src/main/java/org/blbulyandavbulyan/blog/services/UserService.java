@@ -93,8 +93,11 @@ public class UserService implements UserDetailsService {
      * Метод получает ссылку на пользователя
      * @param name имя пользователя
      * @return полученную ссылку на пользователя
+     * @throws UserNotFoundException если пользователь не найден
      */
     public User getReferenceByName(String name) {
+        if (!exists(name))
+            throw new UserNotFoundException("User with name " + name + " not found!");
         return userRepository.getReferenceByName(name);
     }
 
