@@ -221,4 +221,12 @@ class UserServiceTest {
         Mockito.verify(userRepository).existsByName(expected.getName());
         assertEquals(expected, actual);
     }
+    @DisplayName("get reference by name, when user doesn't exist")
+    @Test
+    public void getReferenceForNotExistingUser(){
+        String userName = "david";
+        Mockito.when(userRepository.existsByName(userName)).thenReturn(false);
+        assertThrows(UserNotFoundException.class, ()->userService.getReferenceByName(userName));
+        Mockito.verify(userRepository).existsByName(userName);
+    }
 }
