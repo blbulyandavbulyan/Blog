@@ -64,7 +64,7 @@ class ArticleRepositoryTest {
         underTest.saveAllAndFlush(articles);
         Page<ArticleInfoDTO> page = underTest.findAllPagesBy(ArticleInfoDTO.class, PageRequest.of(0, 4));
         List<ArticleInfoDTO> actual = page.get().toList();
-        Set<ArticleInfoDTO> expected = articles.stream().map(a->new ArticleInfoDTO(a.getArticleId(), a.getTitle())).collect(Collectors.toSet());;
+        Set<ArticleInfoDTO> expected = articles.stream().map(a->new ArticleInfoDTO(a.getArticleId(), a.getTitle())).collect(Collectors.toSet());
         Assertions.assertTrue(expected.containsAll(actual));
     }
     @Test
