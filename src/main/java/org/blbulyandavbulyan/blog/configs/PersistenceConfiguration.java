@@ -10,7 +10,5 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @EnableTransactionManagement
-@EntityScan(basePackages = "org.blbulyandavbulyan.blog.entities")
-@EnableJpaRepositories(basePackages = "org.blbulyandavbulyan.blog.repositories")
 public class PersistenceConfiguration {
 }
