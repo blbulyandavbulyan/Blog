@@ -18,6 +18,6 @@ public class UserExceptionController {
     }
     @ExceptionHandler({IllegalRoleNameException.class})
     public ResponseEntity<AppError> processIllegalRoleException (IllegalRoleNameException e){
-        return new ResponseEntity<AppError>(new AppError(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 }
