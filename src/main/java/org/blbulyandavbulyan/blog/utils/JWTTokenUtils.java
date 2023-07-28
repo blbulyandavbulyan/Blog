@@ -5,14 +5,14 @@ import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import org.blbulyandavbulyan.blog.configs.JwtConfigurationProperties;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.security.Key;
-import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,12 +22,12 @@ import java.util.Map;
  * Данный класс предназначен для удобной работы с jwt токенами
  */
 @Component
+@RequiredArgsConstructor
 public class JWTTokenUtils {
     /**
      * Время жизни jwt токена
      */
-    @Value("${jwt.lifetime}")
-    private Duration jwtLifeTime;
+    private final JwtConfigurationProperties jwtConfigurationProperties;
     /**
      * Ключ для подписи jwt токена
      */
@@ -58,7 +58,7 @@ public class JWTTokenUtils {
         List<String> rolesList = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
         claims.put("roles", rolesList);//добавляем роли
         Date issuedDate = new Date();//время создания токена
-        Date expiredDate = new Date(issuedDate.getTime() + jwtLifeTime.toMillis());//время истечения токена
+        Date expiredDate = new Date(issuedDate.getTime() + jwtConfigurationProperties.getLifetime().toMillis());//время истечения токена
         return Jwts.builder().setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(issuedDate)
