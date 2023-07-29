@@ -1,0 +1,74 @@
+var app = angular.module('blog', []);
+var contextPath = 'http://localhost:8080/blog';
+var commentsApiPath = '/api/v1/comments';
+app.service('CommentService', ['$http', function($http){
+    return {
+            getComments: function(articleId, pageNumber, size){
+                var httpParams = {
+                    p: pageNumber,
+                    s:size
+                };
+                var getQuery = {
+                    method: 'GET',
+                    url: contextPath + commentsApiPath + '/article/' + articleId
+                }
+                getQuery["params"] = httpParams;
+                return $http(getQuery);
+            }
+        }
+}]);
+// Функция для загрузки комментариев с сервера
+app.controller('CommentListController', function($scope, CommentService) {
+     $scope.comments = [];
+     $scope.currentPage = 1;
+     $scope.itemsPerPage = 5;
+     $scope.totalPages = 5;
+     const maxPagesToShow = 3; // Максимальное количество отображаемых страниц
+     var href = window.location.href.split('/');
+     $scope.articleId = href[href.length-1];
+     $scope.loadComments = function(pageNumber) {
+       $scope.currentPage = pageNumber;
+       CommentService.getComments($scope.articleId, pageNumber, $scope.itemsPerPage)
+         .then(function(response) {
+           $scope.comments = response.data.content;
+           $scope.totalPages = response.data.totalPages;
+         });
+     };
+     // Функция для рассчета списка номеров страниц с учетом многоточий
+     $scope.getPage = function(pageNumber){
+          $scope.loadComments(pageNumber);
+          calculatePageNumbers();
+     }
+     function calculatePageNumbers() {
+       $scope.pageNumbers = [];
+       const currentPage = $scope.currentPage;
+       const totalPages = $scope.totalPages;
+       if (totalPages <= maxPagesToShow) {
+         for (let i = 1; i <= totalPages; i++) {
+           $scope.pageNumbers.push(i);
+         }
+       } else {
+         let startPage;
+         let endPage;
+
+         if (currentPage <= Math.ceil(maxPagesToShow / 2)) {
+           startPage = 1;
+           endPage = maxPagesToShow;
+         } else if (currentPage >= totalPages - Math.floor(maxPagesToShow / 2)) {
+           startPage = totalPages - maxPagesToShow + 1;
+           endPage = totalPages;
+         } else {
+           startPage = currentPage - Math.floor(maxPagesToShow / 2);
+           endPage = currentPage + Math.floor(maxPagesToShow / 2);
+         }
+         for (let i = startPage; i <= endPage; i++) {
+           $scope.pageNumbers.push(i);
+         }
+       }
+     }
+     // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
+     $scope.$watch('totalPages', function() {
+       calculatePageNumbers();
+     });
+     $scope.getPage(1);
+});
