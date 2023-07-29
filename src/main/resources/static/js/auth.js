@@ -67,7 +67,6 @@ app.controller('AuthController', function($scope, $http) {
     $httpProvider.interceptors.push('authInterceptor');
   });
 });
- // Функция для получения куки по имени
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
