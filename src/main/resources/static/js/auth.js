@@ -21,7 +21,8 @@ app.controller('AuthController', function($scope, $http) {
       })
       .catch(function(error) {
         console.error('Ошибка авторизации:', error);
-        $scope.error = 'Ошибка авторизации. Пожалуйста, проверьте правильность введенных данных.';
+        if(error.status == 401)$scope.error = 'Ошибка авторизации. Пожалуйста, проверьте правильность введенных данных.';
+        else $scope.error = 'Неизвестная ошибка при авторизации.'
       });
   };
 });
