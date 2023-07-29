@@ -14,6 +14,18 @@ app.service('CommentService', ['$http', function($http){
                 }
                 getQuery["params"] = httpParams;
                 return $http(getQuery);
+            },
+            postComment: function(articleId, text){
+                var httpParams = {
+                    articleId: articleId,
+                    text: text
+                };
+                var postQuery = {
+                    method: 'POST',
+                    url: contextPath + commentsApiPath
+                }
+                postQuery["params"] = httpParams;
+                return $http(postQuery);
             }
         }
 }]);
