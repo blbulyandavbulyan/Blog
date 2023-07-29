@@ -11,7 +11,7 @@
         <h1 th:text="${article.title}"></h1>
         <p th:text="${article.text}"></p>
         <h2>Комментарии:</h2>
-        <div ng-controller="CommentListController">
+        <div ng-controller="CommentController">
             <span ng-if="comments.length <= 0">А их пока нет.</span>
             <div ng-if="comments.length > 0">
                 <div id="comments">
