@@ -64,6 +64,9 @@ app.controller('CommentController', function($scope, CommentService) {
            $scope.totalPages = response.data.totalPages;
          });
      };
+     $scope.postComment = function(text){
+        CommentService.postComment($scope.articleId, $scope.newComment.text);
+     }
      // Функция для рассчета списка номеров страниц с учетом многоточий
      $scope.getPage = function(pageNumber){
           $scope.loadComments(pageNumber);
