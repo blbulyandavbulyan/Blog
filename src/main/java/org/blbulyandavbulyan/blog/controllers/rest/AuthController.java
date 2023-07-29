@@ -14,12 +14,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Контроллер обрабатывающий запросы об авторизации
  */
 @RestController
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
     /**
@@ -40,7 +42,7 @@ public class AuthController {
      * @param authRequest запрос содержащий логин и пароль
      * @return ответ, содержащий JWT токен в случае успешной авторизации
      */
-    @PostMapping("/auth")
+    @PostMapping
     public ResponseEntity<?> createAuthToken(@RequestBody JwtRequest authRequest){
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.username(), authRequest.password()));
