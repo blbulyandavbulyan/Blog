@@ -1,5 +1,5 @@
 var app = angular.module('blog', []);
-var contextPath = 'http://localhost:8080/blog';
+const contextPath = window.location.origin + '/blog';
 var commentsApiPath = '/api/v1/comments';
 app.service('CommentService', ['$http', function($http){
     return {
