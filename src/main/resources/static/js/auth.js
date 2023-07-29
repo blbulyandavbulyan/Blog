@@ -18,6 +18,15 @@ app.controller('AuthController', function($scope, $http) {
       .then(function(response) {
         // В ответе сервера должен быть токен, который вы сохраняете в переменной $scope.token
         $scope.token = response.data.token;
+        jwtToken = $scope.token;
+        // Раскодировать полезную нагрузку (payload) токена
+        const payloadBase64 = jwtToken.split('.')[1];
+        const payloadJson = atob(payloadBase64);
+        const payload = JSON.parse(payloadJson);
+        // Получить дату истечения токена из поля 'exp' и преобразовать в дату
+        const expirationDate = new Date(payload.exp * 1000); // Множим на 1000, т.к. 'exp' в секундах, а new Date() ожидает миллисекунды
+        // Установить куку с временем истечения
+        document.cookie = `token=${jwtToken}; expires=${expirationDate.toUTCString()}; path=/`;
       })
       .catch(function(error) {
         console.error('Ошибка авторизации:', error);
