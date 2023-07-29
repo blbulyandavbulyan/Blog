@@ -1,6 +1,6 @@
 <div class="col-md-4 mx-auto" ng-controller="AuthController">
     <!-- Форма авторизации -->
-    <form id="login-form" ng-submit="login()" class="d-flex flex-row">
+    <form id="login-form" ng-submit="login()" class="d-flex flex-row" ng-show="!isTokenValid()">
         <div class="form-group me-2">
             <label class="visually-hidden" for="username">Имя пользователя:</label>
             <input type="text" id="username" ng-model="credentials.username" class="form-control" required placeholder="Логин">
