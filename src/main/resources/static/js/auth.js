@@ -35,3 +35,16 @@ app.controller('AuthController', function($scope, $http) {
       });
   };
 });
+function isTokenValid() {
+     const token = getCookie('token');
+     if (!token) return false; // Если токен не существует, считаем его недействительным
+
+     const payloadBase64 = token.split('.')[1];
+     const payloadJson = atob(payloadBase64);
+     const payload = JSON.parse(payloadJson);
+
+     // Получить текущее время в секундах (Unix timestamp)
+     const currentTime = Math.floor(Date.now() / 1000);
+
+     return payload.exp > currentTime; // Если время истечения токена больше текущего времени, то считаем его действительным
+}
