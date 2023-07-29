@@ -48,7 +48,7 @@ app.service('CommentService', ['$http', function($http){
         }
 }]);
 // Функция для загрузки комментариев с сервера
-app.controller('CommentListController', function($scope, CommentService) {
+app.controller('CommentController', function($scope, CommentService) {
      $scope.comments = [];
      $scope.currentPage = 1;
      $scope.itemsPerPage = 5;
