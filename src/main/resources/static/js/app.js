@@ -72,6 +72,15 @@ app.controller('CommentController', function($scope, CommentService) {
           $scope.loadComments(pageNumber);
           calculatePageNumbers();
      }
+     $scope.canPost = function () {
+         const token = getCookie('token');
+         if (!token) return false; // Если токен не существует, считаем пользователя не COMMENTER
+         const payloadBase64 = token.split('.')[1];
+         const payloadJson = atob(payloadBase64);
+         const payload = JSON.parse(payloadJson);
+         const roles = payload.roles;
+         return roles.includes('ROLE_COMMENTER'); // Проверяем наличие роли COMMENTER в массиве ролей
+     };
      function calculatePageNumbers() {
        $scope.pageNumbers = [];
        const currentPage = $scope.currentPage;
