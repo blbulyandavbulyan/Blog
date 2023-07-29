@@ -22,9 +22,9 @@ app.service('CommentService', ['$http', function($http){
                 };
                 var postQuery = {
                     method: 'POST',
-                    url: contextPath + commentsApiPath
+                    url: contextPath + commentsApiPath + '/article'
                 }
-                postQuery["params"] = httpParams;
+                postQuery["data"] = httpParams;
                 return $http(postQuery);
             }
         }
