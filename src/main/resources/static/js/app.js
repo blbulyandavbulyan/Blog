@@ -55,7 +55,7 @@ app.controller('CommentController', function($scope, CommentService) {
      $scope.totalPages = 5;
      const maxPagesToShow = 3; // Максимальное количество отображаемых страниц
      var href = window.location.href.split('/');
-     $scope.articleId = href[href.length-1];
+     $scope.articleId = parseInt(href[href.length-1]);
      $scope.loadComments = function(pageNumber) {
        $scope.currentPage = pageNumber;
        CommentService.getComments($scope.articleId, pageNumber, $scope.itemsPerPage)
