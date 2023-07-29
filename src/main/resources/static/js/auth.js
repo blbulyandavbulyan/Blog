@@ -14,7 +14,7 @@ app.controller('AuthController', function($scope, $http) {
 
     // Предполагаем, что на сервере у вас есть маршрут для аутентификации и получения токена
     // Здесь отправляем POST-запрос с данными авторизации
-    $http.post('/api/login', $scope.credentials)
+    $http.post('/api/v1/auth', $scope.credentials)
       .then(function(response) {
         // В ответе сервера должен быть токен, который вы сохраняете в переменной $scope.token
         $scope.token = response.data.token;
