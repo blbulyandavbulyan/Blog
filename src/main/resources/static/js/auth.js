@@ -46,26 +46,6 @@ app.controller('AuthController', function($scope, $http) {
         else $scope.error = 'Неизвестная ошибка при авторизации.'
       });
   };
-  // Регистрация интерцептора
-  app.factory('authInterceptor', function () {
-    return {
-      request: function (config) {
-        // Получить токен из куки
-        const token = getCookie('token');
-        // Если токен существует и его время действия еще не истекло
-        if (token && isTokenValid()) {
-          // Добавить заголовок 'Authorization' к запросу
-          config.headers['Authorization'] = 'Bearer ' + token;
-        }
-        return config;
-      }
-    };
-  });
-
-  // Добавить интерцептор к конфигурации $http
-  app.config(function ($httpProvider) {
-    $httpProvider.interceptors.push('authInterceptor');
-  });
 });
 function getCookie(name) {
   const value = `; ${document.cookie}`;
