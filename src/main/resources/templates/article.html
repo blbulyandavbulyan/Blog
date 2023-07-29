@@ -38,6 +38,13 @@
                     </nav>
                 </div>
             </div>
+            <form ng-show="canPost()" ng-submit="postComment()" class="mt-4">
+                <div class="form-group">
+                    <label for="comment">Напишите комментарий:</label>
+                    <textarea id="comment" ng-model="newComment.text" class="form-control" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Добавить комментарий</button>
+            </form>
         </div>
     </div>
 </body>
