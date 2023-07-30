@@ -29,3 +29,11 @@ INSERT INTO comments(article_id, author_id, text, publish_date) VALUES(1, 1, 'П
 INSERT INTO comments(article_id, author_id, text, publish_date) VALUES(1, 1, 'Комментарий на русском языке', CURRENT_TIMESTAMP);
 INSERT INTO comments(article_id, author_id, text, publish_date) VALUES(1, 1, 'Комментарий для тестирования', CURRENT_TIMESTAMP);
 INSERT INTO comments(article_id, author_id, text, publish_date) VALUES(1, 1, 'Последний комментарий', CURRENT_TIMESTAMP);
+INSERT INTO articles(author_id, title, text, publish_date) VALUES(1, 'Какая-то другая статья', 'Какой-то другой текст', CURRENT_TIMESTAMP);
+INSERT INTO comments(article_id, author_id, text, publish_date) VALUES(2, 1, 'Тестовый комментарий номер 25', CURRENT_TIMESTAMP);
+INSERT INTO comments(article_id, author_id, text, publish_date) VALUES(2, 1, 'Комментарий от нового пользователя', CURRENT_TIMESTAMP);
+INSERT INTO comments(article_id, author_id, text, publish_date) VALUES(2, 1, 'Комментарий номер 27', CURRENT_TIMESTAMP);
+INSERT INTO comments(article_id, author_id, text, publish_date) VALUES(2, 1, 'Просто комментарий', CURRENT_TIMESTAMP);
+INSERT INTO comments(article_id, author_id, text, publish_date) VALUES(2, 1, 'Комментарий на русском языке', CURRENT_TIMESTAMP);
+--INSERT INTO comments(article_id, author_id, text, publish_date) VALUES(2, 1, 'Комментарий для тестирования', CURRENT_TIMESTAMP);
+--INSERT INTO comments(article_id, author_id, text, publish_date) VALUES(2, 1, 'Последний комментарий', CURRENT_TIMESTAMP);
