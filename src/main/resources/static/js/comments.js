@@ -35,7 +35,8 @@ app.controller('CommentController', function($scope, CommentService) {
      $scope.totalPages = 5;
      const maxPagesToShow = 3; // Максимальное количество отображаемых страниц
      var href = window.location.href.split('/');
-     $scope.articleId = parseInt(href[href.length-1]);
+     $scope.articleId = parseInt(href[href.length-1]);//таким нехитрым образом, мы получаем ИД статьи из PathVariable в url
+     //функция для загрузки комментариев
      $scope.loadComments = function(pageNumber) {
        $scope.currentPage = pageNumber;
        CommentService.getComments($scope.articleId, pageNumber, $scope.itemsPerPage)
@@ -44,6 +45,7 @@ app.controller('CommentController', function($scope, CommentService) {
            $scope.totalPages = response.data.totalPages;
          });
      };
+     //функция для публикации комментария
      $scope.postComment = function(){
         CommentService.postComment($scope.articleId, $scope.newComment.text)
                 .then(function(response){
@@ -54,7 +56,7 @@ app.controller('CommentController', function($scope, CommentService) {
                     $scope.sendingError = 'Ошибка отправки!'
                 });
      }
-     // Функция для рассчета списка номеров страниц с учетом многоточий
+     //функция для получения страницы с заданным номером
      $scope.getPage = function(pageNumber){
           $scope.loadComments(pageNumber);
           $scope.pageNumbers = calculatePageNumbers(pageNumber, $scope.totalPages, maxPagesToShow);
