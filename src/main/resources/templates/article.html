@@ -22,9 +22,12 @@
             <span ng-if="comments.length <= 0">А их пока нет.</span>
             <div ng-if="comments.length > 0">
                 <div id="comments">
-                    <div ng-repeat="comment in comments">
-                        <p><strong>{{ comment.authorName }}</strong> - {{ comment.publishDate | date }}</p>
-                        <p>{{ comment.text }}</p>
+                    <div ng-repeat="comment in comments" class="card mb-3 comment">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ comment.authorName }}</h5>
+                            <p class="card-text">{{ comment.text }}</p>
+                            <p class="card-text"><small class="text-muted">{{ comment.publishDate | date:'dd.MM.yyyy HH:mm' }}</small></p>
+                        </div>
                     </div>
                 </div>
                 <div ng-show="pageNumbers.length > 1" id="pagination">
