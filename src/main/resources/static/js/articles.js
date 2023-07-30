@@ -30,7 +30,7 @@ app.controller('ArticleController', function($scope, ArticleService){
           });
       };
       $scope.getPage = function(pageNumber){
-           $scope.loadComments(pageNumber);
+           $scope.loadArticlesInfo(pageNumber);
            $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
       }
       // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
