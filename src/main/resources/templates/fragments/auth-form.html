@@ -1,4 +1,4 @@
-<div class="col-md-4 mx-auto" ng-controller="AuthController">
+<div class="d-flex justify-content-center align-items-center" ng-controller="AuthController">
     <!-- Форма авторизации -->
     <form id="login-form" ng-submit="login()" class="d-flex flex-row" ng-show="!isAuthenticated()">
         <div class="form-group me-2">
@@ -13,7 +13,7 @@
             <button type="submit" id="login-button" class="btn btn-primary">Войти</button>
         </div>
     </form>
-
+    <button ng-show="isAuthenticated()" ng-click="logout()" class="btn btn-danger exit-button">Выйти</button>
     <!-- Вывод ошибки -->
     <div ng-if="error" class="alert alert-danger" role="alert">
         {{ error }}
