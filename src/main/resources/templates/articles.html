@@ -12,7 +12,7 @@
     <div ng-controller="ArticleController">
         <div class="card mb-3" ng-repeat="article in articles">
             <div class="card-body">
-                <h5 class="card-title">{{ article.title }}</h5>
+                <h5 class="card-title"><a ng-href="{{generateArticleLink(article.articleId)}}">{{ article.title }}</a></h5>
                 <p class="card-text">Издатель: {{ article.publisherName }}</p>
                 <p class="card-text">Дата публикации: {{ article.publishDate | date:'dd.MM.yyyy HH:mm:ss' }}</p>
             </div>
