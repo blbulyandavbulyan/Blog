@@ -15,7 +15,7 @@ app.service('ArticleService', function($http){
         }
     };
 });
-app.controller('ArticleController', function($scope, ArticleService){
+app.controller('ArticleController', function($scope, $window, ArticleService){
       $scope.articles = [];
       $scope.currentPage = 1;
       $scope.itemsPerPage = 5;
@@ -32,6 +32,11 @@ app.controller('ArticleController', function($scope, ArticleService){
       $scope.getPage = function(pageNumber){
            $scope.loadArticlesInfo(pageNumber);
            $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
+      }
+      $scope.generateArticleLink = function(articleId){
+          const currentUrl = $window.location.href;
+          // Добавить параметр articleId к текущему пути URL и вернуть его
+          return `${currentUrl}/${articleId}`;
       }
       // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
      $scope.$watch('totalPages', function() {
