@@ -64,8 +64,15 @@ app.controller('CommentController', function($scope, CommentService) {
            $scope.totalPages = response.data.totalPages;
          });
      };
-     $scope.postComment = function(text){
-        CommentService.postComment($scope.articleId, $scope.newComment.text);
+     $scope.postComment = function(){
+        CommentService.postComment($scope.articleId, $scope.newComment.text)
+                .then(function(response){
+                    $scope.newComment.text = '';
+                    $scope.sendingError = null;
+                })
+                .catch(function(error){
+                    $scope.sendingError = 'Ошибка отправки!'
+                });
      }
      // Функция для рассчета списка номеров страниц с учетом многоточий
      $scope.getPage = function(pageNumber){
