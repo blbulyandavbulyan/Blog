@@ -1,22 +1,5 @@
 var app = angular.module('blog', []);
 // Определение интерцептора
-app.factory('authInterceptor', function () {
-  return {
-    request: function (config) {
-      // Ваш код интерцептора
-      const token = getCookie('token');
-      if (token) {
-        config.headers['Authorization'] = 'Bearer ' + token;
-      }
-      return config;
-    }
-  };
-});
-
-// Добавление интерцептора к конфигурации $httpProvider
-app.config(function ($httpProvider) {
-  $httpProvider.interceptors.push('authInterceptor');
-});
 const contextPath = window.location.origin + '/blog';
 var commentsApiPath = '/api/v1/comments';
 app.service('CommentService', ['$http', function($http){
