@@ -18,4 +18,8 @@ public class ArticleTemplatesController {
         model.addAttribute("article", articlesService.getById(id));
         return "article";
     }
+    @GetMapping
+    public String showArticles(){
+        return "articles";
+    }
 }
