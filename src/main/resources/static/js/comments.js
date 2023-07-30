@@ -57,7 +57,7 @@ app.controller('CommentController', function($scope, CommentService) {
      // Функция для рассчета списка номеров страниц с учетом многоточий
      $scope.getPage = function(pageNumber){
           $scope.loadComments(pageNumber);
-          calculatePageNumbers();
+          $scope.pageNumbers = calculatePageNumbers(pageNumber, $scope.totalPages, maxPagesToShow);
      }
      $scope.canPost = function () {
          const token = getCookie('token');
@@ -68,36 +68,9 @@ app.controller('CommentController', function($scope, CommentService) {
          const roles = payload.roles;
          return roles.includes('ROLE_COMMENTER'); // Проверяем наличие роли COMMENTER в массиве ролей
      };
-     function calculatePageNumbers() {
-       $scope.pageNumbers = [];
-       const currentPage = $scope.currentPage;
-       const totalPages = $scope.totalPages;
-       if (totalPages <= maxPagesToShow) {
-         for (let i = 1; i <= totalPages; i++) {
-           $scope.pageNumbers.push(i);
-         }
-       } else {
-         let startPage;
-         let endPage;
-
-         if (currentPage <= Math.ceil(maxPagesToShow / 2)) {
-           startPage = 1;
-           endPage = maxPagesToShow;
-         } else if (currentPage >= totalPages - Math.floor(maxPagesToShow / 2)) {
-           startPage = totalPages - maxPagesToShow + 1;
-           endPage = totalPages;
-         } else {
-           startPage = currentPage - Math.floor(maxPagesToShow / 2);
-           endPage = currentPage + Math.floor(maxPagesToShow / 2);
-         }
-         for (let i = startPage; i <= endPage; i++) {
-           $scope.pageNumbers.push(i);
-         }
-       }
-     }
      // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
      $scope.$watch('totalPages', function() {
-       calculatePageNumbers();
+       $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
      });
      $scope.getPage(1);
 });
