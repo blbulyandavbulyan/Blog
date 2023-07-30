@@ -15,7 +15,7 @@ app.service('ArticleService', function($http){
         }
     };
 });
-app.controller('ArticleController', function(ArticleService){
+app.controller('ArticleController', function($scope, ArticleService){
       $scope.articles = [];
       $scope.currentPage = 1;
       $scope.itemsPerPage = 5;
