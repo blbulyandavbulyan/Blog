@@ -20,7 +20,7 @@
                         <p>{{ comment.text }}</p>
                     </div>
                 </div>
-                <div id="pagination">
+                <div ng-show="pageNumbers.length > 1" id="pagination">
                     <nav aria-label="Page navigation">
                         <ul class="pagination">
                             <li class="page-item" ng-if="currentPage > 1">
