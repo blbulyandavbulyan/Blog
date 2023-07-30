@@ -10,7 +10,8 @@ spring:
     properties:
       dialect: org.hibernate.dialect.PostgreSQLDialect
       format_sql: true
-
+  flyway:
+    target: 3
 server:
   port: 8080
   servlet.context-path: /blog
