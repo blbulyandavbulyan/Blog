@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Entity
@@ -30,7 +31,7 @@ public class Article {
     private List<Comment> comments;
     @Column(name = "publish_date")
     @CreationTimestamp
-    private Instant publishDate;
+    private ZonedDateTime publishDate;
     public Article(User publisher, String title, String text) {
         this.publisher = publisher;
         this.title = title;
