@@ -54,7 +54,10 @@ app.service('AuthService',  function($http, TokenService){
                 return token;
             });
         },
-        isAuthenticated: TokenService.isValidToken
+        isAuthenticated: TokenService.isValidToken,
+        logout: function(){
+            TokenService.removeToken();
+        }
     };
 });
 app.factory('authInterceptor', ['$injector', function ($injector) {
@@ -101,4 +104,5 @@ app.controller('AuthController', function($scope, AuthService) {
         else $scope.error = 'Неизвестная ошибка при авторизации.'
     });
   };
+  $scope.logout = AuthService.logout;
 });
