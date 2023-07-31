@@ -1,11 +1,20 @@
 app.service('ArticleService', function($http){
     const articlesApiPath = contextPath + '/api/v1/articles';
     return {
-        getArticlesInfo: function(pageNumber, pageSize){
+        getArticlesInfo: function(filterParams, pageNumber, pageSize){
             var httpParams = {
                 p: pageNumber,
                 s: pageSize
             };
+            Object.keys(filterParams).forEach(function(key) {
+                var value = filterParams[key];
+                if(value === 'string') {
+                   value = value.trim();
+                }
+                if (value !== '') {
+                    httpParams[key] = value;
+                }
+            });
             var httpQuery = {
                 method: 'GET',
                 url: articlesApiPath + '/info/all'
@@ -17,12 +26,18 @@ app.service('ArticleService', function($http){
 });
 app.controller('ArticleController', function($scope, $window, ArticleService){
       $scope.articles = [];
+      $scope.filterParams = {};
+      $scope.filter = {};
       $scope.currentPage = 1;
       $scope.itemsPerPage = 5;
       $scope.totalPages = 5;
       const maxPagesToShow = 3; // Максимальное количество отображаемых страниц
-      $scope.loadArticlesInfo = function(pageNumber) {
-        ArticleService.getArticlesInfo(pageNumber, $scope.itemsPerPage)
+      $scope.filterArticles = function(){
+           $scope.filterParams = $scope.filter;
+           $scope.getPage(1);
+      }
+      $scope.loadArticlesInfo = function(filterParams, pageNumber) {
+        ArticleService.getArticlesInfo(filterParams, pageNumber, $scope.itemsPerPage)
           .then(function(response) {
             $scope.articles = response.data.content;
             $scope.totalPages = response.data.totalPages;
@@ -30,7 +45,7 @@ app.controller('ArticleController', function($scope, $window, ArticleService){
           });
       };
       $scope.getPage = function(pageNumber){
-           $scope.loadArticlesInfo(pageNumber);
+           $scope.loadArticlesInfo($scope.filterParams, pageNumber);
            $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
       }
       $scope.generateArticleLink = function(articleId){
