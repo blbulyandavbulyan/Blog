@@ -4,7 +4,6 @@ import org.blbulyandavbulyan.blog.dtos.article.ArticleDto;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleInfoDTO;
 import org.blbulyandavbulyan.blog.entities.Article;
 import org.blbulyandavbulyan.blog.entities.User;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +23,34 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
 class ArticleRepositoryTest {
+    /**
+     * DTO для представления базовой информации о статье, для отправки клиенту
+     * @param articleId ИД статьи
+     * @param publisherName имя автора статьи
+     * @param publishDate дата публикации
+     * @param title название статьи
+     */
+    private record ArticleInfoDTOImpl(Long articleId, String publisherName, ZonedDateTime publishDate, String title) implements ArticleInfoDTO {
+        @Override
+        public Long getArticleId() {
+            return articleId;
+        }
+
+        @Override
+        public UserDto getPublisher() {
+            return () -> publisherName;
+        }
+
+        @Override
+        public ZonedDateTime getPublishDate() {
+            return publishDate;
+        }
+
+        @Override
+        public String getTitle() {
+            return title;
+        }
+    }
     @Autowired ArticleRepository underTest;
     @Autowired UserRepository userRepository;
     @BeforeEach
@@ -63,14 +90,14 @@ class ArticleRepositoryTest {
         Collection<Article> articles = List.of(new Article(publisher, "Article 1", "Text 1"), new Article(publisher, "Aritcle 2", "Text 2"), new Article(publisher, "Article 3", "Text 3"));
         articles.forEach(article -> article.setPublishDate(ZonedDateTime.now()));
         underTest.saveAllAndFlush(articles);
-        Page<ArticleInfoDTO> page = underTest.findAllPagesBy(ArticleInfoDTO.class, PageRequest.of(0, 4));
-        List<ArticleInfoDTO> actual = page.get().toList();
-        Set<ArticleInfoDTO> expected = articles.stream().map(a->new ArticleInfoDTO(a.getArticleId(), a.getPublisher().getName(), a.getPublishDate(), a.getTitle())).collect(Collectors.toSet());
+        Page<? extends ArticleInfoDTO> page = underTest.findAllPagesBy(ArticleInfoDTOImpl.class, PageRequest.of(0, 4));
+        List<? extends ArticleInfoDTO> actual = page.get().toList();
+        Set<ArticleInfoDTO> expected = articles.stream().map(a->new ArticleInfoDTOImpl(a.getArticleId(), a.getPublisher().getName(), a.getPublishDate(), a.getTitle())).collect(Collectors.toSet());
         Assertions.assertTrue(expected.containsAll(actual));
     }
     @Test
     void findAllPagesByShouldReturnEmptyPageIfThereIsNoArticles(){
-        Page<ArticleInfoDTO> page = underTest.findAllPagesBy(ArticleInfoDTO.class, PageRequest.of(0, 4));
+        Page<? extends ArticleInfoDTO> page = underTest.findAllPagesBy(ArticleInfoDTOImpl.class, PageRequest.of(0, 4));
         assertThat(page.isEmpty()).isTrue();
     }
 }
