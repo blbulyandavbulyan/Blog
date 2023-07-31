@@ -20,10 +20,13 @@
                 <label for="authorInput" class="form-label d-flex flex-column">Имя автора:</label>
                 <input type="text" ng-model="filter.author" id="authorInput" class="form-control" placeholder="Введите имя автора">
             </div>
-
             <div class="mb-3 me-3">
-                <label for="dateInput" class="form-label d-flex flex-column">Дата до:</label>
-                <input type="date" ng-model="filter.maxDate" id="dateInput" class="form-control">
+                <label for="minDateInput" class="form-label d-flex flex-column">Дата после:</label>
+                <input type="date" ng-model="filter.minDate" id="minDateInput" class="form-control">
+            </div>
+            <div class="mb-3 me-3">
+                <label for="maxDateInput" class="form-label d-flex flex-column">Дата до:</label>
+                <input type="date" ng-model="filter.maxDate" id="maxDateInput" class="form-control">
             </div>
             <div class="mb-3 me-3">
                 <button type="submit" class="btn btn-primary">Применить фильтр</button>
