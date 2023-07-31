@@ -14,12 +14,17 @@ public class ArticleSpecifications {
     public ArticleSpecifications(Map<String, String> filterParams){
         articleSpecification = Specification.where(null);
         for(var entries : filterParams.entrySet()){
-            switch (entries.getKey()) {
-                case "maxDate" -> articleSpecification = articleSpecification.and(untilDate(entries.getValue()));
-                case "author" -> articleSpecification = articleSpecification.and(authorLike(entries.getValue()));
-                case "title" -> articleSpecification = articleSpecification.and(titleLike(entries.getValue()));
-            }
+            articleSpecification = switch (entries.getKey()) {
+                case "maxDate" -> articleSpecification.and(untilDate(entries.getValue()));
+                case "minDate" -> articleSpecification.and(afterDate(entries.getValue()));
+                case "author" -> articleSpecification.and(authorLike(entries.getValue()));
+                case "title" -> articleSpecification.and(titleLike(entries.getValue()));
+                default -> articleSpecification;
+            };
         }
+    }
+    public static Specification<Article> afterDate(String date) {
+        return (root, query, criteriaBuilder)-> criteriaBuilder.greaterThanOrEqualTo(root.get("publishDate"), ZonedDateTime.parse(date,   DateTimeFormatter.ISO_DATE_TIME));
     }
 
     public static Specification<Article> titleLike(String title) {
