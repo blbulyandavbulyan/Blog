@@ -10,10 +10,16 @@
 <div class="container mt-4">
     <h1 class="mb-4">Список статей</h1>
     <div ng-controller="ArticleController">
+        <form ng-submit="filterArticles()">
+            <input type="text" ng-model="filter.title" placeholder="Название">
+            <input type="text" ng-model="filter.author" placeholder="Имя автора">
+            <input type="date" ng-model="filter.maxDate" />
+            <button type="submit">Применить фильтр</button>
+        </form>
         <div class="card mb-3" ng-repeat="article in articles">
             <div class="card-body">
                 <h5 class="card-title"><a ng-href="{{generateArticleLink(article.articleId)}}">{{ article.title }}</a></h5>
-                <p class="card-text">Издатель: {{ article.publisherName }}</p>
+                <p class="card-text">Издатель: {{ article.publisher.name }}</p>
                 <p class="card-text"><small class="text-muted">{{ article.publishDate | date:'dd.MM.yyyy HH:mm:ss' }}</small></p>
             </div>
         </div>
