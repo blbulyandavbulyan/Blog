@@ -1,6 +1,6 @@
 package org.blbulyandavbulyan.blog.entities;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
