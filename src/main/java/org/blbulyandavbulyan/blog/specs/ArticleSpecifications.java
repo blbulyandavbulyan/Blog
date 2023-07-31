@@ -32,7 +32,7 @@ public class ArticleSpecifications {
     }
 
     public static Specification<Article> authorLike(String author){
-        return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("publisher").get("name"), "%%%s%%".formatted(author));
+        return (root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("publisher").get("name")), "%%%s%%".formatted(author).toUpperCase());
     }
     public static Specification<Article> untilDate(String date){
         return (root, query, criteriaBuilder)-> criteriaBuilder.lessThanOrEqualTo(root.get("publishDate"), ZonedDateTime.parse(date,   DateTimeFormatter.ISO_DATE_TIME));
