@@ -1,16 +1,14 @@
 package org.blbulyandavbulyan.blog.services;
 
 import lombok.RequiredArgsConstructor;
-import org.blbulyandavbulyan.blog.dtos.article.ArticleDto;
-import org.blbulyandavbulyan.blog.dtos.article.ArticleForPublishing;
-import org.blbulyandavbulyan.blog.dtos.article.ArticleInfoDTO;
-import org.blbulyandavbulyan.blog.dtos.article.ArticlePublished;
+import org.blbulyandavbulyan.blog.dtos.article.*;
 import org.blbulyandavbulyan.blog.entities.Article;
 import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.exceptions.articles.ArticleNotFoundException;
 import org.blbulyandavbulyan.blog.repositories.ArticleRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 /**
@@ -63,12 +61,13 @@ public class ArticlesService {
 
     /**
      * Получает информацию о статьях в виде страницы
+     * @param spec спецификация, по которой будут фильтроваться статьи
      * @param pageSize размер страницы
      * @param pageNumber номер страницы(начиная с 0)
      * @return страницу, содержащую статьи
      */
-    public Page<ArticleInfoDTO> getInfoAboutAll(int pageSize, int pageNumber) {
-        return articleRepository.findAllPagesBy(ArticleInfoDTO.class, PageRequest.of(pageNumber, pageSize));
+    public Page<ArticleInfoDTO> getInfoAboutAll(Specification<Article> spec, int pageSize, int pageNumber) {
+        return articleRepository.findBy(spec, q-> q.project("articleId", "title", "publishDate", "publisher.name").as(ArticleInfoDTO.class).page(PageRequest.of(pageNumber, pageSize)));
     }
 
     /**
