@@ -28,7 +28,7 @@ public class ArticleSpecifications {
     }
 
     public static Specification<Article> titleLike(String title) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("title"), "%%%s%%".formatted(title));
+        return (root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("title")), "%%%s%%".formatted(title).toUpperCase());
     }
 
     public static Specification<Article> authorLike(String author){
