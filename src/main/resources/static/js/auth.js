@@ -60,7 +60,7 @@ app.service('AuthService',  function($http, TokenService){
         }
     };
 });
-app.factory('authInterceptor', ['$injector', function ($injector) {
+app.factory('authInterceptor', ['$injector', '$q', function ($injector, $q) {
   var tokenService = $injector.get('TokenService');
   return {
       request: function (config) {
