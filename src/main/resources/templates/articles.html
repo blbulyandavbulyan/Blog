@@ -10,13 +10,26 @@
 <div class="container mt-4">
     <h1 class="mb-4">Список статей</h1>
     <div ng-controller="ArticleController">
-        <form ng-submit="filterArticles()">
-            <input type="text" ng-model="filter.title" placeholder="Название">
-            <input type="text" ng-model="filter.author" placeholder="Имя автора">
-            <input type="date" ng-model="filter.maxDate" />
-            <button type="submit">Применить фильтр</button>
+        <form ng-submit="filterArticles" class="d-flex flex-row align-items-end">
+            <div class="mb-3 me-3">
+                <label for="titleInput" class="form-label d-flex flex-column">Название:</label>
+                <input type="text" ng-model="filter.title" id="titleInput" class="form-control" placeholder="Введите название">
+            </div>
+
+            <div class="mb-3 me-3">
+                <label for="authorInput" class="form-label d-flex flex-column">Имя автора:</label>
+                <input type="text" ng-model="filter.author" id="authorInput" class="form-control" placeholder="Введите имя автора">
+            </div>
+
+            <div class="mb-3 me-3">
+                <label for="dateInput" class="form-label d-flex flex-column">Дата до:</label>
+                <input type="date" ng-model="filter.maxDate" id="dateInput" class="form-control">
+            </div>
+            <div class="mb-3 me-3">
+                <button type="submit" class="btn btn-primary">Применить фильтр</button>
+            </div>
         </form>
-        <div class="card mb-3" ng-repeat="article in articles">
+        <div class="card me-3" ng-repeat="article in articles">
             <div class="card-body">
                 <h5 class="card-title"><a ng-href="{{generateArticleLink(article.articleId)}}">{{ article.title }}</a></h5>
                 <p class="card-text">Издатель: {{ article.publisher.name }}</p>
