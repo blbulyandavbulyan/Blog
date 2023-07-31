@@ -6,7 +6,7 @@ import org.blbulyandavbulyan.blog.dtos.article.ArticleForPublishing;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleInfoDTO;
 import org.blbulyandavbulyan.blog.dtos.article.ArticlePublished;
 import org.blbulyandavbulyan.blog.services.ArticlesService;
-import org.blbulyandavbulyan.blog.specs.ArticleSpecification;
+import org.blbulyandavbulyan.blog.specs.ArticleSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
@@ -69,6 +69,6 @@ public class ArticlesController {
      */
     @GetMapping("/info/all")
     public Page<ArticleInfoDTO> getInfoAboutAllArticles(@RequestParam(defaultValue = "5", name = "s") Integer pageSize, @RequestParam(defaultValue = "1", name = "p") Integer pageNumber, @RequestParam Map<String, String> requestParams) {
-        return articlesService.getInfoAboutAll(new ArticleSpecification(requestParams).getArticleSpecification(), pageSize, pageNumber - 1);
+        return articlesService.getInfoAboutAll(new ArticleSpecifications(requestParams).getArticleSpecification(), pageSize, pageNumber - 1);
     }
 }

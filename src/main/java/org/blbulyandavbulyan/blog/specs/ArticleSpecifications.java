@@ -9,9 +9,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @Getter
-public class ArticleSpecification {
+public class ArticleSpecifications {
     private Specification<Article> articleSpecification;
-    public ArticleSpecification(Map<String, String> filterParams){
+    public ArticleSpecifications(Map<String, String> filterParams){
         articleSpecification = Specification.where(null);
         for(var entries : filterParams.entrySet()){
             if(entries.getKey().equals("maxDate")){
