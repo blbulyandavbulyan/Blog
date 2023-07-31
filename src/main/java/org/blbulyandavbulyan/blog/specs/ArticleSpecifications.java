@@ -14,14 +14,10 @@ public class ArticleSpecifications {
     public ArticleSpecifications(Map<String, String> filterParams){
         articleSpecification = Specification.where(null);
         for(var entries : filterParams.entrySet()){
-            if(entries.getKey().equals("maxDate")){
-                articleSpecification = articleSpecification.and(untilDate(entries.getValue()));
-            }
-            else if(entries.getKey().equals("author")){
-                articleSpecification = articleSpecification.and(authorLike(entries.getValue()));
-            }
-            else if(entries.getKey().equals("title")){
-                articleSpecification = articleSpecification.and(titleLike(entries.getValue()));
+            switch (entries.getKey()) {
+                case "maxDate" -> articleSpecification = articleSpecification.and(untilDate(entries.getValue()));
+                case "author" -> articleSpecification = articleSpecification.and(authorLike(entries.getValue()));
+                case "title" -> articleSpecification = articleSpecification.and(titleLike(entries.getValue()));
             }
         }
     }
