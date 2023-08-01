@@ -8,12 +8,16 @@ import org.blbulyandavbulyan.blog.exceptions.IllegalRoleNameException;
 import org.blbulyandavbulyan.blog.exceptions.users.UserAlreadyExistsException;
 import org.blbulyandavbulyan.blog.exceptions.users.UserNotFoundException;
 import org.blbulyandavbulyan.blog.repositories.UserRepository;
+import org.blbulyandavbulyan.blog.specs.UserSpecifications;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MultiValueMap;
 
 /**
  * Сервис для работы с пользователями
@@ -123,5 +127,17 @@ public class UserService implements UserDetailsService {
      */
     public UserInfoDTO getUserInfo(Long userId) {
         return userRepository.findByUserId(userId, UserInfoDTO.class).orElseThrow(()->new UserNotFoundException("User with id " + " not found!"));
+    }
+
+    /**
+     * Получает информацию обо всех пользователях в виде страниц
+     * @param filterParams параметры фильтрации
+     * @param pageNumber номер страницы
+     * @param pageSize размер страницы
+     * @return страницу, с заданным номером и соответствующим фильтрам контенту
+     */
+
+    public Page<UserInfoDTO> getUserInfos(MultiValueMap<String, String> filterParams, Integer pageNumber, Integer pageSize) {
+        return userRepository.findBy(new UserSpecifications(filterParams).getSpecification(), q->q.as(UserInfoDTO.class).page(PageRequest.of(pageNumber, pageSize)));
     }
 }
