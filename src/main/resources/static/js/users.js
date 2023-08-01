@@ -70,9 +70,7 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
     $scope.deleteUser = function(userId){
         UserService.deleteUserById(userId)
             .then(function(response){
-                 var index = $scope.users.findIndex(function(user) {
-                   return user.userId === userId;
-                 });
+                 var index = $scope.users.findIndex(user => user.userId === userId);
                  // Удаляем пользователя с найденным индексом
                  if (index !== -1) {
                    $scope.users.splice(index, 1);
