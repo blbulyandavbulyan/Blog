@@ -133,6 +133,9 @@ app.service('RoleService', function(TokenService){
             if(TokenService.isValidToken()){
                 return TokenService.getTokenPayload().roles.includes('ROLE_ADMIN');
             }
+        },
+        getAvailableRoles: function(){
+            return ['ROLE_COMMENTER', 'ROLE_PUBLISHER', 'ROLE_ADMIN'];
         }
     }
 })
