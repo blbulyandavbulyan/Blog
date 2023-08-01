@@ -22,7 +22,7 @@ app.service('UserService', function($http){
             });
             var httpQuery = {
                 method: 'GET',
-                url: `${usersApiPath}/info/all`
+                url: `${usersApiPath}`
             }
             httpQuery["params"] = httpParams;
             return $http(httpQuery);
