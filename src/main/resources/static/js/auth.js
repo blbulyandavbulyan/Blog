@@ -118,3 +118,16 @@ app.controller('AuthController', function($scope, AuthService) {
   };
   $scope.logout = AuthService.logout;
 });
+app.service('RoleService', function(TokenService){
+    return {
+        isCommenter: function(){
+            return TokenService.getTokenPayload().roles.includes('ROLE_COMMENTER');
+        },
+        isPublisher: function(){
+            return TokenService.getTokenPayload().roles.includes('ROLE_PUBLISHER');
+        },
+        isAdmin: function(){
+            return TokenService.getTokenPayload().roles.includes('ROLE_ADMIN');
+        }
+    }
+})
