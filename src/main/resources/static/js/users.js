@@ -22,9 +22,9 @@ app.service('UserService', function($http){
             });
             var httpQuery = {
                 method: 'GET',
-                url: ${usersApiPath}/info/all`
+                url: `${usersApiPath}/info/all`
             }
-            httpQuery["params"] = httpQuery;
+            httpQuery["params"] = httpParams;
             return $http(httpQuery);
         },
         createUser: function(username, password, rolesNames){
