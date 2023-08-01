@@ -1,15 +1,21 @@
 //данный файл содержит необходимый код для авторизации
-// Определение контроллера AuthController
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-}
-function deleteCookie(name) {
-  document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-}
-app.service('TokenService', function(){
-    var token = getCookie('token');
+app.service('CookieService', function(){
+    return {
+        getCookie: function(name){
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        },
+        deleteCookie: function(name){
+            document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        }
+        setCookie(name, value, expirationDate){
+            document.cookie = `name=${value}; expires=${expirationDate.toUTCString()}; path=/`;
+        }
+    };
+})
+app.service('TokenService', function(CookieService){
+    var token = CookieService.getCookie('token');
     function getTokenPayload(){
         const payloadBase64 = token.split('.')[1];
         const payloadJson = atob(payloadBase64);
@@ -25,7 +31,7 @@ app.service('TokenService', function(){
             // Получить дату истечения токена из поля 'exp' и преобразовать в дату
             const expirationDate = new Date(payload.exp * 1000); // Множим на 1000, т.к. 'exp' в секундах, а new Date() ожидает миллисекунды
             // Установить куку с временем истечения
-            document.cookie = `token=${token}; expires=${expirationDate.toUTCString()}; path=/`;
+            CookieService.setCookie('token', token, expirationDate);
         },
         getToken: function(){
             return token;
@@ -40,7 +46,7 @@ app.service('TokenService', function(){
         },
         removeToken: function(){
             token = null;
-            deleteCookie('token');
+            CookieService.deleteCookie('token');
         }
     };
 })
