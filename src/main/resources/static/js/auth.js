@@ -41,9 +41,8 @@ app.service('TokenService', function(CookieService){
         isValidToken: function(){
             if(!token)return false;
             else{
-                const payload = getTokenPayload();
                 const currentTime = Math.floor(Date.now() / 1000);
-                return payload.exp > currentTime; // Если время истечения токена больше текущего времени, то считаем его действительным
+                return tokenPayload.exp > currentTime; // Если время истечения токена больше текущего времени, то считаем его действительным
             }
         },
         removeToken: function(){
@@ -53,7 +52,7 @@ app.service('TokenService', function(CookieService){
         },
         getTokenPayload: function(){
             return tokenPayload;
-        };
+        }
     };
 })
 app.service('AuthService',  function($http, TokenService){
