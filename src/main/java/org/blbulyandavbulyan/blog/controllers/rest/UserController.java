@@ -5,8 +5,10 @@ import org.blbulyandavbulyan.blog.dtos.authorization.RegistrationUser;
 import org.blbulyandavbulyan.blog.dtos.user.UserCreateRequest;
 import org.blbulyandavbulyan.blog.dtos.user.UserInfoDTO;
 import org.blbulyandavbulyan.blog.services.UserService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -62,4 +64,16 @@ public class UserController {
         return userService.getUserInfo(id);
     }
 
+    /**
+     * Ищет информацию о пользователях в виде страницы
+     * @param pageSize размер страницы
+     * @param pageNumber номер страницы
+     * @param requestParams multimap, содержащая параметры запроса, и из которой будут доставаться параметры фильтрации
+     * @return искомую страницу с информацией
+     */
+    @Secured("ROLE_ADMIN")
+    @GetMapping
+    public Page<UserInfoDTO> getUserInfos(@RequestParam(defaultValue = "5", name = "s") Integer pageSize, @RequestParam(defaultValue = "1", name = "p") Integer pageNumber, @RequestParam MultiValueMap<String, String> requestParams){
+        return userService.getUserInfos(requestParams, pageNumber, pageSize);
+    }
 }
