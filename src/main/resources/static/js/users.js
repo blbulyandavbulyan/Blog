@@ -77,6 +77,9 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
                  }
             });
     };
+    $scope.isItMe = function(user){
+        return user.name === AuthService.getMyUserName();
+    }
     $scope.isRoleSelected = function (user, role) {
          return user.roles.map(r=>r.name).includes(role);
     };
