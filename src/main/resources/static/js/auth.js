@@ -120,13 +120,19 @@ app.controller('AuthController', function($scope, AuthService) {
 app.service('RoleService', function(TokenService){
     return {
         isCommenter: function(){
-            return TokenService.getTokenPayload().roles.includes('ROLE_COMMENTER');
+            if(TokenService.isValidToken()){
+                return TokenService.getTokenPayload().roles.includes('ROLE_COMMENTER');
+            }
         },
         isPublisher: function(){
-            return TokenService.getTokenPayload().roles.includes('ROLE_PUBLISHER');
+            if(TokenService.isValidToken()){
+                return TokenService.getTokenPayload().roles.includes('ROLE_PUBLISHER');
+            }
         },
         isAdmin: function(){
-            return TokenService.getTokenPayload().roles.includes('ROLE_ADMIN');
+            if(TokenService.isValidToken()){
+                return TokenService.getTokenPayload().roles.includes('ROLE_ADMIN');
+            }
         }
     }
 })
