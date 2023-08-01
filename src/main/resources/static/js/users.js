@@ -50,6 +50,7 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
     const maxPagesToShow = 3; // Максимальное количество отображаемых страниц
     $scope.isAuthenticated = AuthService.isAuthenticated;
     $scope.canAdmin = RoleService.isAdmin;
+    $scope.availableRoles = RoleService.getAvailableRoles();
     $scope.filterArticles = function(){
          $scope.filterParams = $scope.filter;
          $scope.getPage(1);
@@ -65,7 +66,22 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
     $scope.getPage = function(pageNumber){
          $scope.loadUsersInfo($scope.filterParams, pageNumber);
          $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
-    }
+    };
+    $scope.deleteUser = function(userId){
+        UserService.deleteUserById(userId)
+            .then(function(response){
+                 var index = $scope.users.findIndex(function(user) {
+                   return user.userId === userId;
+                 });
+                 // Удаляем пользователя с найденным индексом
+                 if (index !== -1) {
+                   $scope.users.splice(index, 1);
+                 }
+            });
+    };
+    $scope.isRoleSelected = function (user, role) {
+         return user.roles.map(r=>r.name).includes(role);
+    };
     // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
     $scope.$watch('totalPages', function() {
       $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
