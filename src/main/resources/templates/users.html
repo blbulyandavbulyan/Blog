@@ -12,13 +12,17 @@
         <div ng-if="canAdmin()" class="container mt-5">
             <div ng-if="users.length > 0">
                 <div ng-repeat="user in users">
-                    <h3 class="mb-3">{{ user.name }}</h3>
-                    <p>User ID: {{ user.userId }}</p>
-                    <h4 class="mt-4">Roles:</h4>
-                    <ul class="list-group">
-                        <li ng-repeat="role in user.roles" class="list-group-item">{{ role.name }}</li>
-                    </ul>
-                    <button class="btn btn-danger" ng-click="deleteUser(user.userId)">Удалить</button>
+                    <input  class="form-control rounded" type="text" ng-model="user.name" />
+                    <h2>Roles:</h2>
+                    <div ng-repeat="role in availableRoles">
+                        <label>
+                            <input type="checkbox" ng-model="role.selected" ng-checked="isRoleSelected(user, role)">
+                            {{ role }}
+                        </label>
+                    </div>
+                    <button class="btn btn-danger" ng-click="applyChanges(user)">Применить изменения</button>
+                    <button class="btn btn-danger" ng-click="deleteUser(user.userId)">Удалить пользователя</button>
+                    <hr>
                 </div>
                 <div ng-show="pageNumbers.length > 1" id="pagination">
                     <nav aria-label="Page navigation">
