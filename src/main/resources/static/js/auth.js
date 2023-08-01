@@ -15,21 +15,23 @@ app.service('CookieService', function(){
     };
 })
 app.service('TokenService', function(CookieService){
-    var token = CookieService.getCookie('token');
-    function getTokenPayload(){
-        const payloadBase64 = token.split('.')[1];
-        const payloadJson = atob(payloadBase64);
-        return JSON.parse(payloadJson);
-    };
-    return {
-        setToken: function(newToken){
-            token = newToken;
+    var token = null;
+    var tokenPayload = null;
+    function init(newToken){
+        token = newToken;
+        if(token){
             // Раскодировать полезную нагрузку (payload) токена
             const payloadBase64 = token.split('.')[1];
             const payloadJson = atob(payloadBase64);
-            const payload = JSON.parse(payloadJson);
+            tokenPayload = JSON.parse(payloadJson);
+        }
+    }
+    init(CookieService.getCookie('token'));
+    return {
+        setToken: function(newToken){
+            init(newToken);
             // Получить дату истечения токена из поля 'exp' и преобразовать в дату
-            const expirationDate = new Date(payload.exp * 1000); // Множим на 1000, т.к. 'exp' в секундах, а new Date() ожидает миллисекунды
+            const expirationDate = new Date(tokenPayload.exp * 1000); // Множим на 1000, т.к. 'exp' в секундах, а new Date() ожидает миллисекунды
             // Установить куку с временем истечения
             CookieService.setCookie('token', token, expirationDate);
         },
@@ -39,14 +41,17 @@ app.service('TokenService', function(CookieService){
         isValidToken: function(){
             if(!token)return false;
             else{
-                const payload = getTokenPayload();
                 const currentTime = Math.floor(Date.now() / 1000);
-                return payload.exp > currentTime; // Если время истечения токена больше текущего времени, то считаем его действительным
+                return tokenPayload.exp > currentTime; // Если время истечения токена больше текущего времени, то считаем его действительным
             }
         },
         removeToken: function(){
             token = null;
+            tokenPayload = null;
             CookieService.deleteCookie('token');
+        },
+        getTokenPayload: function(){
+            return tokenPayload;
         }
     };
 })
@@ -112,3 +117,22 @@ app.controller('AuthController', function($scope, AuthService) {
   };
   $scope.logout = AuthService.logout;
 });
+app.service('RoleService', function(TokenService){
+    return {
+        isCommenter: function(){
+            if(TokenService.isValidToken()){
+                return TokenService.getTokenPayload().roles.includes('ROLE_COMMENTER');
+            }
+        },
+        isPublisher: function(){
+            if(TokenService.isValidToken()){
+                return TokenService.getTokenPayload().roles.includes('ROLE_PUBLISHER');
+            }
+        },
+        isAdmin: function(){
+            if(TokenService.isValidToken()){
+                return TokenService.getTokenPayload().roles.includes('ROLE_ADMIN');
+            }
+        }
+    }
+})

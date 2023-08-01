@@ -28,7 +28,7 @@ app.service('CommentService', ['$http', function($http){
         }
 }]);
 // Функция для загрузки комментариев с сервера
-app.controller('CommentController', function($scope, CommentService, CookieService) {
+app.controller('CommentController', function($scope, CommentService, RoleService) {
      $scope.comments = [];
      $scope.currentPage = 1;
      $scope.itemsPerPage = 5;
@@ -61,15 +61,7 @@ app.controller('CommentController', function($scope, CommentService, CookieServi
           $scope.loadComments(pageNumber);
           $scope.pageNumbers = calculatePageNumbers(pageNumber, $scope.totalPages, maxPagesToShow);
      }
-     $scope.canPost = function () {
-         const token = CookieService.getCookie('token');
-         if (!token) return false; // Если токен не существует, считаем пользователя не COMMENTER
-         const payloadBase64 = token.split('.')[1];
-         const payloadJson = atob(payloadBase64);
-         const payload = JSON.parse(payloadJson);
-         const roles = payload.roles;
-         return roles.includes('ROLE_COMMENTER'); // Проверяем наличие роли COMMENTER в массиве ролей
-     };
+     $scope.canPost = RoleService.isCommenter;
      // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
      $scope.$watch('totalPages', function() {
        $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
