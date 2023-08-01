@@ -28,7 +28,7 @@ app.service('CommentService', ['$http', function($http){
         }
 }]);
 // Функция для загрузки комментариев с сервера
-app.controller('CommentController', function($scope, CommentService) {
+app.controller('CommentController', function($scope, CommentService, CookieService) {
      $scope.comments = [];
      $scope.currentPage = 1;
      $scope.itemsPerPage = 5;
@@ -62,7 +62,7 @@ app.controller('CommentController', function($scope, CommentService) {
           $scope.pageNumbers = calculatePageNumbers(pageNumber, $scope.totalPages, maxPagesToShow);
      }
      $scope.canPost = function () {
-         const token = getCookie('token');
+         const token = CookieService.getCookie('token');
          if (!token) return false; // Если токен не существует, считаем пользователя не COMMENTER
          const payloadBase64 = token.split('.')[1];
          const payloadJson = atob(payloadBase64);
