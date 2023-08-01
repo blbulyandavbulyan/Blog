@@ -40,7 +40,7 @@ app.service('UserService', function($http){
         }
     }
 });
-app.controller('UserController', function($scope, UserService){
+app.controller('UserController', function($scope, UserService, AuthService){
     $scope.users = [];
     $scope.filterParams = {};
     $scope.filter = {};
@@ -48,6 +48,10 @@ app.controller('UserController', function($scope, UserService){
     $scope.itemsPerPage = 5;
     $scope.totalPages = 5;
     const maxPagesToShow = 3; // Максимальное количество отображаемых страниц
+    $scope.isAuthenticated = AuthService.isAuthenticated;
+    $scope.canAdmin = function(){
+        return false;
+    };
     $scope.filterArticles = function(){
          $scope.filterParams = $scope.filter;
          $scope.getPage(1);
@@ -68,5 +72,5 @@ app.controller('UserController', function($scope, UserService){
     $scope.$watch('totalPages', function() {
       $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
     });
-    $scope.getPage(1);
+    if($scope.canAdmin())$scope.getPage(1);
 });
