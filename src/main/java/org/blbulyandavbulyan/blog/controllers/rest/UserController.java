@@ -74,6 +74,6 @@ public class UserController {
     @Secured("ROLE_ADMIN")
     @GetMapping
     public Page<UserInfoDTO> getUserInfos(@RequestParam(defaultValue = "5", name = "s") Integer pageSize, @RequestParam(defaultValue = "1", name = "p") Integer pageNumber, @RequestParam MultiValueMap<String, String> requestParams){
-        return userService.getUserInfos(requestParams, pageNumber, pageSize);
+        return userService.getUserInfos(requestParams, pageNumber - 1, pageSize);
     }
 }
