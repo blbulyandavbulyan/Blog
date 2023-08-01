@@ -20,8 +20,8 @@
                             {{ role }}
                         </label>
                     </div>
-                    <button class="btn btn-danger" ng-click="applyChanges(user)">Применить изменения</button>
-                    <button class="btn btn-danger" ng-click="deleteUser(user.userId)">Удалить пользователя</button>
+                    <button class="btn btn-warning" ng-click="applyChanges(user)">Применить изменения</button>
+                    <button ng-disabled="isItMe(user)" class="btn btn-danger" ng-click="deleteUser(user.userId)">Удалить пользователя</button>
                     <hr>
                 </div>
                 <div ng-show="pageNumbers.length > 1" id="pagination">
