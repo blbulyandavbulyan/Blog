@@ -52,6 +52,12 @@ app.service('TokenService', function(CookieService){
         },
         getTokenPayload: function(){
             return tokenPayload;
+        },
+        getMyUserName: function(){
+            if(tokenPayload){
+                return tokenPayload["sub"];
+            }
+            else throw Error('Нет токена!')
         }
     };
 })
@@ -68,6 +74,9 @@ app.service('AuthService',  function($http, TokenService){
         isAuthenticated: TokenService.isValidToken,
         logout: function(){
             TokenService.removeToken();
+        },
+        getMyUserName: function(){
+            return TokenService.getMyUserName();
         }
     };
 });
