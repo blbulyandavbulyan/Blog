@@ -8,8 +8,8 @@ app.service('CookieService', function(){
         },
         deleteCookie: function(name){
             document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        }
-        setCookie(name, value, expirationDate){
+        },
+        setCookie: function(name, value, expirationDate){
             document.cookie = `name=${value}; expires=${expirationDate.toUTCString()}; path=/`;
         }
     };
