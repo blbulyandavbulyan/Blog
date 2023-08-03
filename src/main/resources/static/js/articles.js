@@ -21,6 +21,9 @@ app.service('ArticleService', function($http){
             };
             httpQuery["params"] = httpParams;
             return $http(httpQuery);
+        },
+        getArticle: function(articleId){
+            return $http.get(`${articlesApiPath}/${articleId}`);
         }
     };
 });
