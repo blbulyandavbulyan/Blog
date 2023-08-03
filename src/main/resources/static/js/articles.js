@@ -24,7 +24,7 @@ app.service('ArticleService', function($http){
         }
     };
 });
-app.controller('ArticleController', function($scope, $window, ArticleService){
+app.controller('ArticlesController', function($scope, ArticleService){
       $scope.articles = [];
       $scope.filterParams = {};
       $scope.filter = {};
