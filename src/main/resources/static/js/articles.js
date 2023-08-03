@@ -60,3 +60,10 @@ app.controller('ArticlesController', function($scope, ArticleService){
       });
       $scope.getPage(1);
 });
+app.controller('ArticleController', function($scope, $routeParams, ArticleService){
+    var articleId = $routeParams.articleId;
+    // Загрузить статью по articleId с сервера или из хранилища данных
+    ArticleService.getArticle(articleId).then(function(response) {
+      $scope.article = response.data;
+    });
+});
