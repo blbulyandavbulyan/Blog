@@ -1,4 +1,15 @@
-var app = angular.module('blog', []);
+var app = angular.module('blog', ['ngRoute']);
+app.config(function($routeProvider, $locationProvider) {
+  $routeProvider
+    .when('/', {
+      templateUrl: 'articlesList.html',
+    })
+    .when('/articles/:articleId', {
+      templateUrl: 'article.html',
+    })
+    .otherwise({ redirectTo: '/' });
+//  $locationProvider.html5Mode(true);
+});
 // Определение интерцептора
 const contextPath = window.location.origin + '/blog';
 function calculatePageNumbers(currentPage, totalPages, maxPagesToShow) {
