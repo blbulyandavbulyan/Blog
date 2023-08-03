@@ -48,14 +48,12 @@ app.controller('ArticleController', function($scope, $window, ArticleService){
            $scope.loadArticlesInfo($scope.filterParams, pageNumber);
            $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
       }
-      $scope.generateArticleLink = function(articleId){
-          const currentUrl = $window.location.href;
-          // Добавить параметр articleId к текущему пути URL и вернуть его
-          return `${currentUrl}/${articleId}`;
-      }
+      $scope.goToArticle = function(articleId) {
+           document.location.hash=`!/articles/${articleId}`;
+      };
       // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
-     $scope.$watch('totalPages', function() {
-       $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
-     });
-     $scope.getPage(1);
+      $scope.$watch('totalPages', function() {
+        $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
+      });
+      $scope.getPage(1);
 });
