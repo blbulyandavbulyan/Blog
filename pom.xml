@@ -30,7 +30,13 @@
 		<dependency>
 			<groupId>org.webjars.bower</groupId>
 			<artifactId>angular</artifactId>
-			<version>1.8.3</version>
+			<version>1.8.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.webjars.bower/angular-route -->
+		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>angular-route</artifactId>
+			<version>1.8.2</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.webjars/webjars-locator -->
 		<dependency>
