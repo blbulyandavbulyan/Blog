@@ -28,14 +28,13 @@ app.service('CommentService', ['$http', function($http){
         }
 }]);
 // Функция для загрузки комментариев с сервера
-app.controller('CommentController', function($scope, CommentService, RoleService) {
+app.controller('CommentController', function($scope, $routeParams, CommentService, RoleService) {
      $scope.comments = [];
      $scope.currentPage = 1;
      $scope.itemsPerPage = 5;
      $scope.totalPages = 5;
      const maxPagesToShow = 3; // Максимальное количество отображаемых страниц
-     var href = window.location.href.split('/');
-     $scope.articleId = parseInt(href[href.length-1]);//таким нехитрым образом, мы получаем ИД статьи из PathVariable в url
+     $scope.articleId = $routeParams.articleId;
      //функция для загрузки комментариев
      $scope.loadComments = function(pageNumber) {
        $scope.currentPage = pageNumber;
