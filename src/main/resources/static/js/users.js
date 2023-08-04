@@ -49,21 +49,21 @@ app.service('UserService', function($http){
 });
 app.controller('UserController', function($scope, UserService, AuthService, RoleService){
     $scope.users = [];
-    $scope.newRoles = {};
-    $scope.filterParams = {};
-    $scope.filter = {};
-    $scope.currentPage = 1;
-    $scope.itemsPerPage = 5;
-    $scope.totalPages = 5;
+    $scope.newRoles = {};//в этом объекте, по ИД пользователя, будет хранится: изменён он или нет, и какие роли у него установлены
+    $scope.filterParams = {};//текущие параметры для фильтрации пользователей
+    $scope.filter = {};//то что хранится в форме
+    $scope.currentPage = 1;//текущая страница с пользователями
+    $scope.itemsPerPage = 5;//количество пользователей на страницу
+    $scope.totalPages = 1;//всего страниц(в дальнейшем будет оно будет обновлено, при получении страниц
     const maxPagesToShow = 3; // Максимальное количество отображаемых страниц
-    $scope.isAuthenticated = AuthService.isAuthenticated;
-    $scope.canAdmin = RoleService.isAdmin;
-    $scope.availableRoles = RoleService.getAvailableRoles();
-    $scope.filterArticles = function(){
+    $scope.isAuthenticated = AuthService.isAuthenticated;//метод для проверки на наличие авторизации
+    $scope.canAdmin = RoleService.isAdmin;//метод для проверки является ли пользователь администратором
+    $scope.availableRoles = RoleService.getAvailableRoles();//метод для получения доступных ролей
+    $scope.filterArticles = function(){//метод для применения фильтра по пользователям
          $scope.filterParams = $scope.filter;
          $scope.getPage(1);
     }
-    $scope.loadUsersInfo = function(filterParams, pageNumber) {
+    $scope.loadUsersInfo = function(filterParams, pageNumber) {//метод для получения информации о пользователях
       UserService.getUserInfoAboutAllUsers(filterParams, pageNumber, $scope.itemsPerPage)
         .then(function(response) {
           $scope.users = response.data.content;
@@ -79,11 +79,11 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
           $scope.currentPage = pageNumber;
         });
     };
-    $scope.getPage = function(pageNumber){
+    $scope.getPage = function(pageNumber){//метод для получения заданной страницы
          $scope.loadUsersInfo($scope.filterParams, pageNumber);
          $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
     };
-    $scope.deleteUser = function(userId){
+    $scope.deleteUser = function(userId){//метод для обработки кнопки удаления пользователя
         UserService.deleteUserById(userId)
             .then(function(response){
                  var index = $scope.users.findIndex(user => user.userId === userId);
@@ -93,13 +93,13 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
                  }
             });
     };
-    $scope.isItMe = function(user){
+    $scope.isItMe = function(user){//метод для проверки является ли переданный пользователь, тем, под которым вошли
         return user.name === AuthService.getMyUserName();
     }
-    $scope.hasRole = function (user, roleName) {
+    $scope.hasRole = function (user, roleName) {//метод для проверки наличия роли у пользователя(роль ищется по имени)
          return user.roles.map(r=>r.name).includes(roleName);
     };
-    $scope.updateRoles = function(user){
+    $scope.updateRoles = function(user){//метод для обновления состояния о том, изменён ли пользователь
         for(var i = 0; i < $scope.availableRoles.length; i++){
             roleName = $scope.availableRoles[i];
             if($scope.hasRole(user, roleName) != $scope.newRoles[user.userId][roleName]){
@@ -109,7 +109,7 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
             $scope.newRoles[user.userId].isChanged = false;
         }
     };
-    $scope.applyChanges = function(user){
+    $scope.applyChanges = function(user){//метод для обработки кнопки "применить изменения"
         newPrivileges = $scope.availableRoles.filter(r=>$scope.newRoles[user.userId][r]);
         $scope.newRoles[user.userId]
         UserService.updateRoles(user.userId, newPrivileges)
