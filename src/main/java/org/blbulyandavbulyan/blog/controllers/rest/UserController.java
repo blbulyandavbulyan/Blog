@@ -2,6 +2,7 @@ package org.blbulyandavbulyan.blog.controllers.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.authorization.RegistrationUser;
+import org.blbulyandavbulyan.blog.dtos.roles.UpdateRolesDto;
 import org.blbulyandavbulyan.blog.dtos.user.UserCreateRequest;
 import org.blbulyandavbulyan.blog.dtos.user.UserInfoDTO;
 import org.blbulyandavbulyan.blog.services.UserService;
@@ -75,5 +76,15 @@ public class UserController {
     @GetMapping
     public Page<UserInfoDTO> getUserInfos(@RequestParam(defaultValue = "5", name = "s") Integer pageSize, @RequestParam(defaultValue = "1", name = "p") Integer pageNumber, @RequestParam MultiValueMap<String, String> requestParams){
         return userService.getUserInfos(requestParams, pageNumber - 1, pageSize);
+    }
+    /**
+     * Обновляет привилегии у пользователя
+     * @param updateRolesDto DTO содержащее ИД пользователя, роли которого нужно обновить и набор новых ролей
+     */
+    @Secured("ROLE_ADMIN")
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/roles")
+    public void updateUserPrivileges(@RequestBody UpdateRolesDto updateRolesDto){
+        userService.updateRoles(updateRolesDto.userId(), updateRolesDto.rolesNames());
     }
 }
