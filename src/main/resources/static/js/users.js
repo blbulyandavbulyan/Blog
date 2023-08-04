@@ -63,6 +63,11 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
          $scope.filterParams = $scope.filter;
          $scope.getPage(1);
     }
+    function setRolesData(userId, rolesNames){
+        $scope.availableRoles.forEach(function(roleName){
+            $scope.newRoles[userId][roleName] = rolesNames.includes(roleName);
+        });
+    }
     $scope.loadUsersInfo = function(filterParams, pageNumber) {//метод для получения информации о пользователях
       UserService.getUserInfoAboutAllUsers(filterParams, pageNumber, $scope.itemsPerPage)
         .then(function(response) {
@@ -70,9 +75,8 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
           $scope.newRoles = {};
           $scope.users.forEach(function(user){
             $scope.newRoles[user.userId] = {};
-            user.roles.forEach(function(role){
-               $scope.newRoles[user.userId][role.name] = true;
-            });
+            rolesNames = user.roles.map(r=>r.name);
+            setRolesData(user.userId, rolesNames)
             $scope.newRoles[user.userId].isChanged = false;
           });
           $scope.totalPages = response.data.totalPages;
@@ -100,14 +104,14 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
          return user.roles.map(r=>r.name).includes(roleName);
     };
     $scope.updateRoles = function(user){//метод для обновления состояния о том, изменён ли пользователь
+        countOfDifferences = 0;
         for(var i = 0; i < $scope.availableRoles.length; i++){
             roleName = $scope.availableRoles[i];
             if($scope.hasRole(user, roleName) != $scope.newRoles[user.userId][roleName]){
-                $scope.newRoles[user.userId].isChanged  = true;
-                return;
+                countOfDifferences++;
             }
-            $scope.newRoles[user.userId].isChanged = false;
         }
+        $scope.newRoles[user.userId].isChanged = countOfDifferences > 0;
     };
     $scope.applyChanges = function(user){//метод для обработки кнопки "применить изменения"
         newPrivileges = $scope.availableRoles.filter(r=>$scope.newRoles[user.userId][r]);
@@ -116,10 +120,8 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
             .then(function(){
                 user.roles = newPrivileges.map(rn=>{ return {name: rn}});
                 $scope.newRoles[user.userId] = {};
-                $scope.newRoles[user.userId].isChanged = false
-                user.roles.forEach(function(role){
-                   $scope.newRoles[user.userId][role.name] = true;
-                });
+                $scope.newRoles[user.userId].isChanged = false;
+                setRolesData(user.userId, newPrivileges);
             });
     };
     // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
