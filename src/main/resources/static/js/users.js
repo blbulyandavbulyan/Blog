@@ -42,6 +42,7 @@ app.service('UserService', function($http){
 });
 app.controller('UserController', function($scope, UserService, AuthService, RoleService){
     $scope.users = [];
+    $scope.newRoles = {};
     $scope.filterParams = {};
     $scope.filter = {};
     $scope.currentPage = 1;
@@ -59,6 +60,14 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
       UserService.getUserInfoAboutAllUsers(filterParams, pageNumber, $scope.itemsPerPage)
         .then(function(response) {
           $scope.users = response.data.content;
+          $scope.newRoles = {};
+          $scope.users.forEach(function(user){
+            $scope.newRoles[user.userId] = {};
+            user.roles.forEach(function(role){
+               $scope.newRoles[user.userId][role.name] = true;
+            });
+            $scope.newRoles[user.userId].isChanged = false;
+          });
           $scope.totalPages = response.data.totalPages;
           $scope.currentPage = pageNumber;
         });
@@ -80,8 +89,18 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
     $scope.isItMe = function(user){
         return user.name === AuthService.getMyUserName();
     }
-    $scope.isRoleSelected = function (user, role) {
-         return user.roles.map(r=>r.name).includes(role);
+    $scope.hasRole = function (user, roleName) {
+         return user.roles.map(r=>r.name).includes(roleName);
+    };
+    $scope.updateRoles = function(user){
+        for(var i = 0; i < $scope.availableRoles.length; i++){
+            roleName = $scope.availableRoles[i];
+            if($scope.hasRole(user, roleName) != $scope.newRoles[user.userId][roleName]){
+                $scope.newRoles[user.userId].isChanged  = true;
+                return;
+            }
+            $scope.newRoles[user.userId].isChanged = false;
+        }
     };
     // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
     $scope.$watch('totalPages', function() {

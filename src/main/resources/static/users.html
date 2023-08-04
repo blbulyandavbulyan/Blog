@@ -18,15 +18,15 @@
         <div ng-if="canAdmin()" class="container mt-5">
             <div ng-if="users.length > 0">
                 <div ng-repeat="user in users">
-                    <input  class="form-control rounded" type="text" ng-model="user.name" />
+                    <h1>{{user.name}}</h1>
                     <h2>Roles:</h2>
-                    <div ng-repeat="role in availableRoles">
-                        <label>
-                            <input type="checkbox" ng-model="role.selected" ng-checked="isRoleSelected(user, role)">
-                            {{ role }}
+                    <div ng-repeat="roleName in availableRoles">
+                        <label class="no-select">
+                            <input type="checkbox" ng-model="newRoles[user.userId][roleName]" ng-checked="hasRole(user, roleName)" ng-change="updateRoles(user)">
+                            {{ roleName }}
                         </label>
                     </div>
-                    <button class="btn btn-warning" ng-click="applyChanges(user)">Применить изменения</button>
+                    <button class="btn btn-warning" ng-disabled="!newRoles[user.userId].isChanged" ng-click="applyChanges(user)">Применить изменения</button>
                     <button ng-disabled="isItMe(user)" class="btn btn-danger" ng-click="deleteUser(user.userId)">Удалить пользователя</button>
                     <hr>
                 </div>
