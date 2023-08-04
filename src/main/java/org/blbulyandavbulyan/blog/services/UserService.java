@@ -145,6 +145,13 @@ public class UserService implements UserDetailsService {
     public Page<UserInfoDTO> getUserInfos(MultiValueMap<String, String> filterParams, Integer pageNumber, Integer pageSize) {
         return userRepository.findBy(new UserSpecifications(filterParams).getSpecification(), q->q.as(UserInfoDTO.class).page(PageRequest.of(pageNumber, pageSize)));
     }
+
+    /**
+     * Обновляет роли у заданного пользователя
+     * @param userId ИД пользователя, роли которого нужно обновить
+     * @param rolesNames список имён ролей, которые будут вместо старых
+     * @throws UserNotFoundException если пользователь с заданным ИД не найден
+     */
     @Transactional
     public void updateRoles(Long userId, List<String> rolesNames) {
         User user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("User with id + " + userId + " not found!"));
