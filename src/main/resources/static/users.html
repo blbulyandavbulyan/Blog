@@ -7,6 +7,7 @@
     <script type="text/javascript" src="webjars/angular/angular.min.js"></script>
     <script type="text/javascript" src="webjars/angular-route/angular-route.min.js"></script>
     <link rel='stylesheet' href="webjars/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/users.css">
     <script type="text/javascript" src="webjars/bootstrap/js/bootstrap.min.js"></script>
     <script src="js/app.js"></script>
     <script src="js/auth.js"></script>
@@ -19,12 +20,14 @@
             <div ng-if="users.length > 0">
                 <div ng-repeat="user in users">
                     <h1>{{user.name}}</h1>
-                    <h2>Roles:</h2>
-                    <div ng-repeat="roleName in availableRoles">
-                        <label class="no-select">
-                            <input type="checkbox" ng-model="newRoles[user.userId][roleName]" ng-checked="hasRole(user, roleName)" ng-change="updateRoles(user)">
-                            {{ roleName }}
-                        </label>
+                    <div class="d-flex flex-wrap">
+                        <h2>Roles:</h2>
+                        <div ng-repeat="roleName in availableRoles" class="me-3 form-check form-switch custom-checkbox">
+                            <label class="no-select form-check-label" ng-class="{'active': newRoles[user.userId][roleName]}">
+                                {{ roleName }}
+                                <input class="form-check-input" type="checkbox" ng-model="newRoles[user.userId][roleName]" ng-checked="hasRole(user, roleName)" ng-change="updateRoles(user)">
+                            </label>
+                        </div>
                     </div>
                     <button class="btn btn-warning" ng-disabled="!newRoles[user.userId].isChanged" ng-click="applyChanges(user)">Применить изменения</button>
                     <button ng-disabled="isItMe(user)" class="btn btn-danger" ng-click="deleteUser(user.userId)">Удалить пользователя</button>
