@@ -37,6 +37,13 @@ app.service('UserService', function($http){
         },
         deleteUserById: function(userId){
             return $http.delete(`${usersApiPath}/${userId}`);
+        },
+        updateRoles: function(userId, rolesNames){
+            httpData = {
+                userId: userId,
+                rolesNames: rolesNames
+            };
+            return $http.patch(`${usersApiPath}/roles`, httpData);
         }
     }
 });
@@ -101,6 +108,19 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
             }
             $scope.newRoles[user.userId].isChanged = false;
         }
+    };
+    $scope.applyChanges = function(user){
+        newPrivileges = $scope.availableRoles.filter(r=>$scope.newRoles[user.userId][r]);
+        $scope.newRoles[user.userId]
+        UserService.updateRoles(user.userId, newPrivileges)
+            .then(function(){
+                user.roles = newPrivileges.map(rn=>{ return {name: rn}});
+                $scope.newRoles[user.userId] = {};
+                $scope.newRoles[user.userId].isChanged = false
+                user.roles.forEach(function(role){
+                   $scope.newRoles[user.userId][role.name] = true;
+                });
+            });
     };
     // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
     $scope.$watch('totalPages', function() {
