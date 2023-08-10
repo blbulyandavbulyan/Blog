@@ -59,8 +59,16 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
     $scope.isAuthenticated = AuthService.isAuthenticated;//метод для проверки на наличие авторизации
     $scope.canAdmin = RoleService.isAdmin;//метод для проверки является ли пользователь администратором
     $scope.availableRoles = RoleService.getAvailableRoles();//метод для получения доступных ролей
-    $scope.filterArticles = function(){//метод для применения фильтра по пользователям
-         $scope.filterParams = $scope.filter;
+    $scope.filter.roles = {};
+    $scope.availableRoles.forEach(function(roleName){
+        $scope.filter.roles[roleName] = false;
+    });
+    $scope.filterUsers = function(){//метод для применения фильтра по пользователям
+         rolesForFilter = $scope.availableRoles.filter(roleName=>$scope.filter.roles[roleName]);
+         $scope.filterParams = {
+            name: $scope.filter.name,
+            roles: rolesForFilter
+         };
          $scope.getPage(1);
     }
     function setRolesData(userId, rolesNames){
