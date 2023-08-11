@@ -112,16 +112,19 @@ public class UserService implements UserDetailsService {
 
     /**
      * Метод создаёт пользователя по заданному запросу
+     *
      * @param userCreateRequest запрос, по которому нужно создать пользователя
+     * @return созданного пользователя
      */
     @Transactional(rollbackFor = {UserAlreadyExistsException.class, IllegalRoleNameException.class})
-    public void createUser(UserCreateRequest userCreateRequest) {
+    public User createUser(UserCreateRequest userCreateRequest) {
         User user = registerUser(userCreateRequest.name(), userCreateRequest.password());//регистрируем пользователя
         //а теперь устанавливаем ему необходимые привилегии
         for(String roleName : userCreateRequest.roleNames()){
             if(!roleService.existsByRoleName(roleName))throw new IllegalRoleNameException("Role with name + " + roleName + " not found!");
         }
         user.setRoles(userCreateRequest.roleNames().stream().map(roleService::getReferenceByRoleName).toList());
+        return user;
     }
 
     /**
