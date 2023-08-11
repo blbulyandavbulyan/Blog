@@ -96,6 +96,7 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
           $scope.totalPages = response.data.totalPages;
           $scope.currentPage = pageNumber;
         });
+        //TODO написать обработку ошибок загрузки информации о пользователях
     };
     $scope.getPage = function(pageNumber){//метод для получения заданной страницы
          $scope.loadUsersInfo($scope.filterParams, pageNumber);
@@ -109,7 +110,9 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
                  if (index !== -1) {
                    $scope.users.splice(index, 1);
                  }
+                 //TODO добавить здесь обработку ситуации, когда это был последний пользователь на странице и при этом, страницы ещё есть
             });
+            //TODO написать обработку ошибки удаления пользователя
     };
     $scope.createUser = function(){
         name = $scope.newUser.name;
@@ -123,7 +126,8 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
             $scope.availableRoles.forEach(function(roleName){
                     $scope.newUser.roles[roleName] = false;
             });
-            if($scope.users.length < $scope.itemsPerPage){
+            if($scope.users.length < $scope.itemsPerPage){//в случае если количество элементов на текущей странице меньше чем максимальное количество элементов на странице
+                //то мы просто вставляем пользователя на эту страницу
                 createdUser = {
                     userId: userCreatedResponse.userId,
                     name: name,
@@ -135,10 +139,12 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
                 });
                 $scope.users.push(createdUser);
             }
-            else if($scope.totalPages == $scope.currentPage){
+            else if($scope.totalPages == $scope.currentPage){//в случае если мы находимся на последней странице и на ней уже максимальное количество элементов
+                //увеличиваем количество страниц
                 $scope.totalPages+=1;
             }
         });
+        //TODO написать обработку ошибки создания пользователя
     }
     $scope.isItMe = function(user){//метод для проверки является ли переданный пользователь, тем, под которым вошли
         return user.name === AuthService.getMyUserName();
@@ -166,6 +172,7 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
                 $scope.newRoles[user.userId].isChanged = false;
                 setRolesData(user.userId, newPrivileges);
             });
+            //TODO написать обработку ошибок обновления пользователя
     };
     // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
     $scope.$watch('totalPages', function() {
