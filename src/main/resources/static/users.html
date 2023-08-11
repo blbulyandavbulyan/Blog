@@ -51,6 +51,32 @@
                 </div>
                 <div ng-include="'fragments/pagination.html'"></div>
             </div>
+            <h2>Создание пользователя:</h2>
+            <form ng-submit="createUser()" name="newUserForm">
+                <div class="form-group">
+                    <label>
+                        Имя пользователя:
+                        <input type="text" class="form-control" ng-model="newUser.name" placeholder="Введите имя пользователя" required>
+                    </label>
+
+                </div>
+                <div class="form-group">
+                    <label>
+                        Пароль:
+                        <input type="password" class="form-control" ng-model="newUser.password" placeholder="Введите пароль" required>
+                    </label>
+                </div>
+                <div class="form-group d-flex flex-wrap roles-selector">
+                    <label>Выберите роли:</label>
+                    <div ng-repeat="roleName in availableRoles" class="me-3 form-check form-switch custom-checkbox">
+                        <label class="no-select form-check-label" ng-class="{'active': newUser.roles[roleName]}">
+                            {{roleName}}
+                            <input type="checkbox" class="form-check-input" ng-model="newUser.roles[roleName]">
+                        </label>
+                    </div>
+                </div>
+                <button ng-disabled="newUserForm.$invalid" type="submit" class="btn btn-primary">Создать</button>
+            </form>
         </div>
         <div ng-show="isAuthenticated() && !canAdmin()" class="alert alert-danger" role="alert">У вас нет прав для действий на данной странице!</div>
         <div ng-show="!isAuthenticated()" class="alert alert-danger" role="alert">Вы не авторизованы!</div>

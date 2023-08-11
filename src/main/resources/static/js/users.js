@@ -51,7 +51,8 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
     $scope.users = [];
     $scope.newRoles = {};//в этом объекте, по ИД пользователя, будет хранится: изменён он или нет, и какие роли у него установлены
     $scope.filterParams = {};//текущие параметры для фильтрации пользователей
-    $scope.filter = {};//то что хранится в форме
+    $scope.filter = {};//модель для фильтрационной формы
+    $scope.filter.roles = {};//инициализируем роли для фильтра
     $scope.currentPage = 1;//текущая страница с пользователями
     $scope.itemsPerPage = 5;//количество пользователей на страницу
     $scope.totalPages = 1;//всего страниц(в дальнейшем будет оно будет обновлено, при получении страниц
@@ -59,9 +60,14 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
     $scope.isAuthenticated = AuthService.isAuthenticated;//метод для проверки на наличие авторизации
     $scope.canAdmin = RoleService.isAdmin;//метод для проверки является ли пользователь администратором
     $scope.availableRoles = RoleService.getAvailableRoles();//метод для получения доступных ролей
-    $scope.filter.roles = {};
+    $scope.newUser = {
+        name: "",
+        password: ""
+    };// определяем модель для формы создания пользователя
+    $scope.newUser.roles = {};//инициализируем роли для нового пользователя пустым массивом
     $scope.availableRoles.forEach(function(roleName){
-        $scope.filter.roles[roleName] = false;
+        $scope.filter.roles[roleName] = false;//по умолчанию выключены требования всех ролей
+        $scope.newUser.roles[roleName] = false;//выключаем требования всех ролей для создания пользователей
     });
     $scope.filterUsers = function(){//метод для применения фильтра по пользователям
          rolesForFilter = $scope.availableRoles.filter(roleName=>$scope.filter.roles[roleName]);
@@ -105,6 +111,35 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
                  }
             });
     };
+    $scope.createUser = function(){
+        name = $scope.newUser.name;
+        password = $scope.newUser.password;
+        rolesNames = $scope.availableRoles.filter(roleName=>$scope.newUser.roles[roleName]);
+        UserService.createUser(name, password, rolesNames)
+        .then(function(response){
+            userCreatedResponse = response.data;
+            $scope.newUser.name = '';
+            $scope.newUser.password = '';
+            $scope.availableRoles.forEach(function(roleName){
+                    $scope.newUser.roles[roleName] = false;
+            });
+            if($scope.users.length < $scope.itemsPerPage){
+                createdUser = {
+                    userId: userCreatedResponse.userId,
+                    name: name,
+                    password: password
+                };
+                createdUser.roles = rolesNames.map(rn=>{ return {name: rn}});
+                rolesNames.forEach(function(roleName){
+                    $scope.newRoles[createUser.userId][roleName] = true;
+                });
+                $scope.users.push(createdUser);
+            }
+            else if($scope.totalPages == $scope.currentPage){
+                $scope.totalPages+=1;
+            }
+        });
+    }
     $scope.isItMe = function(user){//метод для проверки является ли переданный пользователь, тем, под которым вошли
         return user.name === AuthService.getMyUserName();
     }
