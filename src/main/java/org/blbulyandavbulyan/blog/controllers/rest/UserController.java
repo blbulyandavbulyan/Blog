@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.authorization.RegistrationUser;
 import org.blbulyandavbulyan.blog.dtos.roles.UpdateRolesDto;
 import org.blbulyandavbulyan.blog.dtos.user.UserCreateRequest;
+import org.blbulyandavbulyan.blog.dtos.user.UserCreatedResponse;
 import org.blbulyandavbulyan.blog.dtos.user.UserInfoDTO;
+import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.services.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -50,8 +52,9 @@ public class UserController {
     @Secured("ROLE_ADMIN")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createUser(@RequestBody UserCreateRequest userCreateRequest){
-        userService.createUser(userCreateRequest);
+    public UserCreatedResponse createUser(@RequestBody UserCreateRequest userCreateRequest){
+        User user = userService.createUser(userCreateRequest);
+        return new UserCreatedResponse(user.getUserId());
     }
 
     /**
