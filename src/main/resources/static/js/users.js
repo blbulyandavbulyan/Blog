@@ -146,7 +146,7 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
     $scope.hasRole = function (user, roleName) {//метод для проверки наличия роли у пользователя(роль ищется по имени)
          return user.roles.map(r=>r.name).includes(roleName);
     };
-    $scope.updateRoles = function(user){//метод для обновления состояния о том, изменён ли пользователь
+    $scope.updateRoles = function(user){//метод для обновления состояния о том, изменёны ли роли у пользователя
         countOfDifferences = 0;
         for(var i = 0; i < $scope.availableRoles.length; i++){
             roleName = $scope.availableRoles[i];
