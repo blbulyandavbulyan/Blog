@@ -143,7 +143,11 @@ app.controller('UserController', function($scope, UserService, AuthService, Role
                 //увеличиваем количество страниц
                 $scope.totalPages+=1;
             }
-        });
+            $scope.userCreationError = null;
+        })
+        .catch(function(error){
+            $scope.userCreationError = "Ошибка создания пользователя!";
+        })
         //TODO написать обработку ошибки создания пользователя
     }
     $scope.isItMe = function(user){//метод для проверки является ли переданный пользователь, тем, под которым вошли

@@ -77,6 +77,7 @@
                 </div>
                 <button ng-disabled="newUserForm.$invalid" type="submit" class="btn btn-primary">Создать</button>
             </form>
+            <div ng-if="userCreationError" class="alert alert-danger" role="alert">{{userCreationError}}</div>
         </div>
         <div ng-show="isAuthenticated() && !canAdmin()" class="alert alert-danger" role="alert">У вас нет прав для действий на данной странице!</div>
         <div ng-show="!isAuthenticated()" class="alert alert-danger" role="alert">Вы не авторизованы!</div>
