@@ -52,6 +52,12 @@ app.service('TokenService', function(CookieService){
         },
         getTokenPayload: function(){
             return tokenPayload;
+        },
+        getMyUserName: function(){
+            if(tokenPayload){
+                return tokenPayload["sub"];
+            }
+            else throw Error('Нет токена!')
         }
     };
 })
@@ -68,6 +74,9 @@ app.service('AuthService',  function($http, TokenService){
         isAuthenticated: TokenService.isValidToken,
         logout: function(){
             TokenService.removeToken();
+        },
+        getMyUserName: function(){
+            return TokenService.getMyUserName();
         }
     };
 });
@@ -133,6 +142,9 @@ app.service('RoleService', function(TokenService){
             if(TokenService.isValidToken()){
                 return TokenService.getTokenPayload().roles.includes('ROLE_ADMIN');
             }
+        },
+        getAvailableRoles: function(){
+            return ['ROLE_COMMENTER', 'ROLE_PUBLISHER', 'ROLE_ADMIN'];
         }
     }
 })
