@@ -10,6 +10,7 @@ public interface ArticleInfoDTO {
     ZonedDateTime getPublishDate();
 
     String getTitle();
+  
     interface UserDto{
         String getName();
     }
