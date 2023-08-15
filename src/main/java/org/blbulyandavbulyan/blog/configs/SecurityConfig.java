@@ -9,10 +9,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,9 +29,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
+@EnableMethodSecurity(securedEnabled = true)
 @RequiredArgsConstructor
-public class SecurityConfig{
+public class SecurityConfig {
     /**
      * Фильтр для отслеживания jwt токенов
      */
@@ -45,37 +49,37 @@ public class SecurityConfig{
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
     @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider(@Autowired UserService userService, @Autowired PasswordEncoder passwordEncoder){
+    public DaoAuthenticationProvider daoAuthenticationProvider(@Autowired UserService userService, @Autowired PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
         daoAuthenticationProvider.setUserDetailsService(userService);
         return daoAuthenticationProvider;
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .cors().disable()
-                .antMatcher("/api/**")
-                .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/api/v1/articles/**").authenticated()
-                .antMatchers(HttpMethod.DELETE, "/api/v1/articles/**").authenticated()
-                .antMatchers(HttpMethod.PUT, "/api/v1/articles/**").authenticated()
-                .antMatchers(HttpMethod.POST, "/api/v1/comments/**").authenticated()
-                .antMatchers(HttpMethod.DELETE, "/api/v1/comments/**").authenticated()
-                .antMatchers(HttpMethod.PUT, "/api/v1/comments/**").authenticated()
-                .antMatchers("/api/v1/users/register").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/v1/users/**").authenticated()
-                .antMatchers(HttpMethod.DELETE, "/api/v1/users/**").authenticated()
-                .antMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated()
-                .antMatchers(HttpMethod.GET, "/api/v1/users/info").authenticated()
-                .anyRequest().permitAll()
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-                .and().addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        http.csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
+                .securityMatcher("/api/**")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/api/v1/articles/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/articles/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/articles/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/comments/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/comments/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/comments/**").authenticated()
+                        .requestMatchers("/api/v1/users/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/info").authenticated()
+                        .anyRequest().permitAll()
+                )
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

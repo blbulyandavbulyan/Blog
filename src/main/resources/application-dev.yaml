@@ -10,8 +10,10 @@ spring:
     properties:
       dialect: org.hibernate.dialect.PostgreSQLDialect
       format_sql: true
-  flyway:
-    target: 3
+  thymeleaf:
+    check-template-location: true
+    cache: false
+    prefix: file:./src/main/resources/templates/
 server:
   port: 8080
   servlet.context-path: /blog
