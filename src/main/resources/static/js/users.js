@@ -57,7 +57,7 @@ app.controller('UserController', function ($scope, UserService, AuthService, Rol
         $scope.newUser.roles[roleName] = false;//выключаем требования всех ролей для создания пользователей
     });
     $scope.filterUsers = function () {//метод для применения фильтра по пользователям
-        rolesForFilter = $scope.availableRoles.filter(roleName => $scope.filter.roles[roleName]);
+        let rolesForFilter = $scope.availableRoles.filter(roleName => $scope.filter.roles[roleName]);
         $scope.filterParams = {
             name: $scope.filter.name,
             roles: rolesForFilter
@@ -78,7 +78,7 @@ app.controller('UserController', function ($scope, UserService, AuthService, Rol
                 $scope.newRoles = {};
                 $scope.users.forEach(function (user) {
                     $scope.newRoles[user.userId] = {};
-                    rolesNames = user.roles.map(r => r.name);
+                    let rolesNames = user.roles.map(r => r.name);
                     setRolesData(user.userId, rolesNames)
                     $scope.newRoles[user.userId].isChanged = false;
                 });
@@ -94,7 +94,7 @@ app.controller('UserController', function ($scope, UserService, AuthService, Rol
     $scope.deleteUser = function (userId) {//метод для обработки кнопки удаления пользователя
         UserService.deleteUserById(userId)
             .then(function (response) {
-                var index = $scope.users.findIndex(user => user.userId === userId);
+                const index = $scope.users.findIndex(user => user.userId === userId);
                 // Удаляем пользователя с найденным индексом
                 if (index !== -1) {
                     $scope.users.splice(index, 1);
@@ -102,22 +102,23 @@ app.controller('UserController', function ($scope, UserService, AuthService, Rol
                 //TODO добавить здесь обработку ситуации, когда это был последний пользователь на странице и при этом, страницы ещё есть
                 //здесь не учтено, что мы можем удалить пользователя с текущей странице, а на следующей странице был только один пользователь
                 //и тогда этой следующей страницы уже не будет
-                if ($scope.users.length == 0 && $scope.totalPages > 1) {//массив с пользователями стал пустым
+                let pageToLoad;
+                if ($scope.users.length === 0 && $scope.totalPages > 1) {//массив с пользователями стал пустым
                     //для первой страницы мы просто заново будем загружать первую страницу (но уже с учётом того что это будет как бы другая страница)
                     //для всех последующий страниц, мы просто будем загружать предыдущую страницу, т.к. следующей может не быть
-                    pageToLoad = $scope.currentPage == 1 ? 1 : $scope.currentPage - 1;
+                    pageToLoad = $scope.currentPage === 1 ? 1 : $scope.currentPage - 1;
                     $scope.getPage(pageToLoad);
                 }
             });
         //TODO написать обработку ошибки удаления пользователя
     };
     $scope.createUser = function () {
-        name = $scope.newUser.name;
-        password = $scope.newUser.password;
-        rolesNames = $scope.availableRoles.filter(roleName => $scope.newUser.roles[roleName]);
+        let name = $scope.newUser.name;
+        let password = $scope.newUser.password;
+        let rolesNames = $scope.availableRoles.filter(roleName => $scope.newUser.roles[roleName]);
         UserService.createUser(name, password, rolesNames)
             .then(function (response) {
-                userCreatedResponse = response.data;
+                let userCreatedResponse = response.data;
                 $scope.newUser.name = '';
                 $scope.newUser.password = '';
                 $scope.availableRoles.forEach(function (roleName) {
@@ -125,7 +126,7 @@ app.controller('UserController', function ($scope, UserService, AuthService, Rol
                 });
                 if ($scope.users.length < $scope.itemsPerPage) {//в случае если количество элементов на текущей странице меньше чем максимальное количество элементов на странице
                     //то мы просто вставляем пользователя на эту страницу
-                    createdUser = {
+                    let createdUser = {
                         userId: userCreatedResponse.userId,
                         name: name,
                         password: password
@@ -134,10 +135,10 @@ app.controller('UserController', function ($scope, UserService, AuthService, Rol
                         return {name: rn}
                     });
                     rolesNames.forEach(function (roleName) {
-                        $scope.newRoles[createUser.userId][roleName] = true;
+                        $scope.newRoles[createdUser.userId][roleName] = true;
                     });
                     $scope.users.push(createdUser);
-                } else if ($scope.totalPages == $scope.currentPage) {//в случае если мы находимся на последней странице и на ней уже максимальное количество элементов
+                } else if ($scope.totalPages === $scope.currentPage) {//в случае если мы находимся на последней странице и на ней уже максимальное количество элементов
                     //увеличиваем количество страниц
                     $scope.totalPages += 1;
                 }
@@ -155,18 +156,18 @@ app.controller('UserController', function ($scope, UserService, AuthService, Rol
         return user.roles.map(r => r.name).includes(roleName);
     };
     $scope.updateRoles = function (user) {//метод для обновления состояния о том, изменёны ли роли у пользователя
-        countOfDifferences = 0;
-        for (var i = 0; i < $scope.availableRoles.length; i++) {
+        let countOfDifferences = 0;
+        let roleName;
+        for (let i = 0; i < $scope.availableRoles.length; i++) {
             roleName = $scope.availableRoles[i];
-            if ($scope.hasRole(user, roleName) != $scope.newRoles[user.userId][roleName]) {
+            if ($scope.hasRole(user, roleName) !== $scope.newRoles[user.userId][roleName]) {
                 countOfDifferences++;
             }
         }
         $scope.newRoles[user.userId].isChanged = countOfDifferences > 0;
     };
     $scope.applyChanges = function (user) {//метод для обработки кнопки "применить изменения"
-        newPrivileges = $scope.availableRoles.filter(r => $scope.newRoles[user.userId][r]);
-        $scope.newRoles[user.userId]
+        let newPrivileges = $scope.availableRoles.filter(r => $scope.newRoles[user.userId][r]);
         UserService.updateRoles(user.userId, newPrivileges)
             .then(function () {
                 user.roles = newPrivileges.map(rn => {
