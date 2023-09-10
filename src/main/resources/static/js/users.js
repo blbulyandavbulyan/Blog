@@ -36,7 +36,7 @@ app.service('UserService', function ($http) {
 });
 app.controller('UserController', function ($scope, UserService, AuthService, RoleService) {
     $scope.users = [];
-    $scope.newRoles = {};//в этом объекте, по ИД пользователя, будет хранится: изменён он или нет, и какие роли у него установлены
+    $scope.newRoles = {};//в этом объекте, по ИД пользователя, будет храниться: изменён он или нет, и какие роли у него установлены
     $scope.filterParams = {};//текущие параметры для фильтрации пользователей
     $scope.filter = {};//модель для фильтрационной формы
     $scope.filter.roles = {};//инициализируем роли для фильтра
@@ -103,7 +103,7 @@ app.controller('UserController', function ($scope, UserService, AuthService, Rol
                 //здесь не учтено, что мы можем удалить пользователя с текущей странице, а на следующей странице был только один пользователь
                 //и тогда этой следующей страницы уже не будет
                 let pageToLoad;
-                if ($scope.users.length === 0 && $scope.totalPages > 1) {//массив с пользователями стал пустым
+                if ($scope.users.length === 0 && $scope.totalPages > 1) {//Массив с пользователями стал пустым
                     //для первой страницы мы просто заново будем загружать первую страницу (но уже с учётом того что это будет как бы другая страница)
                     //для всех последующий страниц, мы просто будем загружать предыдущую страницу, т.к. следующей может не быть
                     pageToLoad = $scope.currentPage === 1 ? 1 : $scope.currentPage - 1;

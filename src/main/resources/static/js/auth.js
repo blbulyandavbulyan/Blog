@@ -34,7 +34,7 @@ app.service('TokenService', function (CookieService) {
             init(newToken);
             // Получить дату истечения токена из поля 'exp' и преобразовать в дату
             const expirationDate = new Date(tokenPayload.exp * 1000); // Множим на 1000, т.к. 'exp' в секундах, а new Date() ожидает миллисекунды
-            // Установить куку с временем истечения
+            // установить куку с временем истечения
             CookieService.setCookie('token', token, expirationDate);
         },
         getToken: function () {
@@ -94,7 +94,7 @@ app.factory('authInterceptor', ['$injector', '$q', function ($injector, $q) {
         responseError: function (rejection) {
             // Проверить, является ли ошибка ошибкой 401 (Unauthorized)
             if (rejection.status === 401) {
-                // Если токен существует и его время действия истекло, удалить его из куки
+                // Если токен существует и его время действия истекло, удалить его из cookie
                 if (tokenService.isValidToken()) {
                     tokenService.removeToken();
                 }
