@@ -1,4 +1,4 @@
-var commentsApiPath = '/api/v1/comments';
+const commentsApiPath = '/api/v1/comments';
 app.service('CommentService', ['$http', function ($http) {
     return {
         getComments: function (articleId, pageNumber, size) {
