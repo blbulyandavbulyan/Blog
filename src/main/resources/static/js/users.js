@@ -6,24 +6,11 @@ app.service('UserService', function($http){
         },
         //получение информации о пользователях для администраторов
         getUserInfoAboutAllUsers: function(filterParams, pageNumber, pageSize){
-            var httpParams = {
-                p: pageNumber,
-                s: pageSize
-            };
-            //TODO вынести этот кусок в глобальную функцию, т.к. он повторяется в другом сервисе
-            Object.keys(filterParams).forEach(function(key) {
-                var value = filterParams[key];
-                if(value === 'string') {
-                   value = value.trim();
-                }
-                if (value !== '') {
-                    httpParams[key] = value;
-                }
-            });
-            var httpQuery = {
+            const httpParams = generatePageParamsAndFilterParams(filterParams, pageNumber, pageSize);
+            const httpQuery = {
                 method: 'GET',
                 url: `${usersApiPath}`
-            }
+            };
             httpQuery["params"] = httpParams;
             return $http(httpQuery);
         },

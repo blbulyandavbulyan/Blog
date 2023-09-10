@@ -1,5 +1,5 @@
 var app = angular.module('blog', ['ngRoute']);
-app.config(function($routeProvider, $locationProvider) {
+app.config(function($routeProvider) {
   $routeProvider
     .when('/', {
       templateUrl: 'articlesList.html',
@@ -8,12 +8,11 @@ app.config(function($routeProvider, $locationProvider) {
       templateUrl: 'article.html',
     })
     .otherwise({ redirectTo: '/' });
-//  $locationProvider.html5Mode(true);
 });
 // Определение интерцептора
 const contextPath = window.location.origin + '/blog';
 function calculatePageNumbers(currentPage, totalPages, maxPagesToShow) {
-  var pageNumbers = [];
+  const pageNumbers = [];
   if (totalPages <= maxPagesToShow) {
     for (let i = 1; i <= totalPages; i++) {
       pageNumbers.push(i);
@@ -36,4 +35,20 @@ function calculatePageNumbers(currentPage, totalPages, maxPagesToShow) {
     }
   }
   return pageNumbers;
+}
+function generatePageParamsAndFilterParams(filterParams, pageNumber, pageSize){
+  const httpParams = {
+    p: pageNumber,
+    s: pageSize
+  };
+  Object.keys(filterParams).forEach(function(key) {
+    let value = filterParams[key];
+    if(value === 'string') {
+      value = value.trim();
+    }
+    if (value !== '') {
+      httpParams[key] = value;
+    }
+  });
+  return httpParams;
 }

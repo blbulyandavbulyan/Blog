@@ -2,26 +2,26 @@ var commentsApiPath = '/api/v1/comments';
 app.service('CommentService', ['$http', function($http){
     return {
             getComments: function(articleId, pageNumber, size){
-                var httpParams = {
+                const httpParams = {
                     p: pageNumber,
-                    s:size
+                    s: size
                 };
-                var getQuery = {
+                const getQuery = {
                     method: 'GET',
                     url: contextPath + commentsApiPath + '/article/' + articleId
-                }
+                };
                 getQuery["params"] = httpParams;
                 return $http(getQuery);
             },
             postComment: function(articleId, text){
-                var httpParams = {
+                const httpParams = {
                     articleId: articleId,
                     text: text
                 };
-                var postQuery = {
+                const postQuery = {
                     method: 'POST',
                     url: contextPath + commentsApiPath + '/article'
-                }
+                };
                 postQuery["data"] = httpParams;
                 return $http(postQuery);
             }
@@ -33,6 +33,9 @@ app.controller('CommentController', function($scope, $routeParams, CommentServic
      $scope.currentPage = 1;
      $scope.itemsPerPage = 5;
      $scope.totalPages = 5;
+     $scope.newComment = {
+         text:''
+     }
      const maxPagesToShow = 3; // Максимальное количество отображаемых страниц
      $scope.articleId = $routeParams.articleId;
      //функция для загрузки комментариев

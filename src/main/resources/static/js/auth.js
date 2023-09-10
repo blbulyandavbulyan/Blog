@@ -15,8 +15,9 @@ app.service('CookieService', function(){
     };
 })
 app.service('TokenService', function(CookieService){
-    var token = null;
-    var tokenPayload = null;
+    let token = null;
+    let tokenPayload = null;
+
     function init(newToken){
         token = newToken;
         if(token){
@@ -66,7 +67,7 @@ app.service('AuthService',  function($http, TokenService){
         login: function(credentials){
             return $http.post('/blog/api/v1/auth', credentials).then(function(response){
                 // В ответе сервера должен быть токен, который вы сохраняете в переменной $scope.token
-                var token = response.data.token;
+                const token = response.data.token;
                 TokenService.setToken(token);
                 return token;
             });
@@ -81,8 +82,8 @@ app.service('AuthService',  function($http, TokenService){
     };
 });
 app.factory('authInterceptor', ['$injector', '$q', function ($injector, $q) {
-  var tokenService = $injector.get('TokenService');
-  return {
+    const tokenService = $injector.get('TokenService');
+    return {
       request: function (config) {
         // Ваш код интерцептора
         if (tokenService.isValidToken()) {
@@ -120,7 +121,7 @@ app.controller('AuthController', function($scope, AuthService) {
     // Здесь отправляем POST-запрос с данными авторизации
     AuthService.login($scope.credentials).catch(function(error) {
         console.error('Ошибка авторизации:', error);
-        if(error.status == 401)$scope.error = 'Ошибка авторизации. Пожалуйста, проверьте правильность введенных данных.';
+        if(error.status === 401)$scope.error = 'Ошибка авторизации. Пожалуйста, проверьте правильность введенных данных.';
         else $scope.error = 'Неизвестная ошибка при авторизации.'
     });
   };

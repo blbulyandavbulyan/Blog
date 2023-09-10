@@ -2,20 +2,8 @@ app.service('ArticleService', function($http){
     const articlesApiPath = contextPath + '/api/v1/articles';
     return {
         getArticlesInfo: function(filterParams, pageNumber, pageSize){
-            var httpParams = {
-                p: pageNumber,
-                s: pageSize
-            };
-            Object.keys(filterParams).forEach(function(key) {
-                var value = filterParams[key];
-                if(value === 'string') {
-                   value = value.trim();
-                }
-                if (value !== '') {
-                    httpParams[key] = value;
-                }
-            });
-            var httpQuery = {
+            const httpParams = generatePageParamsAndFilterParams(filterParams, pageNumber, pageSize);
+            const httpQuery = {
                 method: 'GET',
                 url: articlesApiPath + '/info/all'
             };
@@ -61,9 +49,8 @@ app.controller('ArticlesController', function($scope, ArticleService){
       $scope.getPage(1);
 });
 app.controller('ArticleController', function($scope, $routeParams, ArticleService){
-    var articleId = $routeParams.articleId;
     // Загрузить статью по articleId с сервера или из хранилища данных
-    ArticleService.getArticle(articleId).then(function(response) {
+    ArticleService.getArticle($routeParams.articleId).then(function(response) {
       $scope.article = response.data;
     });
 });
