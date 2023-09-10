@@ -134,6 +134,7 @@ app.controller('UserController', function ($scope, UserService, AuthService, Rol
                     createdUser.roles = rolesNames.map(rn => {
                         return {name: rn}
                     });
+                    $scope.newRoles[createdUser.userId] = {}
                     rolesNames.forEach(function (roleName) {
                         $scope.newRoles[createdUser.userId][roleName] = true;
                     });
@@ -146,6 +147,7 @@ app.controller('UserController', function ($scope, UserService, AuthService, Rol
             })
             .catch(function (error) {
                 $scope.userCreationError = "Ошибка создания пользователя!";
+                console.log(error);
             })
         //TODO написать обработку ошибки создания пользователя
     }
