@@ -15,18 +15,18 @@ app.service('UserService', function ($http) {
             return $http(httpQuery);
         },
         createUser: function (username, password, rolesNames) {
-            var createUserRequest = {
+            const createUserRequest = {
                 name: username,
                 password: password,
                 roleNames: rolesNames
-            }
+            };
             return $http.post(usersApiPath, createUserRequest);
         },
         deleteUserById: function (userId) {
             return $http.delete(`${usersApiPath}/${userId}`);
         },
         updateRoles: function (userId, rolesNames) {
-            httpData = {
+            const httpData = {
                 userId: userId,
                 rolesNames: rolesNames
             };
