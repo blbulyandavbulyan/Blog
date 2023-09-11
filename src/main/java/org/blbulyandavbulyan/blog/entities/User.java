@@ -3,6 +3,7 @@ package org.blbulyandavbulyan.blog.entities;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.blbulyandavbulyan.blog.annotations.validation.user.ValidUsername;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +23,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long userId;
+    @ValidUsername
     @Column(name = "name")
     private String name;
     @Column(name = "password_hash")
