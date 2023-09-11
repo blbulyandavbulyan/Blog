@@ -6,6 +6,13 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.RECORD_COMPONENT, ElementType.PARAMETER, ElementType.FIELD})
 @Constraint(validatedBy = {})
 @NotNull
 @Min(1)
