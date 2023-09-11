@@ -1,6 +1,7 @@
 package org.blbulyandavbulyan.blog.controllers.rest;
 
 import lombok.RequiredArgsConstructor;
+import org.blbulyandavbulyan.blog.annotations.validation.article.ValidArticleId;
 import org.blbulyandavbulyan.blog.dtos.comment.CommentDTOForPublishing;
 import org.blbulyandavbulyan.blog.dtos.comment.CommentDto;
 import org.blbulyandavbulyan.blog.services.CommentService;
@@ -32,7 +33,7 @@ public class CommentController {
      * @return страницу, содержащую комментарии к заданной статье
      */
     @GetMapping("/article/{articleId}")
-    public Page<CommentDto> getAllCommentsForArticle(@PathVariable Long articleId, @RequestParam(name = "p", defaultValue = "1") Integer pageNumber, @RequestParam(name = "s", defaultValue = "10") Integer pageSize){
+    public Page<CommentDto> getAllCommentsForArticle(@ValidArticleId @PathVariable Long articleId, @RequestParam(name = "p", defaultValue = "1") Integer pageNumber, @RequestParam(name = "s", defaultValue = "10") Integer pageSize){
         return commentService.getCommentDTOsForArticleId(articleId, pageNumber - 1, pageSize);
     }
 

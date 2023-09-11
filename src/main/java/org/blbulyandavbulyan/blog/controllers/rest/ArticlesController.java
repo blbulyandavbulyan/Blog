@@ -1,6 +1,7 @@
 package org.blbulyandavbulyan.blog.controllers.rest;
 
 import lombok.RequiredArgsConstructor;
+import org.blbulyandavbulyan.blog.annotations.validation.article.ValidArticleId;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleDto;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleForPublishing;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleInfoDTO;
@@ -34,7 +35,7 @@ public class ArticlesController {
      * @return найденную статью типа ArticleDto
      */
     @GetMapping("/{id}")
-    public ArticleDto getById(@PathVariable Long id) {
+    public ArticleDto getById(@ValidArticleId @PathVariable Long id) {
         return articlesService.getById(id);
     }
 
@@ -45,7 +46,7 @@ public class ArticlesController {
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteArticleById(@PathVariable Long id) {
+    public void deleteArticleById(@ValidArticleId @PathVariable Long id) {
         articlesService.deleteById(id);
     }
 
