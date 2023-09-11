@@ -12,6 +12,15 @@ app.service('ArticleService', function ($http) {
         },
         getArticle: function (articleId) {
             return $http.get(`${articlesApiPath}/${articleId}`);
+        },
+        postArticle: function (title, text) {
+            return $http.post(articlesApiPath, {
+                title: title,
+                text: text
+            });
+        },
+        openArticle: function (articleId) {
+            document.location.hash = `!/articles/${articleId}`;
         }
     };
 });
@@ -40,7 +49,7 @@ app.controller('ArticlesController', function ($scope, ArticleService) {
         $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
     }
     $scope.goToArticle = function (articleId) {
-        document.location.hash = `!/articles/${articleId}`;
+        ArticleService.openArticle(articleId)
     };
     // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
     $scope.$watch('totalPages', function () {
@@ -48,9 +57,34 @@ app.controller('ArticlesController', function ($scope, ArticleService) {
     });
     $scope.getPage(1);
 });
-app.controller('ArticleController', function ($scope, $routeParams, ArticleService) {
+app.controller('ArticleRouteController', function ($scope, $routeParams, ArticleService, RoleService) {
     // Загрузить статью по articleId с сервера или из хранилища данных
     ArticleService.getArticle($routeParams.articleId).then(function (response) {
         $scope.article = response.data;
     });
+});
+app.controller('ArticleController', function ($scope, ArticleService, RoleService) {
+    $scope.sendingError = null;
+    //переменная содержащая новую статью для публикации
+    $scope.newArticle = {
+        title: '',
+        text: ''
+    }
+    //метод сообщающий о том, может ли пользователь писать статьи
+    $scope.canPublish = () => RoleService.isPublisher();
+    //метод публикующий статью
+    $scope.publishArticle = function () {
+        ArticleService.postArticle($scope.newArticle.title, $scope.newArticle.text)
+            .then(function (response) {
+                //здесь мы ожидаем что нам в ответ придёт как минимум id новой статьи
+                //todo подумать над тем, что нужно делать после успешной публикации
+                const articleId = response.data.articleId;
+                $scope.newArticle.title = ''
+                $scope.newArticle.text = ''
+                ArticleService.openArticle(articleId);
+            });
+    };
+});
+app.controller('ArticleNavbarController', function($scope, RoleService){
+    $scope.showPostArticleItem = ()=> RoleService.isPublisher();
 });

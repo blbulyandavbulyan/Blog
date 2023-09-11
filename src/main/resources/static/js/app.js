@@ -7,6 +7,9 @@ app.config(function ($routeProvider) {
         .when('/articles/:articleId', {
             templateUrl: 'article.html',
         })
+        .when('/new_article', {
+            templateUrl: 'publish_article.html'
+        })
         .otherwise({redirectTo: '/'});
 });
 // Определение интерцептора
