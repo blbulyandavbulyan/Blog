@@ -1,5 +1,5 @@
 <div ng-controller="ArticleController" class="container">
-    <form ng-show="canPublish()" ng-submit="publishArticle()" class="mt-4">
+    <form name="postNewArticle" ng-show="canPublish()" ng-submit="publishArticle()" class="mt-4" novalidate>
         <div class="form-group">
             <label>
                 Напишите заголовок статьи
@@ -10,7 +10,7 @@
             <label for="article-text">Напишите текст статьи:</label>
             <textarea id="article-text" ng-model="newArticle.text" class="form-control" rows="4" required></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Опубликовать статью</button>
+        <button ng-disabled="postNewArticle.$invalid" type="submit" class="btn btn-primary">Опубликовать статью</button>
     </form>
     <div ng-if="sendingError" class="alert alert-danger" role="alert">{{sendingError}}</div>
 </div>
