@@ -16,6 +16,19 @@
 <body>
 <div class="container mt-4">
     <div ng-include="'fragments/auth-form.html'"></div>
+    <nav ng-controller="ArticleNavbarController" class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="articles.html#!/">Все статьи</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul ng-show="showPostArticleItem()" class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="articles.html#!/new_article">Новая статья</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <ng-view></ng-view>
 </div>
 </body>
