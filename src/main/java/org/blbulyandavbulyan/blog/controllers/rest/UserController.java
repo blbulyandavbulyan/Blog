@@ -1,6 +1,7 @@
 package org.blbulyandavbulyan.blog.controllers.rest;
 
 import lombok.RequiredArgsConstructor;
+import org.blbulyandavbulyan.blog.annotations.validation.user.ValidUserId;
 import org.blbulyandavbulyan.blog.dtos.authorization.RegistrationUser;
 import org.blbulyandavbulyan.blog.dtos.roles.UpdateRolesDto;
 import org.blbulyandavbulyan.blog.dtos.user.UserCreateRequest;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.util.MultiValueMap;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -32,7 +34,7 @@ public class UserController {
      */
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerUser(@RequestBody RegistrationUser registrationUser) {
+    public void registerUser(@Validated @RequestBody RegistrationUser registrationUser) {
         userService.registerUser(registrationUser.username(), registrationUser.password());
     }
 
@@ -43,7 +45,7 @@ public class UserController {
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteUserById(@PathVariable Long id) {
+    public void deleteUserById(@ValidUserId @PathVariable Long id) {
         userService.deleteById(id);
     }
     /**
@@ -52,7 +54,7 @@ public class UserController {
     @Secured("ROLE_ADMIN")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserCreatedResponse createUser(@RequestBody UserCreateRequest userCreateRequest){
+    public UserCreatedResponse createUser(@Validated @RequestBody UserCreateRequest userCreateRequest){
         User user = userService.createUser(userCreateRequest);
         return new UserCreatedResponse(user.getUserId());
     }
@@ -64,7 +66,7 @@ public class UserController {
      */
     @Secured("ROLE_ADMIN")
     @GetMapping("/{id}")
-    public UserInfoDTO getUserInfo(@PathVariable Long id){
+    public UserInfoDTO getUserInfo(@ValidUserId @PathVariable Long id){
         return userService.getUserInfo(id);
     }
 
@@ -87,7 +89,7 @@ public class UserController {
     @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/roles")
-    public void updateUserPrivileges(@RequestBody UpdateRolesDto updateRolesDto){
+    public void updateUserPrivileges(@Validated @RequestBody UpdateRolesDto updateRolesDto){
         userService.updateRoles(updateRolesDto.userId(), updateRolesDto.rolesNames());
     }
 }
