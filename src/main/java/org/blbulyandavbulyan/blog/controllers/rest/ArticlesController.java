@@ -10,6 +10,7 @@ import org.blbulyandavbulyan.blog.specs.ArticleSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -57,7 +58,7 @@ public class ArticlesController {
     @Secured("ROLE_PUBLISHER")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ArticlePublished publishArticle(@RequestBody ArticleForPublishing articleForPublishing, Principal principal) {
+    public ArticlePublished publishArticle(@Validated @RequestBody ArticleForPublishing articleForPublishing, Principal principal) {
         return articlesService.publishArticle(articleForPublishing, principal.getName());
     }
 
