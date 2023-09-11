@@ -84,6 +84,3 @@ app.controller('ArticleController', function ($scope, $routeParams, ArticleServi
             });
     };
 });
-app.controller('ArticleNavbarController', function($scope, RoleService){
-    $scope.showPostArticleItem = ()=> RoleService.isPublisher();
-});

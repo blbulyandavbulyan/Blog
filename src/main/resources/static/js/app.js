@@ -1,7 +1,7 @@
 const app = angular.module('blog', ['ngRoute']);
 app.config(function ($routeProvider) {
     $routeProvider
-        .when('/', {
+        .when('/articles', {
             templateUrl: 'articlesList.html',
         })
         .when('/articles/:articleId', {
@@ -10,7 +10,10 @@ app.config(function ($routeProvider) {
         .when('/new_article', {
             templateUrl: 'publish_article.html'
         })
-        .otherwise({redirectTo: '/'});
+        .when("/user_control",{
+            templateUrl: 'users.html'
+        })
+        .otherwise({redirectTo: '/articles'});
 });
 // Определение интерцептора
 const contextPath = window.location.origin + '/blog';
