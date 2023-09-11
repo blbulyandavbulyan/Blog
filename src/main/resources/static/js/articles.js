@@ -57,13 +57,12 @@ app.controller('ArticlesController', function ($scope, ArticleService) {
     });
     $scope.getPage(1);
 });
-app.controller('ArticleRouteController', function ($scope, $routeParams, ArticleService, RoleService) {
-    // Загрузить статью по articleId с сервера или из хранилища данных
-    ArticleService.getArticle($routeParams.articleId).then(function (response) {
-        $scope.article = response.data;
-    });
-});
-app.controller('ArticleController', function ($scope, ArticleService, RoleService) {
+app.controller('ArticleController', function ($scope, $routeParams, ArticleService, RoleService) {
+    if($routeParams.articleId) {
+        ArticleService.getArticle($routeParams.articleId).then(function (response) {
+            $scope.article = response.data;
+        });
+    }
     $scope.sendingError = null;
     //переменная содержащая новую статью для публикации
     $scope.newArticle = {
