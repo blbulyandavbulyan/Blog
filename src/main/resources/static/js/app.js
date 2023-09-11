@@ -10,6 +10,9 @@ app.config(function ($routeProvider) {
         .when('/new_article', {
             templateUrl: 'publish_article.html'
         })
+        .when("/user_control",{
+            templateUrl: 'users.html'
+        })
         .otherwise({redirectTo: '/'});
 });
 // Определение интерцептора
