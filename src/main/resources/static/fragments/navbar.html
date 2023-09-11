@@ -1,12 +1,21 @@
 <nav ng-controller="NavbarController" class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="articles.html#!/">Все статьи</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav" >
+            <li class="nav-item">
+                <a  ng-class="{ active: isActive('/') }" class="nav-link" href="articles.html#!/">Все статьи</a>
+            </li>
+        </ul>
         <ul ng-show="showPostArticleItem()" class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="articles.html#!/new_article">Новая статья</a>
+                <a ng-class="{ active: isActive('/new_article') }" class="nav-link" href="articles.html#!/new_article">Новая статья</a>
+            </li>
+        </ul>
+        <ul ng-show="canAdministrate()" class="navbar-nav">
+            <li class="nav-item">
+                <a ng-class="{ active: isActive('/user_control') }" class="nav-link" href="articles.html#!/user_control">Управление пользователями</a>
             </li>
         </ul>
     </div>
