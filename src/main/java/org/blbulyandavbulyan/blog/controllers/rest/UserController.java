@@ -1,6 +1,8 @@
 package org.blbulyandavbulyan.blog.controllers.rest;
 
 import lombok.RequiredArgsConstructor;
+import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageNumber;
+import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageSize;
 import org.blbulyandavbulyan.blog.annotations.validation.user.ValidUserId;
 import org.blbulyandavbulyan.blog.dtos.authorization.RegistrationUser;
 import org.blbulyandavbulyan.blog.dtos.roles.UpdateRolesDto;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
+@Validated
 public class UserController {
     /**
      * Сервис для управления пользователями
@@ -79,7 +82,9 @@ public class UserController {
      */
     @Secured("ROLE_ADMIN")
     @GetMapping
-    public Page<UserInfoDTO> getUserInfos(@RequestParam(defaultValue = "5", name = "s") Integer pageSize, @RequestParam(defaultValue = "1", name = "p") Integer pageNumber, @RequestParam MultiValueMap<String, String> requestParams){
+    public Page<UserInfoDTO> getUserInfos(@ValidPageSize @RequestParam(defaultValue = "5", name = "s") Integer pageSize,
+                                          @ValidPageNumber @RequestParam(defaultValue = "1", name = "p") Integer pageNumber,
+                                          @RequestParam MultiValueMap<String, String> requestParams){
         return userService.getUserInfos(requestParams, pageNumber - 1, pageSize);
     }
     /**

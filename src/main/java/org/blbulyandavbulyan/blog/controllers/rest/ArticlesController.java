@@ -2,6 +2,8 @@ package org.blbulyandavbulyan.blog.controllers.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.annotations.validation.article.ValidArticleId;
+import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageNumber;
+import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageSize;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleDto;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleForPublishing;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleInfoDTO;
@@ -23,6 +25,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/articles")
+@Validated
 public class ArticlesController {
     /**
      * Ссылка на сервис для статей
@@ -70,7 +73,9 @@ public class ArticlesController {
      * @return найденную страницу с краткой информацией о статьях
      */
     @GetMapping("/info/all")
-    public Page<ArticleInfoDTO> getInfoAboutAllArticles(@RequestParam(defaultValue = "5", name = "s") Integer pageSize, @RequestParam(defaultValue = "1", name = "p") Integer pageNumber, @RequestParam Map<String, String> requestParams) {
+    public Page<ArticleInfoDTO> getInfoAboutAllArticles(@ValidPageSize @RequestParam(defaultValue = "5", name = "s") Integer pageSize,
+                                                        @ValidPageNumber @RequestParam(defaultValue = "1", name = "p") Integer pageNumber,
+                                                        @RequestParam Map<String, String> requestParams) {
         return articlesService.getInfoAboutAll(new ArticleSpecifications(requestParams).getArticleSpecification(), pageSize, pageNumber - 1);
     }
 }
