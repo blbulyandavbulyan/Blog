@@ -10,6 +10,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Данная аннотация предназначена для валидации текста комментария
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.RECORD_COMPONENT, ElementType.PARAMETER, ElementType.FIELD})
 @Constraint(validatedBy = {})

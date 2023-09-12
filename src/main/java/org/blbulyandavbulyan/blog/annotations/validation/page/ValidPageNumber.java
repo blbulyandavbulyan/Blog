@@ -11,6 +11,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Данная аннотация предназначена для валидации параметра с номером страницы(для постраничных запросов)
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.RECORD_COMPONENT, ElementType.PARAMETER, ElementType.FIELD})
 @Constraint(validatedBy = {})
