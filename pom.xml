@@ -11,7 +11,7 @@
 	<groupId>org.blbulyandavbulyan</groupId>
 	<artifactId>Blog</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>Blog</name>
 	<description>My own cms for blog</description>
 	<properties>
