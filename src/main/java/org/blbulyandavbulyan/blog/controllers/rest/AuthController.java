@@ -3,12 +3,8 @@ package org.blbulyandavbulyan.blog.controllers.rest;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.authorization.JwtRequest;
 import org.blbulyandavbulyan.blog.dtos.authorization.JwtResponse;
-import org.blbulyandavbulyan.blog.dtos.error.AppError;
 import org.blbulyandavbulyan.blog.utils.JWTTokenUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -35,17 +31,13 @@ public class AuthController {
 
     /**
      * Метод создаёт токен для пользователя, в случае успешного прохождения авторизации
+     *
      * @param authRequest запрос содержащий логин и пароль
      * @return ответ, содержащий JWT токен в случае успешной авторизации
      */
     @PostMapping
-    public ResponseEntity<?> createAuthToken(@Validated @RequestBody JwtRequest authRequest){
-        try {
+    public JwtResponse createAuthToken(@Validated @RequestBody JwtRequest authRequest){
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.username(), authRequest.password()));
-            return ResponseEntity.ok(new JwtResponse(jwtTokenUtils.generateToken(authentication.getName(), authentication.getAuthorities())));
-        }
-        catch (BadCredentialsException e){
-            return new ResponseEntity<>(new AppError(HttpStatus.UNAUTHORIZED.value(), "Incorrect username or password!"), HttpStatus.UNAUTHORIZED);
-        }
+            return new JwtResponse(jwtTokenUtils.generateToken(authentication.getName(), authentication.getAuthorities()));
     }
 }
