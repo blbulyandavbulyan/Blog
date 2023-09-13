@@ -5,4 +5,5 @@ app.controller('NavbarController', function($scope, $location, RoleService, Auth
         return viewLocation === $location.path();
     };
     $scope.isAuthenticated = ()=> AuthService.isAuthenticated();
+    $scope.logout = ()=> AuthService.logout();
 });

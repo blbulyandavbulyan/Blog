@@ -23,5 +23,10 @@
                 <a ng-class="{ active: isActive('/auth') }" class="nav-link" href="index.html#!/auth">Войти</a>
             </li>
         </ul>
+        <ul ng-show="isAuthenticated()" class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:;" ng-click="logout()">Выйти</a>
+            </li>
+        </ul>
     </div>
 </nav>
