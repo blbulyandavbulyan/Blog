@@ -6,5 +6,5 @@ package org.blbulyandavbulyan.blog.dtos.article;
  * @param text текст стать
  * @param publisherName имя автора данной статьи
  */
-public record ArticleDto(String title, String text, String publisherName) {
+public record ArticleResponse(String title, String text, String publisherName) {
 }

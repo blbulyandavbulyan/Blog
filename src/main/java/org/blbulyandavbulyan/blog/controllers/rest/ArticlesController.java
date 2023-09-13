@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.annotations.validation.article.ValidArticleId;
 import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageNumber;
 import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageSize;
-import org.blbulyandavbulyan.blog.dtos.article.ArticleDto;
-import org.blbulyandavbulyan.blog.dtos.article.ArticleForPublishing;
+import org.blbulyandavbulyan.blog.dtos.article.ArticleResponse;
+import org.blbulyandavbulyan.blog.dtos.article.CreateArticleRequest;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleInfoDTO;
-import org.blbulyandavbulyan.blog.dtos.article.ArticlePublished;
+import org.blbulyandavbulyan.blog.dtos.article.ArticlePublishedResponse;
 import org.blbulyandavbulyan.blog.services.ArticlesService;
 import org.blbulyandavbulyan.blog.specs.ArticleSpecifications;
 import org.springframework.data.domain.Page;
@@ -38,7 +38,7 @@ public class ArticlesController {
      * @return найденную статью типа ArticleDto
      */
     @GetMapping("/{id}")
-    public ArticleDto getById(@ValidArticleId @PathVariable Long id) {
+    public ArticleResponse getById(@ValidArticleId @PathVariable Long id) {
         return articlesService.getById(id);
     }
 
@@ -55,15 +55,15 @@ public class ArticlesController {
 
     /**
      * Публикует статью
-     * @param articleForPublishing статья, которую нужно опубликовать
+     * @param createArticleRequest статья, которую нужно опубликовать
      * @param principal ссылка на Principal, в котором содержатся данные об авторизованном пользователе
      * @return информацию об опубликованной статье
      */
     @Secured("ROLE_PUBLISHER")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ArticlePublished publishArticle(@Validated @RequestBody ArticleForPublishing articleForPublishing, Principal principal) {
-        return articlesService.publishArticle(articleForPublishing, principal.getName());
+    public ArticlePublishedResponse publishArticle(@Validated @RequestBody CreateArticleRequest createArticleRequest, Principal principal) {
+        return articlesService.publishArticle(createArticleRequest, principal.getName());
     }
 
     /**

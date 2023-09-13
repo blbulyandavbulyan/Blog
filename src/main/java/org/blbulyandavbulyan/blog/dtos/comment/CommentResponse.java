@@ -9,5 +9,5 @@ import java.time.ZonedDateTime;
  * @param text текст комментария
  * @param publishDate дата публикации
  */
-public record CommentDto(Long commentId, String authorName, String text, ZonedDateTime publishDate) {
+public record CommentResponse(Long commentId, String authorName, String text, ZonedDateTime publishDate) {
 }

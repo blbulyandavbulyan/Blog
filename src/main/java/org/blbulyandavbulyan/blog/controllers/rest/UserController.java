@@ -5,7 +5,7 @@ import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageNumber;
 import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageSize;
 import org.blbulyandavbulyan.blog.annotations.validation.user.ValidUserId;
 import org.blbulyandavbulyan.blog.dtos.authorization.RegistrationUser;
-import org.blbulyandavbulyan.blog.dtos.roles.UpdateRolesDto;
+import org.blbulyandavbulyan.blog.dtos.roles.UpdateRolesRequest;
 import org.blbulyandavbulyan.blog.dtos.user.UserCreateRequest;
 import org.blbulyandavbulyan.blog.dtos.user.UserCreatedResponse;
 import org.blbulyandavbulyan.blog.dtos.user.UserInfoDTO;
@@ -89,12 +89,12 @@ public class UserController {
     }
     /**
      * Обновляет привилегии у пользователя
-     * @param updateRolesDto DTO содержащее ИД пользователя, роли которого нужно обновить и набор новых ролей
+     * @param updateRolesRequest DTO содержащее ИД пользователя, роли которого нужно обновить и набор новых ролей
      */
     @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/roles")
-    public void updateUserPrivileges(@Validated @RequestBody UpdateRolesDto updateRolesDto){
-        userService.updateRoles(updateRolesDto.userId(), updateRolesDto.rolesNames());
+    public void updateUserPrivileges(@Validated @RequestBody UpdateRolesRequest updateRolesRequest){
+        userService.updateRoles(updateRolesRequest.userId(), updateRolesRequest.rolesNames());
     }
 }

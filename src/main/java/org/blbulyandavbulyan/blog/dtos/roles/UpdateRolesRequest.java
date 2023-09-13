@@ -12,5 +12,5 @@ import java.util.List;
  * @param userId ИД пользователя, роли которого нужно обновить
  * @param rolesNames список ролей, которые будут вместо старых
  */
-public record UpdateRolesDto(@ValidUserId Long userId, @NotNull List<@NotBlank String> rolesNames) {
+public record UpdateRolesRequest(@ValidUserId Long userId, @NotNull List<@NotBlank String> rolesNames) {
 }
