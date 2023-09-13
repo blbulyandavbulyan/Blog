@@ -1,0 +1,77 @@
+<div ng-controller="UserController">
+    <div ng-if="canAdmin()" class="container mt-5">
+        <form ng-submit="filterUsers()" class="filter">
+            <div class="form-group">
+                <label for="nameFilter">Имя пользователя:</label>
+                <input type="text" class="form-control" id="nameFilter" ng-model="filter.name">
+            </div>
+            <div class="form-group d-flex flex-wrap roles-selector">
+                <label>Выберите роли:</label>
+                <div ng-repeat="roleName in availableRoles" class="me-3 form-check form-switch custom-checkbox">
+                    <label class="no-select form-check-label" ng-class="{'active': filter.roles[roleName]}">
+                        {{roleName}}
+                        <input type="checkbox" class="form-check-input" ng-model="filter.roles[roleName]">
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Применить фильтр</button>
+        </form>
+        <div ng-if="users.length > 0">
+            <div ng-repeat="user in users">
+                <h1>{{user.name}}</h1>
+                <div class="d-flex flex-wrap">
+                    <h2>Roles:</h2>
+                    <div ng-repeat="roleName in availableRoles" class="me-3 form-check form-switch custom-checkbox">
+                        <label class="no-select form-check-label"
+                               ng-class="{'active': newRoles[user.userId][roleName]}">
+                            {{ roleName }}
+                            <input class="form-check-input" type="checkbox" ng-model="newRoles[user.userId][roleName]"
+                                   ng-checked="hasRole(user, roleName)" ng-change="updateRoles(user)">
+                        </label>
+                    </div>
+                </div>
+                <button class="btn btn-warning" ng-disabled="!newRoles[user.userId].isChanged"
+                        ng-click="applyChanges(user)">Применить изменения
+                </button>
+                <button ng-disabled="isItMe(user)" class="btn btn-danger" ng-click="deleteUser(user.userId)">Удалить
+                    пользователя
+                </button>
+                <hr>
+            </div>
+            <div ng-include="'fragments/pagination.html'"></div>
+        </div>
+        <h2>Создание пользователя:</h2>
+        <form ng-submit="createUser()" name="newUserForm">
+            <div class="form-group">
+                <label>
+                    Имя пользователя:
+                    <input type="text" class="form-control" ng-model="newUser.name"
+                           placeholder="Введите имя пользователя" required>
+                </label>
+
+            </div>
+            <div class="form-group">
+                <label>
+                    Пароль:
+                    <input type="password" class="form-control" ng-model="newUser.password" placeholder="Введите пароль"
+                           required>
+                </label>
+            </div>
+            <div class="form-group d-flex flex-wrap roles-selector">
+                <label>Выберите роли:</label>
+                <div ng-repeat="roleName in availableRoles" class="me-3 form-check form-switch custom-checkbox">
+                    <label class="no-select form-check-label" ng-class="{'active': newUser.roles[roleName]}">
+                        {{roleName}}
+                        <input type="checkbox" class="form-check-input" ng-model="newUser.roles[roleName]">
+                    </label>
+                </div>
+            </div>
+            <button ng-disabled="newUserForm.$invalid" type="submit" class="btn btn-primary">Создать</button>
+        </form>
+        <div ng-if="userCreationError" class="alert alert-danger" role="alert">{{userCreationError}}</div>
+    </div>
+    <div ng-show="isAuthenticated() && !canAdmin()" class="alert alert-danger" role="alert">У вас нет прав для действий
+        на данной странице!
+    </div>
+    <div ng-show="!isAuthenticated()" class="alert alert-danger" role="alert">Вы не авторизованы!</div>
+</div>

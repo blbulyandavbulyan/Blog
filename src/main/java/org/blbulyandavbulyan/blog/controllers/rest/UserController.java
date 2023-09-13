@@ -1,12 +1,21 @@
 package org.blbulyandavbulyan.blog.controllers.rest;
 
 import lombok.RequiredArgsConstructor;
+import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageNumber;
+import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageSize;
+import org.blbulyandavbulyan.blog.annotations.validation.user.ValidUserId;
 import org.blbulyandavbulyan.blog.dtos.authorization.RegistrationUser;
+import org.blbulyandavbulyan.blog.dtos.roles.UpdateRolesRequest;
 import org.blbulyandavbulyan.blog.dtos.user.UserCreateRequest;
+import org.blbulyandavbulyan.blog.dtos.user.UserCreatedResponse;
 import org.blbulyandavbulyan.blog.dtos.user.UserInfoDTO;
+import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.services.UserService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.util.MultiValueMap;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -15,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
+@Validated
 public class UserController {
     /**
      * Сервис для управления пользователями
@@ -27,7 +37,7 @@ public class UserController {
      */
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerUser(@RequestBody RegistrationUser registrationUser) {
+    public void registerUser(@Validated @RequestBody RegistrationUser registrationUser) {
         userService.registerUser(registrationUser.username(), registrationUser.password());
     }
 
@@ -38,7 +48,7 @@ public class UserController {
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteUserById(@PathVariable Long id) {
+    public void deleteUserById(@ValidUserId @PathVariable Long id) {
         userService.deleteById(id);
     }
     /**
@@ -47,8 +57,9 @@ public class UserController {
     @Secured("ROLE_ADMIN")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createUser(@RequestBody UserCreateRequest userCreateRequest){
-        userService.createUser(userCreateRequest);
+    public UserCreatedResponse createUser(@Validated @RequestBody UserCreateRequest userCreateRequest){
+        User user = userService.createUser(userCreateRequest);
+        return new UserCreatedResponse(user.getUserId());
     }
 
     /**
@@ -58,8 +69,32 @@ public class UserController {
      */
     @Secured("ROLE_ADMIN")
     @GetMapping("/{id}")
-    public UserInfoDTO getUserInfo(@PathVariable Long id){
+    public UserInfoDTO getUserInfo(@ValidUserId @PathVariable Long id){
         return userService.getUserInfo(id);
     }
 
+    /**
+     * Ищет информацию о пользователях в виде страницы
+     * @param pageSize размер страницы
+     * @param pageNumber номер страницы
+     * @param requestParams multimap, содержащая параметры запроса, и из которой будут доставаться параметры фильтрации
+     * @return искомую страницу с информацией
+     */
+    @Secured("ROLE_ADMIN")
+    @GetMapping
+    public Page<UserInfoDTO> getUserInfos(@ValidPageSize @RequestParam(defaultValue = "5", name = "s") Integer pageSize,
+                                          @ValidPageNumber @RequestParam(defaultValue = "1", name = "p") Integer pageNumber,
+                                          @RequestParam MultiValueMap<String, String> requestParams){
+        return userService.getUserInfos(requestParams, pageNumber - 1, pageSize);
+    }
+    /**
+     * Обновляет привилегии у пользователя
+     * @param updateRolesRequest DTO содержащее ИД пользователя, роли которого нужно обновить и набор новых ролей
+     */
+    @Secured("ROLE_ADMIN")
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/roles")
+    public void updateUserPrivileges(@Validated @RequestBody UpdateRolesRequest updateRolesRequest){
+        userService.updateRoles(updateRolesRequest.userId(), updateRolesRequest.rolesNames());
+    }
 }

@@ -1,8 +1,8 @@
 package org.blbulyandavbulyan.blog.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.blbulyandavbulyan.blog.dtos.article.ArticleDto;
-import org.blbulyandavbulyan.blog.dtos.article.ArticleForPublishing;
+import org.blbulyandavbulyan.blog.dtos.article.ArticleResponse;
+import org.blbulyandavbulyan.blog.dtos.article.CreateArticleRequest;
 import org.blbulyandavbulyan.blog.entities.Role;
 import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.services.ArticlesService;
@@ -63,8 +63,8 @@ public class ArticleControllerTest {
         Mockito.when(userService.findByName("david")).thenReturn(david);
     }
     private void createArticle(ResultMatcher ... resultMatchers) throws Exception {
-        ArticleForPublishing articleForPublishing = new ArticleForPublishing("Test title", "Test text");
-        mockMvc.perform(post("/api/v1/articles").contentType(MediaType.APPLICATION_JSON).content(this.objectMapper.writeValueAsString(articleForPublishing)))
+        CreateArticleRequest createArticleRequest = new CreateArticleRequest("Test title", "Test text");
+        mockMvc.perform(post("/api/v1/articles").contentType(MediaType.APPLICATION_JSON).content(this.objectMapper.writeValueAsString(createArticleRequest)))
                 .andExpectAll(resultMatchers)
                 .andDo(
                         document(
@@ -89,12 +89,12 @@ public class ArticleControllerTest {
     @Test
     @WithMockUser(username = "david", roles = {"COMMENTER", "PUBLISHER"})
     public void getArticleByIdIfArticleExists() throws Exception {
-        ArticleDto articleDto = new ArticleDto("My test article", "Something very long", "david");
-        Mockito.when(articlesService.getById(1L)).thenReturn(articleDto);
+        ArticleResponse articleResponse = new ArticleResponse("My test article", "Something very long", "david");
+        Mockito.when(articlesService.getById(1L)).thenReturn(articleResponse);
         mockMvc.perform(get("/api/v1/articles/{id}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(articleDto), true));
+                .andExpect(content().json(objectMapper.writeValueAsString(articleResponse), true));
         verify(articlesService).getById(1L);
     }
 }
