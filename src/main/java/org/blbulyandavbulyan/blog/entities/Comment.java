@@ -3,6 +3,7 @@ package org.blbulyandavbulyan.blog.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.blbulyandavbulyan.blog.annotations.validation.comment.ValidCommentText;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.ZonedDateTime;
@@ -22,7 +23,8 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "article_id")
     private Article article;
-    @Column(name = "text", length = 5000)
+    @ValidCommentText
+    @Column(name = "text", length = 2000)
     private String text;
     @Column(name = "publish_date")
     @CreationTimestamp

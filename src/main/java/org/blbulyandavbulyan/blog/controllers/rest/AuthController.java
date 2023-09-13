@@ -3,7 +3,7 @@ package org.blbulyandavbulyan.blog.controllers.rest;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.authorization.JwtRequest;
 import org.blbulyandavbulyan.blog.dtos.authorization.JwtResponse;
-import org.blbulyandavbulyan.blog.exceptions.AppError;
+import org.blbulyandavbulyan.blog.dtos.error.AppError;
 import org.blbulyandavbulyan.blog.utils.JWTTokenUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +39,7 @@ public class AuthController {
      * @return ответ, содержащий JWT токен в случае успешной авторизации
      */
     @PostMapping
-    public ResponseEntity<?> createAuthToken(@RequestBody JwtRequest authRequest){
+    public ResponseEntity<?> createAuthToken(@Validated @RequestBody JwtRequest authRequest){
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.username(), authRequest.password()));
             return ResponseEntity.ok(new JwtResponse(jwtTokenUtils.generateToken(authentication.getName(), authentication.getAuthorities())));

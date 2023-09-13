@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.blbulyandavbulyan.blog.annotations.validation.article.ValidArticleText;
+import org.blbulyandavbulyan.blog.annotations.validation.article.ValidArticleTitle;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.ZonedDateTime;
@@ -23,8 +25,10 @@ public class Article {
     @JoinColumn(name = "author_id")
     private User publisher;
     @Column(name = "title")
+    @ValidArticleTitle
     private String title;
-    @Column(name = "text", length = 2000)
+    @ValidArticleText
+    @Column(name = "text", length = 5000)
     private String text;
     @OneToMany(mappedBy = "article")
     private List<Comment> comments;

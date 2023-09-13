@@ -1,6 +1,9 @@
 package org.blbulyandavbulyan.blog.controllers.rest;
 
 import lombok.RequiredArgsConstructor;
+import org.blbulyandavbulyan.blog.annotations.validation.article.ValidArticleId;
+import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageNumber;
+import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageSize;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleDto;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleForPublishing;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleInfoDTO;
@@ -10,6 +13,7 @@ import org.blbulyandavbulyan.blog.specs.ArticleSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -21,6 +25,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/articles")
+@Validated
 public class ArticlesController {
     /**
      * Ссылка на сервис для статей
@@ -33,7 +38,7 @@ public class ArticlesController {
      * @return найденную статью типа ArticleDto
      */
     @GetMapping("/{id}")
-    public ArticleDto getById(@PathVariable Long id) {
+    public ArticleDto getById(@ValidArticleId @PathVariable Long id) {
         return articlesService.getById(id);
     }
 
@@ -44,7 +49,7 @@ public class ArticlesController {
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteArticleById(@PathVariable Long id) {
+    public void deleteArticleById(@ValidArticleId @PathVariable Long id) {
         articlesService.deleteById(id);
     }
 
@@ -57,7 +62,7 @@ public class ArticlesController {
     @Secured("ROLE_PUBLISHER")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ArticlePublished publishArticle(@RequestBody ArticleForPublishing articleForPublishing, Principal principal) {
+    public ArticlePublished publishArticle(@Validated @RequestBody ArticleForPublishing articleForPublishing, Principal principal) {
         return articlesService.publishArticle(articleForPublishing, principal.getName());
     }
 
@@ -68,7 +73,9 @@ public class ArticlesController {
      * @return найденную страницу с краткой информацией о статьях
      */
     @GetMapping("/info/all")
-    public Page<ArticleInfoDTO> getInfoAboutAllArticles(@RequestParam(defaultValue = "5", name = "s") Integer pageSize, @RequestParam(defaultValue = "1", name = "p") Integer pageNumber, @RequestParam Map<String, String> requestParams) {
+    public Page<ArticleInfoDTO> getInfoAboutAllArticles(@ValidPageSize @RequestParam(defaultValue = "5", name = "s") Integer pageSize,
+                                                        @ValidPageNumber @RequestParam(defaultValue = "1", name = "p") Integer pageNumber,
+                                                        @RequestParam Map<String, String> requestParams) {
         return articlesService.getInfoAboutAll(new ArticleSpecifications(requestParams).getArticleSpecification(), pageSize, pageNumber - 1);
     }
 }
