@@ -13,6 +13,9 @@ app.config(function ($routeProvider) {
         .when("/user_control",{
             templateUrl: 'users.html'
         })
+        .when('/auth', {
+            templateUrl: 'auth-form.html'
+        })
         .otherwise({redirectTo: '/articles'});
 });
 // Определение интерцептора
