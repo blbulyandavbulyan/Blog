@@ -1,6 +1,6 @@
 package org.blbulyandavbulyan.blog.controllers.handling;
 
-import org.blbulyandavbulyan.blog.exceptions.AppError;
+import org.blbulyandavbulyan.blog.dtos.error.AppError;
 import org.blbulyandavbulyan.blog.exceptions.articles.ArticleNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

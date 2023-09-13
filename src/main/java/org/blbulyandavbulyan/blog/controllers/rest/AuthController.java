@@ -3,7 +3,7 @@ package org.blbulyandavbulyan.blog.controllers.rest;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.authorization.JwtRequest;
 import org.blbulyandavbulyan.blog.dtos.authorization.JwtResponse;
-import org.blbulyandavbulyan.blog.exceptions.AppError;
+import org.blbulyandavbulyan.blog.dtos.error.AppError;
 import org.blbulyandavbulyan.blog.utils.JWTTokenUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package org.blbulyandavbulyan.blog.exceptions;
+package org.blbulyandavbulyan.blog.dtos.error;
 
 import lombok.Getter;
 
