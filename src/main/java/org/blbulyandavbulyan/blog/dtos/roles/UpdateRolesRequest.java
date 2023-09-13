@@ -1,6 +1,10 @@
 package org.blbulyandavbulyan.blog.dtos.roles;
 
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import org.blbulyandavbulyan.blog.annotations.validation.user.ValidUserId;
+
 import java.util.List;
 
 /**
@@ -8,5 +12,5 @@ import java.util.List;
  * @param userId ИД пользователя, роли которого нужно обновить
  * @param rolesNames список ролей, которые будут вместо старых
  */
-public record UpdateRolesDto(Long userId, List<String> rolesNames) {
+public record UpdateRolesRequest(@ValidUserId Long userId, @NotNull List<@NotBlank String> rolesNames) {
 }

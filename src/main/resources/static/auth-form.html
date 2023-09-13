@@ -1,0 +1,23 @@
+<div class="d-flex justify-content-center align-items-center" ng-controller="AuthController">
+    <!-- Форма авторизации -->
+    <form id="login-form" ng-submit="login()" class="text-center" ng-show="!isAuthenticated()">
+        <div class="form-group">
+            <label class="visually-hidden" for="username">Имя пользователя:</label>
+            <input type="text" id="username" ng-model="credentials.username" class="form-control mb-2" required placeholder="Логин">
+        </div>
+        <div class="form-group">
+            <label class="visually-hidden" for="password">Пароль:</label>
+            <input type="password" id="password" ng-model="credentials.password" class="form-control mb-2" required placeholder="Пароль">
+        </div>
+        <div class="form-group">
+            <button type="submit" id="login-button" class="btn btn-primary">Войти</button>
+        </div>
+    </form>
+    <div ng-show="isAuthenticated()" class="alert alert-info mt-2" role="alert">
+        Вы уже вошли, если хотите, можете <a href="javascript:;" ng-click="logout()">выйти</a>
+    </div>
+    <!-- Вывод ошибки -->
+    <div ng-if="error" class="alert alert-danger mt-2" role="alert">
+        {{ error }}
+    </div>
+</div>
