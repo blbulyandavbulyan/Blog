@@ -33,10 +33,10 @@ public class ArticlesService {
      * @param publisher имя публикующего пользователя
      * @return объект, содержащий информацию об опубликованной статьей
      */
-    private ArticlePublished publishArticle(String title, String text, User publisher){
+    private ArticlePublishedResponse publishArticle(String title, String text, User publisher){
         Article article = new Article(publisher, title, text);
         articleRepository.save(article);
-        return new ArticlePublished(article.getArticleId());
+        return new ArticlePublishedResponse(article.getArticleId());
     }
 
     /**
@@ -44,18 +44,18 @@ public class ArticlesService {
      * @param id ИД по которому нужно загрузить данную статью
      * @return DTO, содержащее статью
      */
-    public ArticleDto getById(Long id) {
-        return articleRepository.findByArticleId(id, ArticleDto.class).orElseThrow(()->new ArticleNotFoundException("Article with id " + id + " not found"));
+    public ArticleResponse getById(Long id) {
+        return articleRepository.findByArticleId(id, ArticleResponse.class).orElseThrow(()->new ArticleNotFoundException("Article with id " + id + " not found"));
     }
 
     /**
      * Публикует статью
-     * @param articleForPublishing данные, которые будут в созданной статье
+     * @param createArticleRequest данные, которые будут в созданной статье
      * @param publisherName имя публикатора
      * @return информацию, об опубликованной статье
      */
-    public ArticlePublished publishArticle(ArticleForPublishing articleForPublishing, String publisherName) {
-        return publishArticle(articleForPublishing.title(), articleForPublishing.text(),
+    public ArticlePublishedResponse publishArticle(CreateArticleRequest createArticleRequest, String publisherName) {
+        return publishArticle(createArticleRequest.title(), createArticleRequest.text(),
                 userService.getReferenceByName(publisherName));
     }
 

@@ -1,6 +1,6 @@
 package org.blbulyandavbulyan.blog.repositories;
 
-import org.blbulyandavbulyan.blog.dtos.article.ArticleDto;
+import org.blbulyandavbulyan.blog.dtos.article.ArticleResponse;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleInfoDTO;
 import org.blbulyandavbulyan.blog.entities.Article;
 import org.blbulyandavbulyan.blog.entities.User;
@@ -46,18 +46,18 @@ class ArticleRepositoryTest {
         Article article = new Article(publisher, "Test title", "Test text");
         underTest.save(article);
         //when
-        Optional<ArticleDto> articleDtoOptional = underTest.findByArticleId(article.getArticleId(), ArticleDto.class);
+        Optional<ArticleResponse> articleDtoOptional = underTest.findByArticleId(article.getArticleId(), ArticleResponse.class);
         //then
         assertThat(articleDtoOptional).isPresent();
-        ArticleDto articleDto = articleDtoOptional.get();
-        assertThat(articleDto.publisherName()).isEqualTo(publisher.getName());
-        assertThat(articleDto.text()).isEqualTo(article.getText());
-        assertThat(articleDto.title()).isEqualTo(article.getTitle());
+        ArticleResponse articleResponse = articleDtoOptional.get();
+        assertThat(articleResponse.publisherName()).isEqualTo(publisher.getName());
+        assertThat(articleResponse.text()).isEqualTo(article.getText());
+        assertThat(articleResponse.title()).isEqualTo(article.getTitle());
     }
 
     @Test
     void findArticleDtoByIdShouldReturnEmptyOptionalIfArticleDoesNotExists() {
-        Optional<ArticleDto> articleDtoOptional = underTest.findByArticleId(2L, ArticleDto.class);
+        Optional<ArticleResponse> articleDtoOptional = underTest.findByArticleId(2L, ArticleResponse.class);
         assertThat(articleDtoOptional).isNotPresent();
     }
 

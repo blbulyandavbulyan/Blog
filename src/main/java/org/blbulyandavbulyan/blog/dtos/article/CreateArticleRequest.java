@@ -8,5 +8,5 @@ import org.blbulyandavbulyan.blog.annotations.validation.article.ValidArticleTit
  * @param title название статьи
  * @param text текст статьи
  */
-public record ArticleForPublishing(@ValidArticleTitle String title, @ValidArticleText String text) {
+public record CreateArticleRequest(@ValidArticleTitle String title, @ValidArticleText String text) {
 }

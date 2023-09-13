@@ -1,7 +1,7 @@
 package org.blbulyandavbulyan.blog.services;
 
 import lombok.RequiredArgsConstructor;
-import org.blbulyandavbulyan.blog.dtos.comment.CommentDto;
+import org.blbulyandavbulyan.blog.dtos.comment.CommentResponse;
 import org.blbulyandavbulyan.blog.entities.Comment;
 import org.blbulyandavbulyan.blog.exceptions.articles.ArticleNotFoundException;
 import org.blbulyandavbulyan.blog.repositories.CommentRepository;
@@ -35,10 +35,10 @@ public class CommentService {
      * @param pageSize размер страницы
      * @return страница, содержащая искомые комментарии
      */
-    public Page<CommentDto> getCommentDTOsForArticleId(Long articleId, int pageNumber, int pageSize){
+    public Page<CommentResponse> getCommentDTOsForArticleId(Long articleId, int pageNumber, int pageSize){
         if(!articlesService.existsById(articleId))
             throw new ArticleNotFoundException("Article with articleId " + articleId + " not found!");
-        return commentRepository.findAllByArticleArticleId(articleId, PageRequest.of(pageNumber, pageSize), CommentDto.class);
+        return commentRepository.findAllByArticleArticleId(articleId, PageRequest.of(pageNumber, pageSize), CommentResponse.class);
     }
 
     /**
