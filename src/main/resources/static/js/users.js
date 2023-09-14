@@ -34,7 +34,7 @@ app.service('UserService', function ($http) {
         }
     }
 });
-app.controller('UserController', function ($scope, UserService, AuthService, RoleService) {
+app.controller('UserController', function ($scope, $timeout, UserService, AuthService, RoleService) {
     $scope.users = [];
     $scope.newRoles = {};//в этом объекте, по ИД пользователя, будет храниться: изменён он или нет, и какие роли у него установлены
     $scope.filterParams = {};//текущие параметры для фильтрации пользователей
@@ -47,6 +47,8 @@ app.controller('UserController', function ($scope, UserService, AuthService, Rol
     $scope.isAuthenticated = AuthService.isAuthenticated;//метод для проверки на наличие авторизации
     $scope.canAdmin = RoleService.isAdmin;//метод для проверки является ли пользователь администратором
     $scope.availableRoles = RoleService.getAvailableRoles();//метод для получения доступных ролей
+    $scope.contentLoading = false;//показывает, загружаются ли пользователи
+    $scope.loadingError = null;//содержит текст ошибки загрузки, если таковая возникла
     $scope.newUser = {
         name: "",
         password: ""
@@ -72,6 +74,7 @@ app.controller('UserController', function ($scope, UserService, AuthService, Rol
     }
 
     $scope.loadUsersInfo = function (filterParams, pageNumber) {//метод для получения информации о пользователях
+        $scope.contentLoading = true;
         UserService.getUserInfoAboutAllUsers(filterParams, pageNumber, $scope.itemsPerPage)
             .then(function (response) {
                 $scope.users = response.data.content;
@@ -84,6 +87,15 @@ app.controller('UserController', function ($scope, UserService, AuthService, Rol
                 });
                 $scope.totalPages = response.data.totalPages;
                 $scope.currentPage = pageNumber;
+                $timeout(function () {
+                    $scope.contentLoading = false;
+                    $scope.loadingError = null;
+                }, 300);
+            })
+            .catch(function (error){
+                $scope.contentLoading = false;
+                $scope.loadingError = 'Ошибка загрузки'
+                console.log(error);
             });
         //TODO написать обработку ошибок загрузки информации о пользователях
     };
