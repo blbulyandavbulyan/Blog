@@ -28,11 +28,13 @@ app.service('CommentService', ['$http', function ($http) {
     }
 }]);
 // Функция для загрузки комментариев с сервера
-app.controller('CommentController', function ($scope, $routeParams, CommentService, RoleService) {
+app.controller('CommentController', function ($scope, $routeParams, $timeout, CommentService, RoleService) {
     $scope.comments = [];
     $scope.currentPage = 1;
     $scope.itemsPerPage = 5;
     $scope.totalPages = 5;
+    $scope.contentLoading = false;
+    $scope.loadingError = null;
     $scope.newComment = {
         text: ''
     }
@@ -41,10 +43,19 @@ app.controller('CommentController', function ($scope, $routeParams, CommentServi
     //функция для загрузки комментариев
     $scope.loadComments = function (pageNumber) {
         $scope.currentPage = pageNumber;
+        $scope.contentLoading = true;
         CommentService.getComments($scope.articleId, pageNumber, $scope.itemsPerPage)
             .then(function (response) {
                 $scope.comments = response.data.content;
                 $scope.totalPages = response.data.totalPages;
+                $timeout(function(){
+                    $scope.contentLoading = false;
+                    $scope.loadingError = null;
+                }, 300);
+            })
+            .catch(function (error) {
+                $scope.loadingError = 'Ошибка загрузки'
+                console.log(error);
             });
     };
     //функция для публикации комментария
