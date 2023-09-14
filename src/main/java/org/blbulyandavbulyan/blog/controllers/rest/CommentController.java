@@ -50,7 +50,7 @@ public class CommentController {
     @Secured({"ROLE_COMMENTER"})
     @PostMapping("/article")
     @ResponseStatus(HttpStatus.CREATED)
-    public void publishComment(@Validated @RequestBody CreateCommentRequest commentForPublishing, Principal principal){
-        commentService.publishComment(principal.getName(), commentForPublishing.articleId(), commentForPublishing.text());
+    public CommentResponse publishComment(@Validated @RequestBody CreateCommentRequest commentForPublishing, Principal principal){
+        return commentService.publishComment(principal.getName(), commentForPublishing.articleId(), commentForPublishing.text());
     }
 }
