@@ -73,6 +73,7 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
             })
             .catch(function (error) {
                 $scope.sendingError = 'Ошибка отправки!'
+                console.error(error);
             });
     }
     //функция для получения страницы с заданным номером
