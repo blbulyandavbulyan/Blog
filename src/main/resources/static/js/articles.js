@@ -24,24 +24,35 @@ app.service('ArticleService', function ($http) {
         }
     };
 });
-app.controller('ArticlesController', function ($scope, ArticleService) {
+app.controller('ArticlesController', function ($scope, $timeout, ArticleService) {
     $scope.articles = [];
     $scope.filterParams = {};
     $scope.filter = {};
     $scope.currentPage = 1;
     $scope.itemsPerPage = 5;
     $scope.totalPages = 5;
+    $scope.contentLoading = false;
+    $scope.loadingError = null;
     const maxPagesToShow = 3; // Максимальное количество отображаемых страниц
     $scope.filterArticles = function () {
         $scope.filterParams = $scope.filter;
         $scope.getPage(1);
     }
     $scope.loadArticlesInfo = function (filterParams, pageNumber) {
+        $scope.contentLoading = true;
         ArticleService.getArticlesInfo(filterParams, pageNumber, $scope.itemsPerPage)
             .then(function (response) {
                 $scope.articles = response.data.content;
                 $scope.totalPages = response.data.totalPages;
                 $scope.currentPage = pageNumber;
+                $timeout(function () {
+                    $scope.contentLoading = false;
+                    $scope.loadingError = null;
+                }, 300);
+            })
+            .catch(function (error) {
+                $scope.loadingError = 'Ошибка загрузки';
+                console.log(error);
             });
     };
     $scope.getPage = function (pageNumber) {
@@ -58,7 +69,7 @@ app.controller('ArticlesController', function ($scope, ArticleService) {
     $scope.getPage(1);
 });
 app.controller('ArticleController', function ($scope, $routeParams, ArticleService, RoleService) {
-    if($routeParams.articleId) {
+    if ($routeParams.articleId) {
         ArticleService.getArticle($routeParams.articleId).then(function (response) {
             $scope.article = response.data;
         });

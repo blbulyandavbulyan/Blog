@@ -22,7 +22,14 @@
             <button type="submit" class="btn btn-primary">Применить фильтр</button>
         </div>
     </form>
-    <div class="card me-3" ng-repeat="article in articles">
+    <div ng-show="contentLoading && loadingError == null" class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Загрузка...</span>
+    </div>
+    <div ng-show="articles.length === 0" class="alert alert-info" role="alert">
+        Кажется статей пока нет...
+    </div>
+    <div ng-show="loadingError != null" class="alert alert-danger">{{loadingError}}</div>
+    <div ng-show="!contentLoading" class="card me-3" ng-repeat="article in articles">
         <div class="card-body">
             <h5 class="card-title"><a href="javascript:;" ng-click="goToArticle(article.articleId)">{{ article.title }}</a></h5>
             <p class="card-text">Издатель: {{ article.publisher.name }}</p>
