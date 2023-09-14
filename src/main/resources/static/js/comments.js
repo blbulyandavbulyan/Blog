@@ -51,8 +51,14 @@ app.controller('CommentController', function ($scope, $routeParams, CommentServi
     $scope.postComment = function () {
         CommentService.postComment($scope.articleId, $scope.newComment.text)
             .then(function (response) {
+                const publishedComment = response.data;
                 $scope.newComment.text = '';
                 $scope.sendingError = null;
+                if($scope.comments.length < $scope.itemsPerPage ) {
+                    if($scope.totalPages === 0)$scope.totalPages = 1
+                    $scope.comments.push(publishedComment);
+                }
+                else $scope.totalPages++;
             })
             .catch(function (error) {
                 $scope.sendingError = 'Ошибка отправки!'

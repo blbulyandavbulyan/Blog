@@ -49,11 +49,12 @@ public class CommentService {
      * @throws ArticleNotFoundException если статья не найдена
      * @throws org.blbulyandavbulyan.blog.exceptions.users.UserNotFoundException если не найден публикатор
      */
-    public void publishComment(String publisherName, Long articleId, String text){
+    public CommentResponse publishComment(String publisherName, Long articleId, String text){
         Comment comment = new Comment();
         comment.setText(text);
         comment.setAuthor(userService.getReferenceByName(publisherName));
         comment.setArticle(articlesService.getReferenceById(articleId));
-        commentRepository.save(comment);
+        comment = commentRepository.save(comment);
+        return new CommentResponse(comment.getCommentId(), publisherName, comment.getText(), comment.getPublishDate());
     }
 }
