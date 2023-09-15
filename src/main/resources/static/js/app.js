@@ -63,3 +63,9 @@ function generatePageParamsAndFilterParams(filterParams, pageNumber, pageSize) {
     });
     return httpParams;
 }
+function showErrorToast(caption, text){
+    const errorToast = document.getElementById('errorToast');
+    errorToast.getElementsByClassName("error-text")[0].textContent = text;
+    errorToast.getElementsByClassName("error-caption")[0].textContent = caption;
+    bootstrap.Toast.getOrCreateInstance(errorToast).show();
+}
