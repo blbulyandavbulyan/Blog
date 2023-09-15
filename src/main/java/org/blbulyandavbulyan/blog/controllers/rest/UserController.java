@@ -6,6 +6,7 @@ import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageSize;
 import org.blbulyandavbulyan.blog.annotations.validation.user.ValidUserId;
 import org.blbulyandavbulyan.blog.dtos.authorization.RegistrationUser;
 import org.blbulyandavbulyan.blog.dtos.roles.UpdateRolesRequest;
+import org.blbulyandavbulyan.blog.dtos.user.UpdateUserPasswordRequest;
 import org.blbulyandavbulyan.blog.dtos.user.UserCreateRequest;
 import org.blbulyandavbulyan.blog.dtos.user.UserCreatedResponse;
 import org.blbulyandavbulyan.blog.dtos.user.UserInfoDTO;
@@ -14,6 +15,7 @@ import org.blbulyandavbulyan.blog.services.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -96,5 +98,9 @@ public class UserController {
     @PatchMapping("/roles")
     public void updateUserPrivileges(@Validated @RequestBody UpdateRolesRequest updateRolesRequest){
         userService.updateRoles(updateRolesRequest.userId(), updateRolesRequest.rolesNames());
+    }
+    @PatchMapping
+    public void updateUserPassword(@Validated @RequestBody UpdateUserPasswordRequest updateUserPasswordRequest, Authentication authentication){
+        userService.updateUserPassword(updateUserPasswordRequest.username(), updateUserPasswordRequest.password(), authentication);
     }
 }
