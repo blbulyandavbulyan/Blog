@@ -102,6 +102,7 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
                 toastBody.textContent = "Ошибка удаления комментария";
                 const toastBootstrap = bootstrap.Toast.getOrCreateInstance(errorToast);
                 toastBootstrap.show();
+                console.log(error);
             });
     }
     $scope.editComment = function (comment){
