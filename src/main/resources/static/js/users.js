@@ -97,7 +97,6 @@ app.controller('UserController', function ($scope, $timeout, UserService, AuthSe
                 $scope.loadingError = 'Ошибка загрузки'
                 console.log(error);
             });
-        //TODO написать обработку ошибок загрузки информации о пользователях
     };
     $scope.getPage = function (pageNumber) {//метод для получения заданной страницы
         $scope.loadUsersInfo($scope.filterParams, pageNumber);
