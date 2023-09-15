@@ -3,10 +3,13 @@ package org.blbulyandavbulyan.blog.services;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.comment.CommentResponse;
 import org.blbulyandavbulyan.blog.entities.Comment;
+import org.blbulyandavbulyan.blog.exceptions.AccessDeniedException;
 import org.blbulyandavbulyan.blog.exceptions.articles.ArticleNotFoundException;
+import org.blbulyandavbulyan.blog.exceptions.comments.CommentNotFoundException;
 import org.blbulyandavbulyan.blog.repositories.CommentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 /**
@@ -56,5 +59,15 @@ public class CommentService {
         comment.setArticle(articlesService.getReferenceById(articleId));
         comment = commentRepository.save(comment);
         return new CommentResponse(comment.getCommentId(), publisherName, comment.getText(), comment.getPublishDate());
+    }
+
+    public void deleteComment(Long commentId, Authentication authentication) {
+        String authorName = commentRepository.findCommentAuthorNameByCommentId(commentId)
+                .orElseThrow(()->new CommentNotFoundException("Comment with id " + commentId + " not found!"));// TODO: 15.09.2023 выборонить исключение о том что такого комментария нет
+        if(authorName.equals(authentication.getName())
+                || authentication.getAuthorities().stream().anyMatch(a->a.getAuthority().equals("ROLE_ADMIN"))) {
+            commentRepository.deleteById(commentId);
+        }
+        else throw new AccessDeniedException("Operation not permitted");// TODO: 15.09.2023 выбросить здесь исключение, о том что операция не позволена
     }
 }
