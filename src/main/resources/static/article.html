@@ -49,5 +49,15 @@
             <button type="submit" class="btn btn-primary">Добавить комментарий</button>
         </form>
         <div ng-if="sendingError" class="alert alert-danger" role="alert">{{sendingError}}</div>
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header bg-danger">
+                    <img class="rounded me-2">
+                    <strong class="me-auto text-white">Ошибка</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body"></div>
+            </div>
+        </div>
     </div>
 </div>
