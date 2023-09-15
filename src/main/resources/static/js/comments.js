@@ -1,5 +1,5 @@
-const commentsApiPath = '/api/v1/comments';
 app.service('CommentService', ['$http', function ($http) {
+    const commentsApiPath = contextPath + '/api/v1/comments';
     return {
         getComments: function (articleId, pageNumber, size) {
             const httpParams = {
@@ -8,7 +8,7 @@ app.service('CommentService', ['$http', function ($http) {
             };
             const getQuery = {
                 method: 'GET',
-                url: contextPath + commentsApiPath + '/article/' + articleId
+                url: commentsApiPath + '/article/' + articleId
             };
             getQuery["params"] = httpParams;
             return $http(getQuery);
@@ -20,15 +20,18 @@ app.service('CommentService', ['$http', function ($http) {
             };
             const postQuery = {
                 method: 'POST',
-                url: contextPath + commentsApiPath + '/article'
+                url: commentsApiPath + '/article'
             };
             postQuery["data"] = httpParams;
             return $http(postQuery);
+        },
+        deleteComment: function(commentId){
+            return $http.delete(`${commentsApiPath}/${commentId}`);
         }
     }
 }]);
 // Функция для загрузки комментариев с сервера
-app.controller('CommentController', function ($scope, $routeParams, $timeout, CommentService, RoleService) {
+app.controller('CommentController', function ($scope, $routeParams, $timeout, CommentService, RoleService, AuthService) {
     $scope.comments = [];
     $scope.currentPage = 1;
     $scope.itemsPerPage = 5;
@@ -81,8 +84,32 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
         $scope.loadComments(pageNumber);
         $scope.pageNumbers = calculatePageNumbers(pageNumber, $scope.totalPages, maxPagesToShow);
     }
+    $scope.deleteComment = function (comment){
+        CommentService.deleteComment(comment.commentId)
+            .then(function (){
+                const index = $scope.comments.findIndex(c => c.commentId === comment.commentId);
+                // Удаляем пользователя с найденным индексом
+                if (index !== -1) {
+                    $scope.comments.splice(index, 1);
+                }
+
+            });
+    }
+    $scope.editComment = function (comment){
+
+    }
     $scope.canPost = RoleService.isCommenter;
     // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
+    $scope.canEditComment = function (comment) {
+        //TODO исправить эту функцию, сделать так, чтобы она реально проверяла, может ли пользователь редактировать комментарий
+        return false;
+    }
+    $scope.canDeleteComment = function (comment) {
+        return RoleService.isAdmin() || (AuthService.isAuthenticated() && AuthService.getMyUserName() === comment.authorName);
+    }
+    $scope.hasAnyActionsForComment = function (comment){
+        return $scope.canEditComment(comment) || $scope.canDeleteComment(comment);
+    }
     $scope.$watch('totalPages', function () {
         $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
     });
