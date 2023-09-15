@@ -91,8 +91,17 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
                 // Удаляем пользователя с найденным индексом
                 if (index !== -1) {
                     $scope.comments.splice(index, 1);
+                    if($scope.comments.length === 0 && $scope.totalPages > 1){
+                        $scope.getPage($scope.currentPage > 1 ? $scope.currentPage - 1 : 1);
+                    }
                 }
-
+            })
+            .catch(function (error) {
+                const errorToast = document.getElementById('errorToast');
+                let toastBody = errorToast.getElementsByClassName("toast-body")[0];
+                toastBody.textContent = "Ошибка удаления комментария";
+                const toastBootstrap = bootstrap.Toast.getOrCreateInstance(errorToast);
+                toastBootstrap.show();
             });
     }
     $scope.editComment = function (comment){
