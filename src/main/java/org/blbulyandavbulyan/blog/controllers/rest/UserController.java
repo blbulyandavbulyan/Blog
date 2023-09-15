@@ -99,7 +99,7 @@ public class UserController {
     public void updateUserPrivileges(@Validated @RequestBody UpdateRolesRequest updateRolesRequest){
         userService.updateRoles(updateRolesRequest.userId(), updateRolesRequest.rolesNames());
     }
-    @PatchMapping
+    @PatchMapping("/password")
     public void updateUserPassword(@Validated @RequestBody UpdateUserPasswordRequest updateUserPasswordRequest, Authentication authentication){
         userService.updateUserPassword(updateUserPasswordRequest.username(), updateUserPasswordRequest.password(), authentication);
     }
