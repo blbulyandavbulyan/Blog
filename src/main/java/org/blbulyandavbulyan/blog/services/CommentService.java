@@ -3,7 +3,6 @@ package org.blbulyandavbulyan.blog.services;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.comment.CommentResponse;
 import org.blbulyandavbulyan.blog.entities.Comment;
-import org.blbulyandavbulyan.blog.exceptions.AccessDeniedException;
 import org.blbulyandavbulyan.blog.exceptions.articles.ArticleNotFoundException;
 import org.blbulyandavbulyan.blog.exceptions.comments.CommentNotFoundException;
 import org.blbulyandavbulyan.blog.repositories.CommentRepository;
@@ -30,7 +29,7 @@ public class CommentService {
      * Сервис для работы со статьями
      */
     private final ArticlesService articlesService;
-
+    private final SecurityService securityService;
     /**
      * Получает комментарии для определённой статьи
      * @param articleId ИД статьи
@@ -64,10 +63,8 @@ public class CommentService {
     public void deleteComment(Long commentId, Authentication authentication) {
         String authorName = commentRepository.findCommentAuthorNameByCommentId(commentId)
                 .orElseThrow(()->new CommentNotFoundException("Comment with id " + commentId + " not found!"));// TODO: 15.09.2023 выборонить исключение о том что такого комментария нет
-        if(authorName.equals(authentication.getName())
-                || authentication.getAuthorities().stream().anyMatch(a->a.getAuthority().equals("ROLE_ADMIN"))) {
+        securityService.executeIfExecutorIsAdminOrEqualToTarget(authentication, authorName, ()->{
             commentRepository.deleteById(commentId);
-        }
-        else throw new AccessDeniedException("Operation not permitted");// TODO: 15.09.2023 выбросить здесь исключение, о том что операция не позволена
+        });
     }
 }
