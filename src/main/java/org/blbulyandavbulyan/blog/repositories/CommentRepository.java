@@ -4,6 +4,8 @@ import org.blbulyandavbulyan.blog.entities.Comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -11,5 +13,6 @@ import java.util.Optional;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     <T> Page<T> findAllByArticleArticleId(Long id, Pageable pageable, Class<T> dtoType);
-    Optional<String> find_AuthorNameByCommentId(Long commentId);
+    @Query("SELECT c.author.name FROM Comment c WHERE c.commentId = :commentId")
+    Optional<String> findCommentAuthorNameByCommentId(@Param("commentId") Long commentId);
 }
