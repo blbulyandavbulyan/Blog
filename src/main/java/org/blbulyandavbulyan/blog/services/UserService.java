@@ -12,6 +12,7 @@ import org.blbulyandavbulyan.blog.repositories.UserRepository;
 import org.blbulyandavbulyan.blog.specs.UserSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -42,6 +43,7 @@ public class UserService implements UserDetailsService {
      * Шифровальщик паролей, используется для регистрации пользователей
      */
     private final PasswordEncoder passwordEncoder;
+    private final SecurityService securityService;
 
     /**
      * Метод регистрирует пользователя в системе
@@ -161,5 +163,20 @@ public class UserService implements UserDetailsService {
         List<Role> roles = rolesNames.stream().map(roleService::getReferenceByRoleName).collect(Collectors.toCollection(ArrayList::new));
         user.setRoles(roles);
         userRepository.save(user);
+    }
+
+    /**
+     * Обновляет пароль пользователя
+     * @param targetUsername пользователь, которого нужно обновить
+     * @param password новый пароль в нехэшированном виде
+     * @param authentication объект Authentication
+     * @throws UserNotFoundException если пользователь с именем targetUsername не найден
+     * @throws org.blbulyandavbulyan.blog.exceptions.AccessDeniedException если исполнитель не равен цели и он не админ
+     */
+    public void updateUserPassword(String targetUsername, String password, Authentication authentication){
+        securityService.executeIfExecutorIsAdminOrEqualToTarget(authentication, targetUsername, ()->{
+            if(userRepository.updatePasswordHashByName(passwordEncoder.encode(password), targetUsername) < 1)
+                throw new UserNotFoundException("User with name " + targetUsername + " not found!");
+        });
     }
 }
