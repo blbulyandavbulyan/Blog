@@ -55,6 +55,11 @@ app.controller('ArticlesController', function ($scope, $timeout, ArticleService)
                 console.log(error);
             });
     };
+    $scope.resetFilter = function(){
+        $scope.filterParams = {};
+        $scope.filter = {};
+        $scope.getPage(1);
+    }
     $scope.getPage = function (pageNumber) {
         $scope.loadArticlesInfo($scope.filterParams, pageNumber);
         $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
