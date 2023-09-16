@@ -9,6 +9,7 @@ import org.blbulyandavbulyan.blog.repositories.ArticleRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,6 +26,7 @@ public class ArticlesService {
      * Сервис пользователей
      */
     private final UserService userService;
+    private final SecurityService securityService;
 
     /**
      * Публикует статью от имени данного пользователя
@@ -74,9 +76,12 @@ public class ArticlesService {
      * Удаляет статью по ИД
      * @param id ИД статьи, которую нужно удалить
      */
-    public void deleteById(Long id) {
-        if(articleRepository.existsById(id)) articleRepository.deleteById(id);
-        else throw new ArticleNotFoundException("Article with id " + id + " not found");
+    public void deleteById(Long id, Authentication authentication) {
+        String authorName = articleRepository.findArticleAuthorNameByArticleId(id)
+                .orElseThrow(()->new ArticleNotFoundException("Article with id " + id + " not found"));
+        securityService.executeIfExecutorIsAdminOrEqualToTarget(authentication, authorName, ()->{
+            articleRepository.deleteById(id);
+        });
     }
 
     /**

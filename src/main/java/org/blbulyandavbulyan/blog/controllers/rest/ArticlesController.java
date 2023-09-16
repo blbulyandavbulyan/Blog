@@ -13,6 +13,7 @@ import org.blbulyandavbulyan.blog.specs.ArticleSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,11 +47,10 @@ public class ArticlesController {
      * Удаляет статью по ид
      * @param id ид статьи, которую нужно удалить
      */
-    @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteArticleById(@ValidArticleId @PathVariable Long id) {
-        articlesService.deleteById(id);
+    public void deleteArticleById(@ValidArticleId @PathVariable Long id, Authentication authentication) {
+        articlesService.deleteById(id, authentication);
     }
 
     /**
