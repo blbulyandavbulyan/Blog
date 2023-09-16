@@ -125,24 +125,11 @@ app.controller('UserController', function ($scope, $timeout, UserService, AuthSe
     };
     $scope.deleteUser = function (userId) {//метод для обработки кнопки удаления пользователя
         UserService.deleteUserById(userId)
-            .then(function (response) {
-                const index = $scope.users.findIndex(user => user.userId === userId);
-                // Удаляем пользователя с найденным индексом
-                if (index !== -1) {
-                    $scope.users.splice(index, 1);
-                }
-                //TODO добавить здесь обработку ситуации, когда это был последний пользователь на странице и при этом, страницы ещё есть
-                //здесь не учтено, что мы можем удалить пользователя с текущей странице, а на следующей странице был только один пользователь
-                //и тогда этой следующей страницы уже не будет
-                let pageToLoad;
-                if ($scope.users.length === 0 && $scope.totalPages > 1) {//Массив с пользователями стал пустым
-                    //для первой страницы мы просто заново будем загружать первую страницу (но уже с учётом того что это будет как бы другая страница)
-                    //для всех последующий страниц, мы просто будем загружать предыдущую страницу, т.к. следующей может не быть
-                    pageToLoad = $scope.currentPage === 1 ? 1 : $scope.currentPage - 1;
-                    $scope.getPage(pageToLoad);
-                }
+            .then(() => deleteItemAndGetNewPage($scope.users, $scope.totalPages, $scope.currentPage, user => user.userId === userId, $scope.getPage))
+            .catch(function (error) {
+                showErrorToast("Ошибка удаления", "Не удалось удалить пользователя");
+                console.log(error);
             });
-        //TODO написать обработку ошибки удаления пользователя
     };
     $scope.createUser = function () {
         let name = $scope.newUser.name;
@@ -175,13 +162,11 @@ app.controller('UserController', function ($scope, $timeout, UserService, AuthSe
                     //увеличиваем количество страниц
                     $scope.totalPages += 1;
                 }
-                $scope.userCreationError = null;
             })
             .catch(function (error) {
-                $scope.userCreationError = "Ошибка создания пользователя!";
+                showErrorToast("Ошибка создания", `Не удалось создать пользователя ${name}`)
                 console.log(error);
-            })
-        //TODO написать обработку ошибки создания пользователя
+            });
     }
     $scope.isItMe = function (user) {//метод для проверки является ли переданный пользователь, тем, под которым вошли
         return user.name === AuthService.getMyUserName();
@@ -210,8 +195,10 @@ app.controller('UserController', function ($scope, $timeout, UserService, AuthSe
                 $scope.newRoles[user.userId] = {};
                 $scope.newRoles[user.userId].isChanged = false;
                 setRolesData(user.userId, newPrivileges);
+            }).catch(function (error) {
+                showErrorToast("Ошибка обновления", `Не удалось обновить роли для пользователя ${user.name}`);
+                console.log(error);
             });
-        //TODO написать обработку ошибок обновления пользователя
     };
     // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
     $scope.$watch('totalPages', function () {
