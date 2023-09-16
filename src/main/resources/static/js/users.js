@@ -83,7 +83,11 @@ app.controller('UserController', function ($scope, $timeout, UserService, AuthSe
         };
         $scope.getPage(1);
     }
-
+    $scope.resetFilter = function (){
+        $scope.filterParams = {};
+        $scope.filter = {};
+        $scope.getPage(1);
+    }
     function setRolesData(userId, rolesNames) {
         $scope.availableRoles.forEach(function (roleName) {
             $scope.newRoles[userId][roleName] = rolesNames.includes(roleName);
