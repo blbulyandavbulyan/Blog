@@ -1,4 +1,4 @@
-app.controller('NavbarController', function($scope, $location, RoleService, AuthService, ChangePasswordService){
+app.controller('NavbarController', function($scope, $location, RoleService, AuthService){
     $scope.showPostArticleItem = ()=> RoleService.isPublisher();
     $scope.canAdministrate = ()=> RoleService.isAdmin();
     $scope.isActive = function (viewLocation) {
@@ -7,7 +7,6 @@ app.controller('NavbarController', function($scope, $location, RoleService, Auth
     $scope.isAuthenticated = ()=> AuthService.isAuthenticated();
     $scope.logout = ()=> AuthService.logout();
     $scope.changePassword = function (){
-        ChangePasswordService.setTargetUsername(AuthService.getMyUserName());
         showChangePasswordDialog();
     }
 });
