@@ -83,7 +83,7 @@ app.controller('ArticlesController', function ($scope, $timeout, ArticleService,
                 }
             })
             .catch(function (error) {
-                showErrorToast("Ошибка", "Ошибка удаления комментария");
+                showErrorToast("Ошибка", "Ошибка удаления статьи");
                 console.log(error);
             });
     }
