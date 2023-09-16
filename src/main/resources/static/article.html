@@ -3,7 +3,7 @@
         border: 3px solid rgba(0, 0, 255, 0.5);
         border-radius: 10mm;
     }
-    .comment_actions{
+    .item_actions{
         margin: 0.7em;
         border-radius: 20px;
     }
@@ -23,20 +23,12 @@
         </div>
         <div ng-show="loadingError != null" class="alert alert-danger">{{loadingError}}</div>
         <div id="comments" ng-if="comments.length > 0 && !contentLoading">
-            <div ng-repeat="comment in comments" class="card mb-3 comment">
+            <div ng-repeat="item in comments" class="card mb-3 comment">
                 <div class="card-body position-relative">
-                    <h5 class="card-title">{{ comment.authorName }}</h5>
-                    <p class="card-text">{{ comment.text }}</p>
-                    <p class="card-text"><small class="text-muted">{{ comment.publishDate | date:'dd.MM.yyyy HH:mm' }}</small></p>
-                    <div ng-show="hasAnyActionsForComment(comment)">
-                        <button type="button" class="btn btn-sm btn-primary dropdown-toggle dropdown-toggle-split position-absolute end-0 top-0 comment_actions" data-bs-toggle="dropdown" aria-expanded="false">
-                            <span class="visually-hidden">Toggle Dropdown</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                            <li><a ng-show="canEditComment(comment)" ng-click="editComment(comment)" class="dropdown-item" href="javascript:;">Редактировать</a></li>
-                            <li><a ng-show="canDeleteComment(comment)" ng-click="deleteComment(comment)" class="dropdown-item" href="javascript:;">Удалить</a></li>
-                        </ul>
-                    </div>
+                    <h5 class="card-title">{{ item.authorName }}</h5>
+                    <p class="card-text">{{ item.text }}</p>
+                    <p class="card-text"><small class="text-muted">{{ item.publishDate | date:'dd.MM.yyyy HH:mm' }}</small></p>
+                    <div ng-include="'fragments/additional-actions.html'"></div>
                 </div>
             </div>
             <div ng-include="'fragments/pagination.html'"></div>

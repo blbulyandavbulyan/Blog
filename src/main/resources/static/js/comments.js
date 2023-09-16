@@ -84,7 +84,7 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
         $scope.loadComments(pageNumber);
         $scope.pageNumbers = calculatePageNumbers(pageNumber, $scope.totalPages, maxPagesToShow);
     }
-    $scope.deleteComment = function (comment){
+    $scope.deleteItem = function (comment){
         CommentService.deleteComment(comment.commentId)
             .then(function (){
                 const index = $scope.comments.findIndex(c => c.commentId === comment.commentId);
@@ -101,20 +101,20 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
                 console.log(error);
             });
     }
-    $scope.editComment = function (comment){
+    $scope.editItem = function (comment){
 
     }
     $scope.canPost = RoleService.isCommenter;
     // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
-    $scope.canEditComment = function (comment) {
+    $scope.canEditItem = function (comment) {
         //TODO исправить эту функцию, сделать так, чтобы она реально проверяла, может ли пользователь редактировать комментарий
         return false;
     }
-    $scope.canDeleteComment = function (comment) {
+    $scope.canDeleteItem = function (comment) {
         return RoleService.isAdmin() || (AuthService.isAuthenticated() && AuthService.getMyUserName() === comment.authorName);
     }
-    $scope.hasAnyActionsForComment = function (comment){
-        return $scope.canEditComment(comment) || $scope.canDeleteComment(comment);
+    $scope.hasAnyActionsForItem = function (comment){
+        return $scope.canEditItem(comment) || $scope.canDeleteItem(comment);
     }
     $scope.$watch('totalPages', function () {
         $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
