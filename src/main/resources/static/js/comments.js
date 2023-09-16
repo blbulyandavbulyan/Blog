@@ -27,6 +27,12 @@ app.service('CommentService', ['$http', function ($http) {
         },
         deleteComment: function(commentId){
             return $http.delete(`${commentsApiPath}/${commentId}`);
+        },
+        editComment: function (commentId, text){
+            return $http.patch(commentsApiPath, {
+               commentId: commentId,
+               text: text
+            });
         }
     }
 }]);
@@ -92,13 +98,28 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
             });
     }
     $scope.editItem = function (comment){
-        //TODO реализовать метод редактирования комментария
+        const editCommentText = document.getElementById("editCommentText");
+        const modalDialogElement = document.getElementById("editCommentModal");
+        document.getElementById("confirmCommentEdit").onclick = function () {
+            const text = editCommentText.value;
+            CommentService.editComment(comment.commentId, text)
+                .then(function () {
+                    const index = $scope.comments.findIndex(c=>c.commentId === comment.commentId);
+                    if(index !== -1) $scope.comments[index].text = text;
+                })
+                .catch(function(error){
+                    showErrorToast("Ошибка редактирования", "Не удалось отредактировать комментарий")
+                    console.log(error);
+                })
+        }
+        editCommentText.value = comment.text;
+        const editCommentDialog = new bootstrap.Modal(modalDialogElement, {});
+        editCommentDialog.show();
     }
     $scope.canPost = RoleService.isCommenter;
     // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
     $scope.canEditItem = function (comment) {
-        //TODO исправить эту функцию, сделать так, чтобы она реально проверяла, может ли пользователь редактировать комментарий
-        return false;
+        return  AuthService.isAuthenticated() && AuthService.getMyUserName() === comment.authorName;
     }
     $scope.canDeleteItem = function (comment) {
         return RoleService.isAdmin() || (AuthService.isAuthenticated() && AuthService.getMyUserName() === comment.authorName);
