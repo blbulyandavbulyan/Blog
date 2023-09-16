@@ -116,7 +116,6 @@ app.controller('ArticleController', function ($scope, $routeParams, ArticleServi
         ArticleService.postArticle($scope.newArticle.title, $scope.newArticle.text)
             .then(function (response) {
                 //здесь мы ожидаем что нам в ответ придёт как минимум id новой статьи
-                //todo подумать над тем, что нужно делать после успешной публикации
                 const articleId = response.data.articleId;
                 $scope.newArticle.title = ''
                 $scope.newArticle.text = ''
