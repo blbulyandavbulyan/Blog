@@ -69,3 +69,7 @@ function showErrorToast(caption, text){
     errorToast.getElementsByClassName("error-caption")[0].textContent = caption;
     bootstrap.Toast.getOrCreateInstance(errorToast).show();
 }
+function showChangePasswordDialog(){
+    const myModalAlternative = new bootstrap.Modal('#changePasswordModal', {});
+    myModalAlternative.show();
+}
