@@ -42,7 +42,6 @@ public class UserService implements UserDetailsService {
      * Шифровальщик паролей, используется для регистрации пользователей
      */
     private final PasswordEncoder passwordEncoder;
-    private final SecurityService securityService;
 
     /**
      * Метод регистрирует пользователя в системе
