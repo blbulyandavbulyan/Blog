@@ -60,6 +60,13 @@ public class CommentService {
         return new CommentResponse(comment.getCommentId(), publisherName, comment.getText(), comment.getPublishDate());
     }
 
+    /**
+     * Удаляет комментарий с заданным id
+     * @param commentId ID комментария, который нужно удалить
+     * @param authentication объект authentication, необходимый методу для проверки, имени удаляющего и его ролей
+     * @throws CommentNotFoundException если комментария с заданным ID нет
+     * @throws org.blbulyandavbulyan.blog.exceptions.AccessDeniedException если у пользователя, который хочет удалить нет необходимых прав
+     */
     public void deleteComment(Long commentId, Authentication authentication) {
         String authorName = commentRepository.findCommentAuthorNameByCommentId(commentId)
                 .orElseThrow(()->new CommentNotFoundException("Comment with id " + commentId + " not found!"));
