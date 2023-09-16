@@ -67,7 +67,6 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
             .then(function (response) {
                 const publishedComment = response.data;
                 $scope.newComment.text = '';
-                $scope.sendingError = null;
                 if($scope.comments.length < $scope.itemsPerPage ) {
                     if($scope.totalPages === 0)$scope.totalPages = 1
                     $scope.comments.push(publishedComment);
@@ -75,7 +74,7 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
                 else $scope.totalPages++;
             })
             .catch(function (error) {
-                $scope.sendingError = 'Ошибка отправки!'
+                showErrorToast("Ошибка отправки", "Не удалось отправить комментарий!");
                 console.error(error);
             });
     }
