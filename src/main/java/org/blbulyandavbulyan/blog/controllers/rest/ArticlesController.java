@@ -78,4 +78,10 @@ public class ArticlesController {
                                                         @RequestParam Map<String, String> requestParams) {
         return articlesService.getInfoAboutAll(new ArticleSpecifications(requestParams).getArticleSpecification(), pageSize, pageNumber - 1);
     }
+    @PatchMapping("/{articleId}")
+    public void updateArticle(@ValidArticleId @PathVariable Long articleId,
+                              @Validated @RequestBody CreateArticleRequest createArticleRequest,
+                              Principal principal){
+        articlesService.updateArticle(articleId, createArticleRequest.title(), createArticleRequest.text(), principal.getName());
+    }
 }

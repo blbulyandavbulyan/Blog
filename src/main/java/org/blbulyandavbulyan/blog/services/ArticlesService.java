@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.article.*;
 import org.blbulyandavbulyan.blog.entities.Article;
 import org.blbulyandavbulyan.blog.entities.User;
+import org.blbulyandavbulyan.blog.exceptions.AccessDeniedException;
 import org.blbulyandavbulyan.blog.exceptions.articles.ArticleNotFoundException;
 import org.blbulyandavbulyan.blog.repositories.ArticleRepository;
 import org.springframework.data.domain.Page;
@@ -101,5 +102,12 @@ public class ArticlesService {
      */
     public boolean existsById(Long id) {
         return articleRepository.existsById(id);
+    }
+
+    public void updateArticle(Long articleId, String title, String text, String executorName) {
+        String authorName = articleRepository.findArticleAuthorNameByArticleId(articleId)
+                .orElseThrow(()->new ArticleNotFoundException("Article with id " + articleId + " not found"));
+        if(authorName.equals(executorName)) articleRepository.updateTitleAndTextByArticleId(articleId, title, text);
+        else throw new AccessDeniedException("Operation not permitted!");
     }
 }
