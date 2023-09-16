@@ -37,7 +37,7 @@ app.controller('ArticlesController', function ($scope, $timeout, ArticleService)
     $scope.filterArticles = function () {
         $scope.filterParams = $scope.filter;
         $scope.getPage(1);
-    }
+    };
     $scope.loadArticlesInfo = function (filterParams, pageNumber) {
         $scope.contentLoading = true;
         ArticleService.getArticlesInfo(filterParams, pageNumber, $scope.itemsPerPage)
@@ -59,11 +59,11 @@ app.controller('ArticlesController', function ($scope, $timeout, ArticleService)
         $scope.filterParams = {};
         $scope.filter = {};
         $scope.getPage(1);
-    }
+    };
     $scope.getPage = function (pageNumber) {
         $scope.loadArticlesInfo($scope.filterParams, pageNumber);
         $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
-    }
+    };
     $scope.goToArticle = function (articleId) {
         ArticleService.openArticle(articleId)
     };
