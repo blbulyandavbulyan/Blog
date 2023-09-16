@@ -87,8 +87,8 @@ app.controller('ArticlesController', function ($scope, $timeout, ArticleService,
                 console.log(error);
             });
     }
-    $scope.editItem = function (comment){
-
+    $scope.editItem = function (article){
+        //TODO реализовать метод редактирования статьи
     }
     $scope.canEditItem = function (article) {
         //TODO исправить эту функцию, сделать так, чтобы она реально проверяла, может ли пользователь редактировать статью

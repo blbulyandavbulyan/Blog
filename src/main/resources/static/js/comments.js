@@ -102,7 +102,7 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
             });
     }
     $scope.editItem = function (comment){
-
+        //TODO реализовать метод редактирования комментария
     }
     $scope.canPost = RoleService.isCommenter;
     // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
