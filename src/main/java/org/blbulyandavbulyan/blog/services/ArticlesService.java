@@ -79,9 +79,7 @@ public class ArticlesService {
     public void deleteById(Long id, Authentication authentication) {
         String authorName = articleRepository.findArticleAuthorNameByArticleId(id)
                 .orElseThrow(()->new ArticleNotFoundException("Article with id " + id + " not found"));
-        securityService.executeIfExecutorIsAdminOrEqualToTarget(authentication, authorName, ()->{
-            articleRepository.deleteById(id);
-        });
+        securityService.executeIfExecutorIsAdminOrEqualToTarget(authentication, authorName, ()-> articleRepository.deleteById(id));
     }
 
     /**

@@ -63,8 +63,6 @@ public class CommentService {
     public void deleteComment(Long commentId, Authentication authentication) {
         String authorName = commentRepository.findCommentAuthorNameByCommentId(commentId)
                 .orElseThrow(()->new CommentNotFoundException("Comment with id " + commentId + " not found!"));
-        securityService.executeIfExecutorIsAdminOrEqualToTarget(authentication, authorName, ()->{
-            commentRepository.deleteById(commentId);
-        });
+        securityService.executeIfExecutorIsAdminOrEqualToTarget(authentication, authorName, ()-> commentRepository.deleteById(commentId));
     }
 }
