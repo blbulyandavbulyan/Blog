@@ -50,3 +50,13 @@ function showChangePasswordDialog(){
     const myModalAlternative = new bootstrap.Modal('#changePasswordModal', {});
     myModalAlternative.show();
 }
+function deleteItemAndGetNewPage(items, totalPages, currentPage, indexPredicate, getPage){
+    const index = items.findIndex(indexPredicate);
+    // Удаляем пользователя с найденным индексом
+    if (index !== -1) {
+        items.splice(index, 1);
+        if(items.length === 0 && totalPages > 1){
+            getPage(currentPage > 1 ? currentPage - 1 : 1);
+        }
+    }
+}

@@ -72,16 +72,7 @@ app.controller('ArticlesController', function ($scope, $timeout, ArticleService,
     };
     $scope.deleteItem = function (article){
         ArticleService.deleteArticle(article.articleId)
-            .then(function (){
-                const index = $scope.articles.findIndex(a => a.articleId === article.articleId);
-                // Удаляем пользователя с найденным индексом
-                if (index !== -1) {
-                    $scope.articles.splice(index, 1);
-                    if($scope.articles.length === 0 && $scope.totalPages > 1){
-                        $scope.getPage($scope.currentPage > 1 ? $scope.currentPage - 1 : 1);
-                    }
-                }
-            })
+            .then(() => deleteItemAndGetNewPage($scope.articles, $scope.totalPages, $scope.currentPage, a => a.articleId === article.articleId, $scope.getPage))
             .catch(function (error) {
                 showErrorToast("Ошибка", "Ошибка удаления статьи");
                 console.log(error);

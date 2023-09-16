@@ -86,16 +86,7 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     }
     $scope.deleteItem = function (comment){
         CommentService.deleteComment(comment.commentId)
-            .then(function (){
-                const index = $scope.comments.findIndex(c => c.commentId === comment.commentId);
-                // Удаляем пользователя с найденным индексом
-                if (index !== -1) {
-                    $scope.comments.splice(index, 1);
-                    if($scope.comments.length === 0 && $scope.totalPages > 1){
-                        $scope.getPage($scope.currentPage > 1 ? $scope.currentPage - 1 : 1);
-                    }
-                }
-            })
+            .then(() => deleteItemAndGetNewPage($scope.comments, $scope.totalPages, $scope.currentPage, c => c.commentId === comment.commentId, $scope.getPage))
             .catch(function (error) {
                 showErrorToast("Ошибка", "Ошибка удаления комментария");
                 console.log(error);
