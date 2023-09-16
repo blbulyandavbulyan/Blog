@@ -31,9 +31,46 @@ app.service('UserService', function ($http) {
                 rolesNames: rolesNames
             };
             return $http.patch(`${usersApiPath}/roles`, httpData);
+        },
+        changePassword: function (targetUsername, password){
+            return $http.patch(`${usersApiPath}/password`, {
+                username: targetUsername,
+                password: password
+            });
         }
     }
 });
+//данный сервис нужен для того, чтобы можно было универсиализировать диалог смены пароля, как для случая когда пароль меняет администратор другому пользователю, так и для случая когда пользователь меняет свой пароль
+app.service('ChangePasswordService', function (UserService){
+    let targetUsername = '';//имя пользователя, у которого будет меняться пароль
+    return{
+        changePassword: function (password){
+            if(targetUsername !== '') {
+                let changePassword = UserService.changePassword(targetUsername, password);
+                targetUsername = '';
+                return changePassword;
+            }
+            else throw Error("Не задано имя пользователя для смены пароля!");
+        },
+        setTargetUsername: function (newTargetUsername){
+            targetUsername = newTargetUsername;
+        }
+    }
+});
+app.controller('PasswordChangeController', function ($scope, ChangePasswordService){
+    $scope.password = '';
+    $scope.confirmPassword = '';
+    $scope.apply = function (){
+        if($scope.password === $scope.confirmPassword && $scope.password !== '') {
+            ChangePasswordService.changePassword($scope.password);
+            $scope.reset();
+        }
+    }
+    $scope.reset = function (){
+        $scope.password = '';
+        $scope.confirmPassword = '';
+    }
+})
 app.controller('UserController', function ($scope, $timeout, UserService, AuthService, RoleService) {
     $scope.users = [];
     $scope.newRoles = {};//в этом объекте, по ИД пользователя, будет храниться: изменён он или нет, и какие роли у него установлены
