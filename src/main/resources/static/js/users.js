@@ -1,9 +1,6 @@
 app.service('UserService', function ($http) {
     const usersApiPath = contextPath + '/api/v1/users';
     return {
-        getUserProfile: function (username) {
-            return $http.get(`${usersApiPath}/${username}`);
-        },
         //получение информации о пользователях для администраторов
         getUserInfoAboutAllUsers: function (filterParams, pageNumber, pageSize) {
             const httpParams = generatePageParamsAndFilterParams(filterParams, pageNumber, pageSize);
