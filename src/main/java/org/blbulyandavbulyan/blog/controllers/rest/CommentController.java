@@ -7,6 +7,7 @@ import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageNumber;
 import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageSize;
 import org.blbulyandavbulyan.blog.dtos.comment.CommentResponse;
 import org.blbulyandavbulyan.blog.dtos.comment.CreateCommentRequest;
+import org.blbulyandavbulyan.blog.dtos.comment.EditCommentRequest;
 import org.blbulyandavbulyan.blog.services.CommentService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -58,5 +59,9 @@ public class CommentController {
     @DeleteMapping("/{commentId}")
     public void deleteComment(@PathVariable @ValidCommentId Long commentId, Authentication authentication){
         commentService.deleteComment(commentId, authentication);
+    }
+    @PatchMapping
+    public void editComment(@Validated @RequestBody EditCommentRequest editCommentRequest, Principal principal){
+        commentService.editComment(editCommentRequest.commentId(), editCommentRequest.text(), principal.getName());
     }
 }

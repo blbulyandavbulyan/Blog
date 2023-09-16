@@ -3,6 +3,7 @@ package org.blbulyandavbulyan.blog.services;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.comment.CommentResponse;
 import org.blbulyandavbulyan.blog.entities.Comment;
+import org.blbulyandavbulyan.blog.exceptions.AccessDeniedException;
 import org.blbulyandavbulyan.blog.exceptions.articles.ArticleNotFoundException;
 import org.blbulyandavbulyan.blog.exceptions.comments.CommentNotFoundException;
 import org.blbulyandavbulyan.blog.repositories.CommentRepository;
@@ -71,5 +72,21 @@ public class CommentService {
         String authorName = commentRepository.findCommentAuthorNameByCommentId(commentId)
                 .orElseThrow(()->new CommentNotFoundException("Comment with id " + commentId + " not found!"));
         securityService.executeIfExecutorIsAdminOrEqualToTarget(authentication, authorName, ()-> commentRepository.deleteById(commentId));
+    }
+
+    /**
+     * Редактирует комментарий по id
+     * @param commentId ID комментария, который нужно отредактировать
+     * @param text новый текст комментария
+     * @param executorName имя пользователя, который хочет отредактировать комментарий
+     * @throws CommentNotFoundException если комментарий с заданным ID не найден
+     * @throws AccessDeniedException если имя исполнителя не совпадает с именем автора комментария
+     */
+    public void editComment(Long commentId, String text, String executorName) {
+        String authorName = commentRepository.findCommentAuthorNameByCommentId(commentId)
+                .orElseThrow(() -> new CommentNotFoundException("Comment with id " + commentId + " not found!"));
+        if(authorName.equals(executorName))
+            commentRepository.updateTextByCommentId(commentId, text);
+        else throw new AccessDeniedException("Operation not permitted");
     }
 }
