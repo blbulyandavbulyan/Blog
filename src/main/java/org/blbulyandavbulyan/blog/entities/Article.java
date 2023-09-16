@@ -30,7 +30,7 @@ public class Article {
     @ValidArticleText
     @Column(name = "text", length = 5000)
     private String text;
-    @OneToMany(mappedBy = "article")
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
     @Column(name = "publish_date")
     @CreationTimestamp
