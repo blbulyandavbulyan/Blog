@@ -1,5 +1,7 @@
 <style>
     .comment{
+        width: 50%;
+        height: 15%;
         border: 3px solid rgba(0, 0, 255, 0.5);
         border-radius: 10mm;
     }
@@ -23,7 +25,7 @@
                 <div class="card-body position-relative">
                     <h5 class="card-title">{{ item.authorName }}</h5>
                     <p class="card-text">{{ item.text }}</p>
-                    <p class="card-text"><small class="text-muted">{{ item.publishDate | date:'dd.MM.yyyy HH:mm' }}</small></p>
+                    <small class="text-muted">{{ item.publishDate | date:'dd.MM.yyyy HH:mm' }}</small>
                     <div ng-include="'fragments/additional-actions.html'"></div>
                 </div>
             </div>
