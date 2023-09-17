@@ -98,12 +98,13 @@ app.controller('ArticlesController', function ($scope, $timeout, ArticleService,
     $scope.getPage(1);
 });
 app.controller('ArticleController', function ($scope, $routeParams, ArticleService, RoleService) {
+    $scope.maxArticleTitleLength = 255;
+    $scope.maxArticleTextLength = 5000;
     if ($routeParams.articleId) {
         ArticleService.getArticle($routeParams.articleId).then(function (response) {
             $scope.article = response.data;
         });
     }
-    $scope.sendingError = null;
     //переменная содержащая новую статью для публикации
     $scope.newArticle = {
         title: '',
@@ -120,6 +121,11 @@ app.controller('ArticleController', function ($scope, $routeParams, ArticleServi
                 $scope.newArticle.title = ''
                 $scope.newArticle.text = ''
                 ArticleService.openArticle(articleId);
+            })
+            .catch(function (error) {
+                showErrorToast("Ошибка публикации", "Не удалось опубликовать статью!")
+                console.error(error)
             });
     };
+    $scope.$watch()
 });
