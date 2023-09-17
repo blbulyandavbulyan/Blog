@@ -20,7 +20,7 @@
         </ul>
         <ul ng-show="!isAuthenticated()" class="navbar-nav">
             <li class="nav-item">
-                <a ng-class="{ active: isActive('/auth') }" class="nav-link" href="index.html#!/auth">Войти</a>
+                <a class="nav-link" data-bs-toggle="modal" data-bs-target="#loginModal" href="javascript:;">Войти</a>
             </li>
         </ul>
         <ul ng-show="isAuthenticated()" class="navbar-nav">
