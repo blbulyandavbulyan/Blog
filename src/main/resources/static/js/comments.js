@@ -38,6 +38,9 @@ app.service('CommentService', ['$http', function ($http) {
 }]);
 // Функция для загрузки комментариев с сервера
 app.controller('CommentController', function ($scope, $routeParams, $timeout, CommentService, RoleService, AuthService) {
+    $scope.maxCommentLength = 2000;
+    $scope.charactersLeftForEditedComment = $scope.maxCommentLength;
+    $scope.charactersLeftForNewComment = $scope.maxCommentLength;
     $scope.comments = [];
     $scope.currentPage = 1;
     $scope.itemsPerPage = 5;
@@ -46,7 +49,10 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     $scope.loadingError = null;
     $scope.newComment = {
         text: ''
-    }
+    };
+    $scope.editedComment = {
+        text: ''
+    };
     const maxPagesToShow = 3; // Максимальное количество отображаемых страниц
     $scope.articleId = $routeParams.articleId;
     //функция для загрузки комментариев
@@ -98,10 +104,9 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
             });
     }
     $scope.editItem = function (comment){
-        const editCommentText = document.getElementById("editCommentText");
         const modalDialogElement = document.getElementById("editCommentModal");
         document.getElementById("confirmCommentEdit").onclick = function () {
-            const text = editCommentText.value;
+            const text = $scope.editedComment.text;
             CommentService.editComment(comment.commentId, text)
                 .then(function () {
                     const index = $scope.comments.findIndex(c=>c.commentId === comment.commentId);
@@ -112,7 +117,8 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
                     console.log(error);
                 })
         }
-        editCommentText.value = comment.text;
+        $scope.editedComment.text = comment.text;
+        $scope.charactersLeftForEditedComment = $scope.maxCommentLength - comment.text;
         const editCommentDialog = new bootstrap.Modal(modalDialogElement, {});
         editCommentDialog.show();
     }
@@ -129,6 +135,12 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     }
     $scope.$watch('totalPages', function () {
         $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
+    });
+    $scope.$watch('editedComment.text', function(){
+        $scope.charactersLeftForEditedComment = $scope.maxCommentLength - ($scope.editedComment.text ? $scope.editedComment.text.length : 0);
+    });
+    $scope.$watch('newComment.text', function(){
+        $scope.charactersLeftForNewComment = $scope.maxCommentLength - ($scope.newComment.text ? $scope.newComment.text.length : 0);
     });
     $scope.getPage(1);
 });
