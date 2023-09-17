@@ -53,7 +53,7 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     $scope.editedComment = {
         text: ''
     };
-    const maxPagesToShow = 3; // Максимальное количество отображаемых страниц
+    $scope.maxPagesToShow = 3; // Максимальное количество отображаемых страниц
     $scope.articleId = $routeParams.articleId;
     //функция для загрузки комментариев
     $scope.loadComments = function (pageNumber) {
@@ -93,7 +93,7 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     //функция для получения страницы с заданным номером
     $scope.getPage = function (pageNumber) {
         $scope.loadComments(pageNumber);
-        $scope.pageNumbers = calculatePageNumbers(pageNumber, $scope.totalPages, maxPagesToShow);
+        $scope.pageNumbers = calculatePageNumbers(pageNumber, $scope.totalPages, $scope.maxPagesToShow);
     }
     $scope.deleteItem = function (comment){
         CommentService.deleteComment(comment.commentId)
@@ -134,7 +134,7 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
         return $scope.canEditItem(comment) || $scope.canDeleteItem(comment);
     }
     $scope.$watch('totalPages', function () {
-        $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
+        $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, $scope.maxPagesToShow);
     });
     $scope.$watch('editedComment.text', function(){
         $scope.charactersLeftForEditedComment = $scope.maxCommentLength - ($scope.editedComment.text ? $scope.editedComment.text.length : 0);

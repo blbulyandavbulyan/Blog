@@ -36,7 +36,7 @@ app.controller('ArticlesController', function ($scope, $timeout, ArticleService,
     $scope.totalPages = 5;
     $scope.contentLoading = false;
     $scope.loadingError = null;
-    const maxPagesToShow = 3; // Максимальное количество отображаемых страниц
+    $scope.maxPagesToShow = 3; // Максимальное количество отображаемых страниц
     $scope.filterArticles = function () {
         $scope.filterParams = $scope.filter;
         $scope.getPage(1);
@@ -65,7 +65,7 @@ app.controller('ArticlesController', function ($scope, $timeout, ArticleService,
     };
     $scope.getPage = function (pageNumber) {
         $scope.loadArticlesInfo($scope.filterParams, pageNumber);
-        $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
+        $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, $scope.maxPagesToShow);
     };
     $scope.goToArticle = function (articleId) {
         ArticleService.openArticle(articleId)
@@ -93,7 +93,7 @@ app.controller('ArticlesController', function ($scope, $timeout, ArticleService,
     }
     // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
     $scope.$watch('totalPages', function () {
-        $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, maxPagesToShow);
+        $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, $scope.maxPagesToShow);
     });
     $scope.getPage(1);
 });
