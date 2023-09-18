@@ -5,7 +5,7 @@ import org.blbulyandavbulyan.blog.dtos.user.UserCreateRequest;
 import org.blbulyandavbulyan.blog.dtos.user.UserInfoDTO;
 import org.blbulyandavbulyan.blog.entities.Role;
 import org.blbulyandavbulyan.blog.entities.User;
-import org.blbulyandavbulyan.blog.exceptions.IllegalRoleNameException;
+import org.blbulyandavbulyan.blog.exceptions.role.IllegalRoleNameException;
 import org.blbulyandavbulyan.blog.exceptions.users.UserAlreadyExistsException;
 import org.blbulyandavbulyan.blog.exceptions.users.UserNotFoundException;
 import org.blbulyandavbulyan.blog.repositories.UserRepository;

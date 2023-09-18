@@ -1,6 +1,6 @@
 package org.blbulyandavbulyan.blog.services;
 
-import org.blbulyandavbulyan.blog.exceptions.AccessDeniedException;
+import org.blbulyandavbulyan.blog.exceptions.security.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
