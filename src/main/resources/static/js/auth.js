@@ -113,16 +113,21 @@ app.controller('AuthController', function ($scope, AuthService) {
         username: '',
         password: ''
     };
-    $scope.error = null;
     $scope.isAuthenticated = AuthService.isAuthenticated;
     $scope.login = function () {
-        $scope.error = null; // Сбрасываем предыдущую ошибку
         // Предполагаем, что на сервере у вас есть маршрут для аутентификации и получения токена
         // Здесь отправляем POST-запрос с данными авторизации
-        AuthService.login($scope.credentials).catch(function (error) {
-            console.error('Ошибка авторизации:', error);
-            if (error.status === 401) $scope.error = 'Ошибка авторизации. Пожалуйста, проверьте правильность введенных данных.';
-            else $scope.error = 'Неизвестная ошибка при авторизации.'
+        AuthService.login($scope.credentials)
+            .then(function () {
+                $scope.credentials.username = '';
+                $scope.credentials.password = '';
+            })
+            .catch(function (error) {
+            if (error.status === 401) showErrorToast("Ошибка авторизации", "Пожалуйста, проверьте правильность введенных данных");
+            else {
+                showErrorToast("Ошибка авторизации", "Неизвестная ошибка!");
+                console.error('Ошибка авторизации:', error);
+            }
         });
     };
     $scope.logout = AuthService.logout;

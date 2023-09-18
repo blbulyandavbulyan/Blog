@@ -14,9 +14,20 @@
                     </label>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Применить фильтр</button>
+            <div class="d-flex flex-row align-items-end">
+                <div class="mb-3 me-3">
+                    <button type="submit" class="btn btn-primary">Применить фильтр</button>
+                </div>
+                <div class="mb-3 me-3">
+                    <button type="reset" class="btn btn-secondary" ng-click="resetFilter()">Сбросить фильтр</button>
+                </div>
+            </div>
         </form>
-        <div ng-if="users.length > 0">
+        <div ng-show="contentLoading && loadingError == null" class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Загрузка...</span>
+        </div>
+        <div ng-show="loadingError != null" class="alert alert-danger">{{loadingError}}</div>
+        <div ng-if="users.length > 0 && !contentLoading">
             <div ng-repeat="user in users">
                 <h1>{{user.name}}</h1>
                 <div class="d-flex flex-wrap">
@@ -68,7 +79,6 @@
             </div>
             <button ng-disabled="newUserForm.$invalid" type="submit" class="btn btn-primary">Создать</button>
         </form>
-        <div ng-if="userCreationError" class="alert alert-danger" role="alert">{{userCreationError}}</div>
     </div>
     <div ng-show="isAuthenticated() && !canAdmin()" class="alert alert-danger" role="alert">У вас нет прав для действий
         на данной странице!

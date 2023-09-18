@@ -3,6 +3,7 @@ package org.blbulyandavbulyan.blog.controllers.rest;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageNumber;
 import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageSize;
+import org.blbulyandavbulyan.blog.annotations.validation.user.ValidRawPassword;
 import org.blbulyandavbulyan.blog.annotations.validation.user.ValidUserId;
 import org.blbulyandavbulyan.blog.dtos.authorization.RegistrationUser;
 import org.blbulyandavbulyan.blog.dtos.roles.UpdateRolesRequest;
@@ -17,6 +18,8 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 /**
  * Контроллер для управления пользователями
@@ -96,5 +99,9 @@ public class UserController {
     @PatchMapping("/roles")
     public void updateUserPrivileges(@Validated @RequestBody UpdateRolesRequest updateRolesRequest){
         userService.updateRoles(updateRolesRequest.userId(), updateRolesRequest.rolesNames());
+    }
+    @PatchMapping("/password")
+    public void updateUserPassword(@RequestParam(name = "password") @ValidRawPassword String password, Principal principal){
+        userService.updateUserPassword(principal.getName(), password);
     }
 }

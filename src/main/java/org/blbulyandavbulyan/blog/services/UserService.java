@@ -162,4 +162,15 @@ public class UserService implements UserDetailsService {
         user.setRoles(roles);
         userRepository.save(user);
     }
+
+    /**
+     * Обновляет пароль пользователя
+     * @param targetUsername пользователь, которого нужно обновить
+     * @param password новый пароль в не хэшированном виде
+     * @throws UserNotFoundException если пользователь с именем targetUsername не найден
+     */
+    public void updateUserPassword(String targetUsername, String password){
+        if(userRepository.updatePasswordHashByName(passwordEncoder.encode(password), targetUsername) < 1)
+            throw new UserNotFoundException("User with name " + targetUsername + " not found!");
+    }
 }

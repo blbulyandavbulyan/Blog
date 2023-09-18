@@ -3,10 +3,13 @@ package org.blbulyandavbulyan.blog.services;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.comment.CommentResponse;
 import org.blbulyandavbulyan.blog.entities.Comment;
+import org.blbulyandavbulyan.blog.exceptions.AccessDeniedException;
 import org.blbulyandavbulyan.blog.exceptions.articles.ArticleNotFoundException;
+import org.blbulyandavbulyan.blog.exceptions.comments.CommentNotFoundException;
 import org.blbulyandavbulyan.blog.repositories.CommentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,7 +30,7 @@ public class CommentService {
      * Сервис для работы со статьями
      */
     private final ArticlesService articlesService;
-
+    private final SecurityService securityService;
     /**
      * Получает комментарии для определённой статьи
      * @param articleId ИД статьи
@@ -56,5 +59,34 @@ public class CommentService {
         comment.setArticle(articlesService.getReferenceById(articleId));
         comment = commentRepository.save(comment);
         return new CommentResponse(comment.getCommentId(), publisherName, comment.getText(), comment.getPublishDate());
+    }
+
+    /**
+     * Удаляет комментарий с заданным id
+     * @param commentId ID комментария, который нужно удалить
+     * @param authentication объект authentication, необходимый методу для проверки, имени удаляющего и его ролей
+     * @throws CommentNotFoundException если комментария с заданным ID нет
+     * @throws org.blbulyandavbulyan.blog.exceptions.AccessDeniedException если у пользователя, который хочет удалить нет необходимых прав
+     */
+    public void deleteComment(Long commentId, Authentication authentication) {
+        String authorName = commentRepository.findCommentAuthorNameByCommentId(commentId)
+                .orElseThrow(()->new CommentNotFoundException("Comment with id " + commentId + " not found!"));
+        securityService.executeIfExecutorIsAdminOrEqualToTarget(authentication, authorName, ()-> commentRepository.deleteById(commentId));
+    }
+
+    /**
+     * Редактирует комментарий по id
+     * @param commentId ID комментария, который нужно отредактировать
+     * @param text новый текст комментария
+     * @param executorName имя пользователя, который хочет отредактировать комментарий
+     * @throws CommentNotFoundException если комментарий с заданным ID не найден
+     * @throws AccessDeniedException если имя исполнителя не совпадает с именем автора комментария
+     */
+    public void editComment(Long commentId, String text, String executorName) {
+        String authorName = commentRepository.findCommentAuthorNameByCommentId(commentId)
+                .orElseThrow(() -> new CommentNotFoundException("Comment with id " + commentId + " not found!"));
+        if(authorName.equals(executorName))
+            commentRepository.updateTextByCommentId(commentId, text);
+        else throw new AccessDeniedException("Operation not permitted");
     }
 }
