@@ -108,7 +108,9 @@ app.factory('authInterceptor', ['$injector', '$q', function ($injector, $q) {
 app.config(function ($httpProvider) {
     $httpProvider.interceptors.push('authInterceptor');
 });
-app.controller('AuthController', function ($scope, AuthService) {
+app.controller('AuthController', function ($scope, $timeout, AuthService) {
+    const authFormModal = bootstrap.Modal.getOrCreateInstance("#loginModal", {});
+    $scope.requestProcessed = false;
     $scope.credentials = {
         username: '',
         password: ''
@@ -117,18 +119,25 @@ app.controller('AuthController', function ($scope, AuthService) {
     $scope.login = function () {
         // Предполагаем, что на сервере у вас есть маршрут для аутентификации и получения токена
         // Здесь отправляем POST-запрос с данными авторизации
+        $scope.requestProcessed = true;
         AuthService.login($scope.credentials)
-            .then(function () {
-                $scope.credentials.username = '';
-                $scope.credentials.password = '';
-            })
+            .then(() =>
+                $timeout(function () {
+                    authFormModal.hide();
+                    $scope.requestProcessed = false;
+                    $scope.credentials.username = '';
+                    $scope.credentials.password = '';
+                }, 300))
             .catch(function (error) {
-            if (error.status === 401) showErrorToast("Ошибка авторизации", "Пожалуйста, проверьте правильность введенных данных");
-            else {
-                showErrorToast("Ошибка авторизации", "Неизвестная ошибка!");
-                console.error('Ошибка авторизации:', error);
-            }
-        });
+                $timeout(function () {
+                    $scope.requestProcessed = false;
+                    if (error.status === 401) showErrorToast("Ошибка авторизации", "Пожалуйста, проверьте правильность введенных данных");
+                    else {
+                        showErrorToast("Ошибка авторизации", "Неизвестная ошибка!");
+                        console.error('Ошибка авторизации:', error);
+                    }
+                }, 300)
+            });
     };
     $scope.logout = AuthService.logout;
 });
