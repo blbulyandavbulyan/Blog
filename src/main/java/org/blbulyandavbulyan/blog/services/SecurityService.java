@@ -1,6 +1,6 @@
 package org.blbulyandavbulyan.blog.services;
 
-import org.blbulyandavbulyan.blog.exceptions.AccessDeniedException;
+import org.blbulyandavbulyan.blog.exceptions.security.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +21,6 @@ public class SecurityService {
                 || authentication.getAuthorities().stream().anyMatch(a->a.getAuthority().equals("ROLE_ADMIN"))) {
             r.run();
         }
-        else throw new AccessDeniedException("Operation not permitted");
+        else throw new AccessDeniedException();
     }
 }

@@ -2,7 +2,7 @@ package org.blbulyandavbulyan.blog.services;
 
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.entities.Role;
-import org.blbulyandavbulyan.blog.exceptions.IllegalRoleNameException;
+import org.blbulyandavbulyan.blog.exceptions.role.IllegalRoleNameException;
 import org.blbulyandavbulyan.blog.repositories.RoleRepository;
 import org.springframework.stereotype.Service;
 

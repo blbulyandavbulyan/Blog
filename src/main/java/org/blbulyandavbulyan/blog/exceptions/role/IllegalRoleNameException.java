@@ -1,13 +1,11 @@
-package org.blbulyandavbulyan.blog.exceptions;
+package org.blbulyandavbulyan.blog.exceptions.role;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.blbulyandavbulyan.blog.exceptions.BadRequestException;
 
 /**
  * Данное исключение бросается при создании пользователя администратором, если указано неверное имя роли
  */
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class IllegalRoleNameException extends BlogException{
+public class IllegalRoleNameException extends BadRequestException {
     public IllegalRoleNameException(String message) {
         super(message);
     }

@@ -3,9 +3,9 @@ package org.blbulyandavbulyan.blog.services;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.comment.CommentResponse;
 import org.blbulyandavbulyan.blog.entities.Comment;
-import org.blbulyandavbulyan.blog.exceptions.AccessDeniedException;
 import org.blbulyandavbulyan.blog.exceptions.articles.ArticleNotFoundException;
 import org.blbulyandavbulyan.blog.exceptions.comments.CommentNotFoundException;
+import org.blbulyandavbulyan.blog.exceptions.security.AccessDeniedException;
 import org.blbulyandavbulyan.blog.repositories.CommentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -66,7 +66,7 @@ public class CommentService {
      * @param commentId ID комментария, который нужно удалить
      * @param authentication объект authentication, необходимый методу для проверки, имени удаляющего и его ролей
      * @throws CommentNotFoundException если комментария с заданным ID нет
-     * @throws org.blbulyandavbulyan.blog.exceptions.AccessDeniedException если у пользователя, который хочет удалить нет необходимых прав
+     * @throws AccessDeniedException если у пользователя, который хочет удалить нет необходимых прав
      */
     public void deleteComment(Long commentId, Authentication authentication) {
         String authorName = commentRepository.findCommentAuthorNameByCommentId(commentId)
@@ -87,6 +87,6 @@ public class CommentService {
                 .orElseThrow(() -> new CommentNotFoundException("Comment with id " + commentId + " not found!"));
         if(authorName.equals(executorName))
             commentRepository.updateTextByCommentId(commentId, text);
-        else throw new AccessDeniedException("Operation not permitted");
+        else throw new AccessDeniedException();
     }
 }

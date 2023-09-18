@@ -1,16 +1,16 @@
 package org.blbulyandavbulyan.blog.exceptions;
 
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
 /**
  * Общий класс исключений для моего приложения
  */
-public class BlogException extends RuntimeException{
-    public BlogException() {
-    }
-    public BlogException(String message) {
+@Getter
+public abstract class BlogException extends RuntimeException{
+    private final HttpStatus httpStatus;
+    public BlogException(String message, HttpStatus httpStatus) {
         super(message);
-    }
-
-    public BlogException(String message, Throwable cause) {
-        super(message, cause);
+        this.httpStatus = httpStatus;
     }
 }
