@@ -87,6 +87,6 @@ public class CommentService {
                 .orElseThrow(() -> new CommentNotFoundException("Comment with id " + commentId + " not found!"));
         if(authorName.equals(executorName))
             commentRepository.updateTextByCommentId(commentId, text);
-        else throw new AccessDeniedException("Operation not permitted");
+        else throw new AccessDeniedException();
     }
 }

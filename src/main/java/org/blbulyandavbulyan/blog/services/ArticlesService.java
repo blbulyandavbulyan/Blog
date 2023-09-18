@@ -1,7 +1,10 @@
 package org.blbulyandavbulyan.blog.services;
 
 import lombok.RequiredArgsConstructor;
-import org.blbulyandavbulyan.blog.dtos.article.*;
+import org.blbulyandavbulyan.blog.dtos.article.ArticleInfoDTO;
+import org.blbulyandavbulyan.blog.dtos.article.ArticlePublishedResponse;
+import org.blbulyandavbulyan.blog.dtos.article.ArticleResponse;
+import org.blbulyandavbulyan.blog.dtos.article.CreateArticleRequest;
 import org.blbulyandavbulyan.blog.entities.Article;
 import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.exceptions.AccessDeniedException;
@@ -108,6 +111,6 @@ public class ArticlesService {
         String authorName = articleRepository.findArticleAuthorNameByArticleId(articleId)
                 .orElseThrow(()->new ArticleNotFoundException("Article with id " + articleId + " not found"));
         if(authorName.equals(executorName)) articleRepository.updateTitleAndTextByArticleId(articleId, title, text);
-        else throw new AccessDeniedException("Operation not permitted!");
+        else throw new AccessDeniedException();
     }
 }

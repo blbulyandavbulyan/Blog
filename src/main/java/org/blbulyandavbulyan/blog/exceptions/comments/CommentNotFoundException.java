@@ -1,8 +1,8 @@
 package org.blbulyandavbulyan.blog.exceptions.comments;
 
-import org.blbulyandavbulyan.blog.exceptions.BlogException;
+import org.blbulyandavbulyan.blog.exceptions.ResourceNofFoundException;
 
-public class CommentNotFoundException extends BlogException {
+public class CommentNotFoundException extends ResourceNofFoundException {
     public CommentNotFoundException(String message) {
         super(message);
     }

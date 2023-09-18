@@ -21,6 +21,6 @@ public class SecurityService {
                 || authentication.getAuthorities().stream().anyMatch(a->a.getAuthority().equals("ROLE_ADMIN"))) {
             r.run();
         }
-        else throw new AccessDeniedException("Operation not permitted");
+        else throw new AccessDeniedException();
     }
 }
