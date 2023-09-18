@@ -50,9 +50,11 @@ app.controller('PasswordChangeController', function ($scope, $timeout, UserServi
                     $scope.reset()
                 }, 300))
                 .catch(function (error) {
-                    $scope.requestProcessed = false;
-                    showErrorToast("Ошибка смены пароля", "Не удалось сменить пароль!");
-                    console.log(error)
+                    $timeout(()=>{
+                        $scope.requestProcessed = false;
+                        showErrorToast("Ошибка смены пароля", "Не удалось сменить пароль!");
+                        console.log(error)
+                    }, 300)
                 });
         }
     }
