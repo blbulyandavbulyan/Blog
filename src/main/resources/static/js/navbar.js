@@ -6,4 +6,7 @@ app.controller('NavbarController', function($scope, $location, RoleService, Auth
     };
     $scope.isAuthenticated = ()=> AuthService.isAuthenticated();
     $scope.logout = ()=> AuthService.logout();
+    $scope.changePassword = function (){
+        showModalDialog("changePasswordModal");
+    }
 });

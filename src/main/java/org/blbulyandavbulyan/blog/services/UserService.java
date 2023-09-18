@@ -5,7 +5,7 @@ import org.blbulyandavbulyan.blog.dtos.user.UserCreateRequest;
 import org.blbulyandavbulyan.blog.dtos.user.UserInfoDTO;
 import org.blbulyandavbulyan.blog.entities.Role;
 import org.blbulyandavbulyan.blog.entities.User;
-import org.blbulyandavbulyan.blog.exceptions.IllegalRoleNameException;
+import org.blbulyandavbulyan.blog.exceptions.role.IllegalRoleNameException;
 import org.blbulyandavbulyan.blog.exceptions.users.UserAlreadyExistsException;
 import org.blbulyandavbulyan.blog.exceptions.users.UserNotFoundException;
 import org.blbulyandavbulyan.blog.repositories.UserRepository;
@@ -161,5 +161,16 @@ public class UserService implements UserDetailsService {
         List<Role> roles = rolesNames.stream().map(roleService::getReferenceByRoleName).collect(Collectors.toCollection(ArrayList::new));
         user.setRoles(roles);
         userRepository.save(user);
+    }
+
+    /**
+     * Обновляет пароль пользователя
+     * @param targetUsername пользователь, которого нужно обновить
+     * @param password новый пароль в не хэшированном виде
+     * @throws UserNotFoundException если пользователь с именем targetUsername не найден
+     */
+    public void updateUserPassword(String targetUsername, String password){
+        if(userRepository.updatePasswordHashByName(passwordEncoder.encode(password), targetUsername) < 1)
+            throw new UserNotFoundException("User with name " + targetUsername + " not found!");
     }
 }

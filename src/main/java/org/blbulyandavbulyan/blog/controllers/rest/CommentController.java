@@ -2,14 +2,17 @@ package org.blbulyandavbulyan.blog.controllers.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.annotations.validation.article.ValidArticleId;
+import org.blbulyandavbulyan.blog.annotations.validation.comment.ValidCommentId;
 import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageNumber;
 import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageSize;
-import org.blbulyandavbulyan.blog.dtos.comment.CreateCommentRequest;
 import org.blbulyandavbulyan.blog.dtos.comment.CommentResponse;
+import org.blbulyandavbulyan.blog.dtos.comment.CreateCommentRequest;
+import org.blbulyandavbulyan.blog.dtos.comment.EditCommentRequest;
 import org.blbulyandavbulyan.blog.services.CommentService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,7 +53,15 @@ public class CommentController {
     @Secured({"ROLE_COMMENTER"})
     @PostMapping("/article")
     @ResponseStatus(HttpStatus.CREATED)
-    public void publishComment(@Validated @RequestBody CreateCommentRequest commentForPublishing, Principal principal){
-        commentService.publishComment(principal.getName(), commentForPublishing.articleId(), commentForPublishing.text());
+    public CommentResponse publishComment(@Validated @RequestBody CreateCommentRequest commentForPublishing, Principal principal){
+        return commentService.publishComment(principal.getName(), commentForPublishing.articleId(), commentForPublishing.text());
+    }
+    @DeleteMapping("/{commentId}")
+    public void deleteComment(@PathVariable @ValidCommentId Long commentId, Authentication authentication){
+        commentService.deleteComment(commentId, authentication);
+    }
+    @PatchMapping
+    public void editComment(@Validated @RequestBody EditCommentRequest editCommentRequest, Principal principal){
+        commentService.editComment(editCommentRequest.commentId(), editCommentRequest.text(), principal.getName());
     }
 }
