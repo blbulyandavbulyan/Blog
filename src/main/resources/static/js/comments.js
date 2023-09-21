@@ -47,6 +47,7 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     $scope.totalPages = 5;
     $scope.contentLoading = false;
     $scope.loadingError = null;
+    $scope.postCommentRequestProcessed = false;
     $scope.newComment = {
         text: ''
     };
@@ -75,19 +76,26 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     };
     //функция для публикации комментария
     $scope.postComment = function () {
+        $scope.postCommentRequestProcessed = true;
         CommentService.postComment($scope.articleId, $scope.newComment.text)
             .then(function (response) {
-                const publishedComment = response.data;
-                $scope.newComment.text = '';
-                if($scope.comments.length < $scope.itemsPerPage ) {
-                    if($scope.totalPages === 0)$scope.totalPages = 1
-                    $scope.comments.push(publishedComment);
-                }
-                else $scope.totalPages++;
+                $timeout(function () {
+                    const publishedComment = response.data;
+                    $scope.newComment.text = '';
+                    if($scope.comments.length < $scope.itemsPerPage ) {
+                        if($scope.totalPages === 0)$scope.totalPages = 1
+                        $scope.comments.push(publishedComment);
+                    }
+                    else $scope.totalPages++;
+                    $scope.postCommentRequestProcessed = false;
+                }, 300)
             })
             .catch(function (error) {
-                showErrorToast("Ошибка отправки", "Не удалось отправить комментарий!");
-                console.error(error);
+                $timeout(function () {
+                    showErrorToast("Ошибка отправки", "Не удалось отправить комментарий!");
+                    console.error(error);
+                    $scope.postCommentRequestProcessed = false;
+                }, 300)
             });
     }
     //функция для получения страницы с заданным номером
