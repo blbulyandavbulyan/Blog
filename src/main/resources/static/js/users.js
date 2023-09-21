@@ -34,16 +34,32 @@ app.service('UserService', function ($http) {
         }
     }
 });
-app.controller('PasswordChangeController', function ($scope, UserService){
+app.controller('PasswordChangeController', function ($scope, $timeout, UserService){
+    const changePasswordModalDialog = bootstrap.Modal.getOrCreateInstance("#changePasswordModal", {
+        keyboard:false
+    });
     $scope.password = '';
     $scope.confirmPassword = '';
+    $scope.requestProcessed = false;//показывает, обрабатывается ли запрос
     $scope.apply = function (){
         if($scope.password === $scope.confirmPassword && $scope.password !== '') {
-            UserService.changePassword($scope.password);
-            $scope.reset();
+            $scope.requestProcessed = true;
+            UserService.changePassword($scope.password)
+                .then(() =>  $timeout(() => {
+                    changePasswordModalDialog.hide();
+                    $scope.reset()
+                }, 300))
+                .catch(function (error) {
+                    $timeout(()=>{
+                        $scope.requestProcessed = false;
+                        showErrorToast("Ошибка смены пароля", "Не удалось сменить пароль!");
+                        console.log(error)
+                    }, 300)
+                });
         }
     }
     $scope.reset = function (){
+        $scope.requestProcessed = false;
         $scope.password = '';
         $scope.confirmPassword = '';
     }

@@ -46,10 +46,6 @@ function showErrorToast(caption, text){
     errorToast.getElementsByClassName("error-caption")[0].textContent = caption;
     bootstrap.Toast.getOrCreateInstance(errorToast).show();
 }
-function showModalDialog(dialogId){
-    const myModalAlternative = new bootstrap.Modal(`#${dialogId}`, {});
-    myModalAlternative.show();
-}
 function deleteItemAndGetNewPage(items, totalPages, currentPage, indexPredicate, getPage){
     const index = items.findIndex(indexPredicate);
     // Удаляем пользователя с найденным индексом
