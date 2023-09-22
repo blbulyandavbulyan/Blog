@@ -97,9 +97,10 @@ app.controller('ArticlesController', function ($scope, $timeout, ArticleService,
     });
     $scope.getPage(1);
 });
-app.controller('ArticleController', function ($scope, $routeParams, ArticleService, RoleService) {
+app.controller('ArticleController', function ($scope, $routeParams, $timeout, ArticleService, RoleService) {
     $scope.maxArticleTitleLength = 255;
     $scope.maxArticleTextLength = 5000;
+    $scope.articlePublishing = false;
     if ($routeParams.articleId) {
         ArticleService.getArticle($routeParams.articleId).then(function (response) {
             $scope.article = response.data;
@@ -114,18 +115,25 @@ app.controller('ArticleController', function ($scope, $routeParams, ArticleServi
     $scope.canPublish = () => RoleService.isPublisher();
     //метод публикующий статью
     $scope.publishArticle = function () {
+        $scope.articlePublishing = true;
         ArticleService.postArticle($scope.newArticle.title, $scope.newArticle.text)
             .then(function (response) {
-                //здесь мы ожидаем что нам в ответ придёт как минимум id новой статьи
-                const articleId = response.data.articleId;
-                $scope.newArticle.title = ''
-                $scope.newArticle.text = ''
-                ArticleService.openArticle(articleId);
+                $timeout(function () {
+                    //здесь мы ожидаем что нам в ответ придёт как минимум id новой статьи
+                    const articleId = response.data.articleId;
+                    $scope.newArticle.title = ''
+                    $scope.newArticle.text = ''
+                    $scope.articlePublishing = false
+                    ArticleService.openArticle(articleId);
+                }, 300);
             })
             .catch(function (error) {
-                showErrorToast("Ошибка публикации", "Не удалось опубликовать статью!")
-                console.error(error)
+                $timeout(function () {
+                    showErrorToast("Ошибка публикации", "Не удалось опубликовать статью!")
+                    console.error(error)
+                    $scope.articlePublishing = false
+                }, 300);
             });
     };
-    $scope.$watch()
+    $scope.$watch()// TODO: 21.09.2023 ЧТО ЭТО ???
 });

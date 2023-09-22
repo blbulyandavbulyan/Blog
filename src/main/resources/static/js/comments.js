@@ -47,6 +47,8 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     $scope.totalPages = 5;
     $scope.contentLoading = false;
     $scope.loadingError = null;
+    $scope.postCommentRequestProcessed = false;
+    $scope.editCommentRequestProcessed = false;
     $scope.newComment = {
         text: ''
     };
@@ -75,19 +77,26 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     };
     //функция для публикации комментария
     $scope.postComment = function () {
+        $scope.postCommentRequestProcessed = true;
         CommentService.postComment($scope.articleId, $scope.newComment.text)
             .then(function (response) {
-                const publishedComment = response.data;
-                $scope.newComment.text = '';
-                if($scope.comments.length < $scope.itemsPerPage ) {
-                    if($scope.totalPages === 0)$scope.totalPages = 1
-                    $scope.comments.push(publishedComment);
-                }
-                else $scope.totalPages++;
+                $timeout(function () {
+                    const publishedComment = response.data;
+                    $scope.newComment.text = '';
+                    if($scope.comments.length < $scope.itemsPerPage ) {
+                        if($scope.totalPages === 0)$scope.totalPages = 1
+                        $scope.comments.push(publishedComment);
+                    }
+                    else $scope.totalPages++;
+                    $scope.postCommentRequestProcessed = false;
+                }, 300)
             })
             .catch(function (error) {
-                showErrorToast("Ошибка отправки", "Не удалось отправить комментарий!");
-                console.error(error);
+                $timeout(function () {
+                    showErrorToast("Ошибка отправки", "Не удалось отправить комментарий!");
+                    console.error(error);
+                    $scope.postCommentRequestProcessed = false;
+                }, 300)
             });
     }
     //функция для получения страницы с заданным номером
@@ -105,21 +114,29 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     }
     $scope.editItem = function (comment){
         const modalDialogElement = document.getElementById("editCommentModal");
+        const editCommentDialog = new bootstrap.Modal(modalDialogElement, {});
         document.getElementById("confirmCommentEdit").onclick = function () {
+            $scope.editCommentRequestProcessed = true;
             const text = $scope.editedComment.text;
             CommentService.editComment(comment.commentId, text)
-                .then(function () {
-                    const index = $scope.comments.findIndex(c=>c.commentId === comment.commentId);
-                    if(index !== -1) $scope.comments[index].text = text;
-                })
+                .then(() =>
+                    $timeout(function () {
+                        const index = $scope.comments.findIndex(c => c.commentId === comment.commentId);
+                        if (index !== -1) $scope.comments[index].text = text;
+                        $scope.editCommentRequestProcessed = false;
+                        editCommentDialog.hide();
+                    }, 300)
+                )
                 .catch(function(error){
-                    showErrorToast("Ошибка редактирования", "Не удалось отредактировать комментарий")
-                    console.log(error);
+                    $timeout(function (){
+                        showErrorToast("Ошибка редактирования", "Не удалось отредактировать комментарий")
+                        console.log(error);
+                        $scope.editCommentRequestProcessed = false;
+                    }, 300);
                 })
         }
         $scope.editedComment.text = comment.text;
         $scope.charactersLeftForEditedComment = $scope.maxCommentLength - comment.text;
-        const editCommentDialog = new bootstrap.Modal(modalDialogElement, {});
         editCommentDialog.show();
     }
     $scope.canPost = RoleService.isCommenter;

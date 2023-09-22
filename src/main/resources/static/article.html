@@ -34,10 +34,14 @@
         <form name="newCommentForm" ng-show="canPost()" ng-submit="postComment()" class="mt-4">
             <div class="form-group">
                 <label for="comment">Напишите комментарий:</label>
-                <textarea id="comment" ng-model="newComment.text" class="form-control" rows="4" maxlength="{{maxCommentLength}}" required></textarea>
+                <textarea id="comment" ng-model="newComment.text" class="form-control" rows="4" maxlength="{{maxCommentLength}}" ng-disabled="postCommentRequestProcessed" required></textarea>
                 <p class="alert" ng-class="charactersLeftForNewComment > maxCommentLength/2 ? 'alert-info' : 'alert-warning'">Символов осталось: {{charactersLeftForNewComment}}</p>
             </div>
-            <button type="submit" class="btn btn-primary" ng-disabled="newCommentForm.$invalid">Добавить комментарий</button>
+            <button type="submit" class="btn btn-primary" ng-disabled="newCommentForm.$invalid || postCommentRequestProcessed">
+                <span ng-show="postCommentRequestProcessed" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <span ng-show="postCommentRequestProcessed" class="visually-hidden" role="status">Отправка...</span>
+                <span>Добавить комментарий</span>
+            </button>
         </form>
         <div class="modal fade" id="editCommentModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editCommentLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -49,12 +53,16 @@
                     <form name="editCommentForm">
                         <div class="modal-body">
                             <label for="editCommentText">Новый текст комментария</label>
-                            <textarea id="editCommentText" ng-model="editedComment.text" class="form-control" rows="4" maxlength="{{maxCommentLength}}" required></textarea>
+                            <textarea id="editCommentText" ng-model="editedComment.text" class="form-control" rows="4" maxlength="{{maxCommentLength}}" ng-disabled="editCommentRequestProcessed" required></textarea>
                             <p class="alert" ng-class="charactersLeftForEditedComment > maxCommentLength/2 ? 'alert-info' : 'alert-warning'">Символов осталось: {{charactersLeftForEditedComment}}</p>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                            <button id="confirmCommentEdit" class="btn btn-primary" ng-disabled="editCommentForm.$invalid" data-bs-dismiss="modal" data-button-clicked="ok">Отредактировать</button>
+                            <button id="confirmCommentEdit" class="btn btn-primary" ng-disabled="editCommentForm.$invalid || editCommentRequestProcessed" data-button-clicked="ok">
+                                <span ng-show="editCommentRequestProcessed" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                <span ng-show="editCommentRequestProcessed" class="visually-hidden" role="status">Обработка...</span>
+                                <span>Отредактировать</span>
+                            </button>
                         </div>
                     </form>
                 </div>
