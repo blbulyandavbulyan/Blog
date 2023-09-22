@@ -41,11 +41,15 @@
                         </label>
                     </div>
                 </div>
-                <button class="btn btn-warning" ng-disabled="!newRoles[user.userId].isChanged"
-                        ng-click="applyChanges(user)">Применить изменения
+                <button class="btn btn-warning" ng-disabled="!newRoles[user.userId].isChanged" ng-click="applyChanges(user)">
+                    <span ng-show="newRoles[user.userId].rolesUpdating" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <span ng-show="newRoles[user.userId].rolesUpdating" class="visually-hidden" role="status">Обработка...</span>
+                    <span>Применить изменения</span>
                 </button>
-                <button ng-disabled="isItMe(user)" class="btn btn-danger" ng-click="deleteUser(user.userId)">Удалить
-                    пользователя
+                <button ng-disabled="isItMe(user)" class="btn btn-danger" ng-click="deleteUser(user)">
+                    <span ng-show="user.deleting" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <span ng-show="user.deleting" class="visually-hidden" role="status">Обработка...</span>
+                    <span>Удалить пользователя</span>
                 </button>
                 <hr>
             </div>
@@ -77,7 +81,11 @@
                     </label>
                 </div>
             </div>
-            <button ng-disabled="newUserForm.$invalid" type="submit" class="btn btn-primary">Создать</button>
+            <button ng-disabled="newUserForm.$invalid || userCreating" type="submit" class="btn btn-primary">
+                <span ng-show="userCreating" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <span ng-show="userCreating" class="visually-hidden" role="status">Обработка...</span>
+                <span>Создать</span>
+            </button>
         </form>
     </div>
     <div ng-show="isAuthenticated() && !canAdmin()" class="alert alert-danger" role="alert">У вас нет прав для действий

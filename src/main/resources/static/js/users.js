@@ -136,49 +136,65 @@ app.controller('UserController', function ($scope, $timeout, UserService, AuthSe
         $scope.loadUsersInfo($scope.filterParams, pageNumber);
         $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, $scope.maxPagesToShow);
     };
-    $scope.deleteUser = function (userId) {//метод для обработки кнопки удаления пользователя
+    $scope.deleteUser = function (user) {//метод для обработки кнопки удаления пользователя
+        const userId = user.userId
+        user.deleting = true;
         UserService.deleteUserById(userId)
-            .then(() => deleteItemAndGetNewPage($scope.users, $scope.totalPages, $scope.currentPage, user => user.userId === userId, $scope.getPage))
+            .then(() => $timeout(function () {
+                    user.deleting = false;
+                    deleteItemAndGetNewPage($scope.users, $scope.totalPages, $scope.currentPage, user => user.userId === userId, $scope.getPage);
+                }, 300))
             .catch(function (error) {
-                showErrorToast("Ошибка удаления", "Не удалось удалить пользователя");
-                console.log(error);
+                $timeout(()=>{
+                    user.deleting = false;
+                    showErrorToast("Ошибка удаления", `Не удалось удалить пользователя ${user.name}`);
+                    console.log(error);
+                }, 300);
             });
     };
     $scope.createUser = function () {
         let name = $scope.newUser.name;
         let password = $scope.newUser.password;
         let rolesNames = $scope.availableRoles.filter(roleName => $scope.newUser.roles[roleName]);
+        $scope.userCreating = true;
         UserService.createUser(name, password, rolesNames)
             .then(function (response) {
-                let userCreatedResponse = response.data;
-                $scope.newUser.name = '';
-                $scope.newUser.password = '';
-                $scope.availableRoles.forEach(function (roleName) {
-                    $scope.newUser.roles[roleName] = false;
-                });
-                if ($scope.users.length < $scope.itemsPerPage) {//в случае если количество элементов на текущей странице меньше чем максимальное количество элементов на странице
-                    //то мы просто вставляем пользователя на эту страницу
-                    let createdUser = {
-                        userId: userCreatedResponse.userId,
-                        name: name,
-                        password: password
-                    };
-                    createdUser.roles = rolesNames.map(rn => {
-                        return {name: rn}
+                $timeout(function () {
+                    let userCreatedResponse = response.data;
+                    $scope.newUser.name = '';
+                    $scope.newUser.password = '';
+                    $scope.availableRoles.forEach(function (roleName) {
+                        $scope.newUser.roles[roleName] = false;
                     });
-                    $scope.newRoles[createdUser.userId] = {}
-                    rolesNames.forEach(function (roleName) {
-                        $scope.newRoles[createdUser.userId][roleName] = true;
-                    });
-                    $scope.users.push(createdUser);
-                } else if ($scope.totalPages === $scope.currentPage) {//в случае если мы находимся на последней странице и на ней уже максимальное количество элементов
-                    //увеличиваем количество страниц
-                    $scope.totalPages += 1;
-                }
+                    $scope.userCreating = false;
+                    if ($scope.users.length < $scope.itemsPerPage) {//в случае если количество элементов на текущей странице меньше чем максимальное количество элементов на странице
+                        //то мы просто вставляем пользователя на эту страницу
+                        let createdUser = {
+                            userId: userCreatedResponse.userId,
+                            name: name,
+                            password: password
+                        };
+                        createdUser.roles = rolesNames.map(rn => {
+                            return {name: rn}
+                        });
+                        $scope.newRoles[createdUser.userId] = {}
+                        rolesNames.forEach(function (roleName) {
+                            $scope.newRoles[createdUser.userId][roleName] = true;
+                        });
+                        $scope.users.push(createdUser);
+                    } else if ($scope.totalPages === $scope.currentPage) {//в случае если мы находимся на последней странице и на ней уже максимальное количество элементов
+                        //увеличиваем количество страниц
+                        $scope.totalPages += 1;
+                    }
+
+                }, 300);
             })
             .catch(function (error) {
-                showErrorToast("Ошибка создания", `Не удалось создать пользователя ${name}`)
-                console.log(error);
+                $timeout(function (){
+                    showErrorToast("Ошибка создания", `Не удалось создать пользователя ${name}`)
+                    console.log(error);
+                    $scope.userCreating = false;
+                }, 300);
             });
     }
     $scope.isItMe = function (user) {//метод для проверки является ли переданный пользователь, тем, под которым вошли
@@ -200,17 +216,24 @@ app.controller('UserController', function ($scope, $timeout, UserService, AuthSe
     };
     $scope.applyChanges = function (user) {//метод для обработки кнопки "применить изменения"
         let newPrivileges = $scope.availableRoles.filter(r => $scope.newRoles[user.userId][r]);
+        $scope.newRoles[user.userId].rolesUpdating = true;
         UserService.updateRoles(user.userId, newPrivileges)
-            .then(function () {
-                user.roles = newPrivileges.map(rn => {
-                    return {name: rn}
-                });
-                $scope.newRoles[user.userId] = {};
-                $scope.newRoles[user.userId].isChanged = false;
-                setRolesData(user.userId, newPrivileges);
-            }).catch(function (error) {
-                showErrorToast("Ошибка обновления", `Не удалось обновить роли для пользователя ${user.name}`);
-                console.log(error);
+            .then(()=> $timeout(() => {
+                        user.roles = newPrivileges.map(rn => {
+                            return {name: rn}
+                        });
+                        $scope.newRoles[user.userId] = {};
+                        $scope.newRoles[user.userId].isChanged = false;
+                        setRolesData(user.userId, newPrivileges);
+                        $scope.newRoles[user.userId].rolesUpdating = false;
+                    }, 300)
+            )
+            .catch(function (error) {
+                $timeout(()=>{
+                    showErrorToast("Ошибка обновления", `Не удалось обновить роли для пользователя ${user.name}`);
+                    console.log(error);
+                    $scope.newRoles[user.userId].rolesUpdating = false;
+                }, 300);
             });
     };
     // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)
