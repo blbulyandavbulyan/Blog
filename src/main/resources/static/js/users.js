@@ -200,17 +200,24 @@ app.controller('UserController', function ($scope, $timeout, UserService, AuthSe
     };
     $scope.applyChanges = function (user) {//метод для обработки кнопки "применить изменения"
         let newPrivileges = $scope.availableRoles.filter(r => $scope.newRoles[user.userId][r]);
+        $scope.newRoles[user.userId].rolesUpdating = true;
         UserService.updateRoles(user.userId, newPrivileges)
-            .then(function () {
-                user.roles = newPrivileges.map(rn => {
-                    return {name: rn}
-                });
-                $scope.newRoles[user.userId] = {};
-                $scope.newRoles[user.userId].isChanged = false;
-                setRolesData(user.userId, newPrivileges);
-            }).catch(function (error) {
-                showErrorToast("Ошибка обновления", `Не удалось обновить роли для пользователя ${user.name}`);
-                console.log(error);
+            .then(()=> $timeout(() => {
+                        user.roles = newPrivileges.map(rn => {
+                            return {name: rn}
+                        });
+                        $scope.newRoles[user.userId] = {};
+                        $scope.newRoles[user.userId].isChanged = false;
+                        setRolesData(user.userId, newPrivileges);
+                        $scope.newRoles[user.userId].rolesUpdating = false;
+                    }, 300)
+            )
+            .catch(function (error) {
+                $timeout(()=>{
+                    showErrorToast("Ошибка обновления", `Не удалось обновить роли для пользователя ${user.name}`);
+                    console.log(error);
+                    $scope.newRoles[user.userId].rolesUpdating = false;
+                }, 300);
             });
     };
     // Обработчик изменения общего количества страниц (возможно, при загрузке данных с сервера)

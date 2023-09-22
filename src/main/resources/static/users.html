@@ -41,11 +41,13 @@
                         </label>
                     </div>
                 </div>
-                <button class="btn btn-warning" ng-disabled="!newRoles[user.userId].isChanged"
-                        ng-click="applyChanges(user)">Применить изменения
+                <button class="btn btn-warning" ng-disabled="!newRoles[user.userId].isChanged" ng-click="applyChanges(user)">
+                    <span ng-show="newRoles[user.userId].rolesUpdating" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <span ng-show="newRoles[user.userId].rolesUpdating" class="visually-hidden" role="status">Обработка...</span>
+                    <span>Применить изменения</span>
                 </button>
-                <button ng-disabled="isItMe(user)" class="btn btn-danger" ng-click="deleteUser(user.userId)">Удалить
-                    пользователя
+                <button ng-disabled="isItMe(user)" class="btn btn-danger" ng-click="deleteUser(user.userId)">
+                    <span>Удалить пользователя</span>
                 </button>
                 <hr>
             </div>
