@@ -156,37 +156,45 @@ app.controller('UserController', function ($scope, $timeout, UserService, AuthSe
         let name = $scope.newUser.name;
         let password = $scope.newUser.password;
         let rolesNames = $scope.availableRoles.filter(roleName => $scope.newUser.roles[roleName]);
+        $scope.userCreating = true;
         UserService.createUser(name, password, rolesNames)
             .then(function (response) {
-                let userCreatedResponse = response.data;
-                $scope.newUser.name = '';
-                $scope.newUser.password = '';
-                $scope.availableRoles.forEach(function (roleName) {
-                    $scope.newUser.roles[roleName] = false;
-                });
-                if ($scope.users.length < $scope.itemsPerPage) {//в случае если количество элементов на текущей странице меньше чем максимальное количество элементов на странице
-                    //то мы просто вставляем пользователя на эту страницу
-                    let createdUser = {
-                        userId: userCreatedResponse.userId,
-                        name: name,
-                        password: password
-                    };
-                    createdUser.roles = rolesNames.map(rn => {
-                        return {name: rn}
+                $timeout(function () {
+                    let userCreatedResponse = response.data;
+                    $scope.newUser.name = '';
+                    $scope.newUser.password = '';
+                    $scope.availableRoles.forEach(function (roleName) {
+                        $scope.newUser.roles[roleName] = false;
                     });
-                    $scope.newRoles[createdUser.userId] = {}
-                    rolesNames.forEach(function (roleName) {
-                        $scope.newRoles[createdUser.userId][roleName] = true;
-                    });
-                    $scope.users.push(createdUser);
-                } else if ($scope.totalPages === $scope.currentPage) {//в случае если мы находимся на последней странице и на ней уже максимальное количество элементов
-                    //увеличиваем количество страниц
-                    $scope.totalPages += 1;
-                }
+                    $scope.userCreating = false;
+                    if ($scope.users.length < $scope.itemsPerPage) {//в случае если количество элементов на текущей странице меньше чем максимальное количество элементов на странице
+                        //то мы просто вставляем пользователя на эту страницу
+                        let createdUser = {
+                            userId: userCreatedResponse.userId,
+                            name: name,
+                            password: password
+                        };
+                        createdUser.roles = rolesNames.map(rn => {
+                            return {name: rn}
+                        });
+                        $scope.newRoles[createdUser.userId] = {}
+                        rolesNames.forEach(function (roleName) {
+                            $scope.newRoles[createdUser.userId][roleName] = true;
+                        });
+                        $scope.users.push(createdUser);
+                    } else if ($scope.totalPages === $scope.currentPage) {//в случае если мы находимся на последней странице и на ней уже максимальное количество элементов
+                        //увеличиваем количество страниц
+                        $scope.totalPages += 1;
+                    }
+
+                }, 300);
             })
             .catch(function (error) {
-                showErrorToast("Ошибка создания", `Не удалось создать пользователя ${name}`)
-                console.log(error);
+                $timeout(function (){
+                    showErrorToast("Ошибка создания", `Не удалось создать пользователя ${name}`)
+                    console.log(error);
+                    $scope.userCreating = false;
+                }, 300);
             });
     }
     $scope.isItMe = function (user) {//метод для проверки является ли переданный пользователь, тем, под которым вошли

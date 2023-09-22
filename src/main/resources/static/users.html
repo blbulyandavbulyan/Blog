@@ -81,7 +81,11 @@
                     </label>
                 </div>
             </div>
-            <button ng-disabled="newUserForm.$invalid" type="submit" class="btn btn-primary">Создать</button>
+            <button ng-disabled="newUserForm.$invalid || userCreating" type="submit" class="btn btn-primary">
+                <span ng-show="userCreating" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <span ng-show="userCreating" class="visually-hidden" role="status">Обработка...</span>
+                <span>Создать</span>
+            </button>
         </form>
     </div>
     <div ng-show="isAuthenticated() && !canAdmin()" class="alert alert-danger" role="alert">У вас нет прав для действий
