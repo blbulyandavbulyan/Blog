@@ -46,7 +46,9 @@
                     <span ng-show="newRoles[user.userId].rolesUpdating" class="visually-hidden" role="status">Обработка...</span>
                     <span>Применить изменения</span>
                 </button>
-                <button ng-disabled="isItMe(user)" class="btn btn-danger" ng-click="deleteUser(user.userId)">
+                <button ng-disabled="isItMe(user)" class="btn btn-danger" ng-click="deleteUser(user)">
+                    <span ng-show="user.deleting" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <span ng-show="user.deleting" class="visually-hidden" role="status">Обработка...</span>
                     <span>Удалить пользователя</span>
                 </button>
                 <hr>

@@ -136,12 +136,20 @@ app.controller('UserController', function ($scope, $timeout, UserService, AuthSe
         $scope.loadUsersInfo($scope.filterParams, pageNumber);
         $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, $scope.maxPagesToShow);
     };
-    $scope.deleteUser = function (userId) {//метод для обработки кнопки удаления пользователя
+    $scope.deleteUser = function (user) {//метод для обработки кнопки удаления пользователя
+        const userId = user.userId
+        user.deleting = true;
         UserService.deleteUserById(userId)
-            .then(() => deleteItemAndGetNewPage($scope.users, $scope.totalPages, $scope.currentPage, user => user.userId === userId, $scope.getPage))
+            .then(() => $timeout(function () {
+                    user.deleting = false;
+                    deleteItemAndGetNewPage($scope.users, $scope.totalPages, $scope.currentPage, user => user.userId === userId, $scope.getPage);
+                }, 300))
             .catch(function (error) {
-                showErrorToast("Ошибка удаления", "Не удалось удалить пользователя");
-                console.log(error);
+                $timeout(()=>{
+                    user.deleting = false;
+                    showErrorToast("Ошибка удаления", `Не удалось удалить пользователя ${user.name}`);
+                    console.log(error);
+                }, 300);
             });
     };
     $scope.createUser = function () {
