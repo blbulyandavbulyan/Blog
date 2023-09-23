@@ -1,4 +1,4 @@
-package org.blbulyandavbulyan.blog.utils;
+package org.blbulyandavbulyan.blog.services;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
@@ -19,7 +19,7 @@ import java.util.*;
  */
 @Component
 @RequiredArgsConstructor
-public class JWTTokenUtils {
+public class TokenService {
     /**
      * Время жизни jwt токена
      */
