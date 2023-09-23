@@ -5,8 +5,6 @@ import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.configs.JwtConfigurationProperties;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -18,7 +16,6 @@ import java.util.*;
  * Данный класс предназначен для удобной работы с jwt токенами
  */
 @Component
-@RequiredArgsConstructor
 public class TokenService {
     /**
      * Время жизни jwt токена
@@ -27,17 +24,18 @@ public class TokenService {
     /**
      * Ключ для подписи jwt токена
      */
-    private Key secretKey;
+    private final Key secretKey;
     /**
      * Парсер, для парсинга jwt токена
      */
-    private JwtParser parser;
+    private final JwtParser parser;
 
     /**
-     * Метод инициализации нашего бина
+     * Создаёт экземпляр сервиса
+     * @param jwtConfigurationProperties класс, содержащий конфигурационные свойства для jwt
      */
-    @PostConstruct
-    private void init(){
+    public TokenService(JwtConfigurationProperties jwtConfigurationProperties) {
+        this.jwtConfigurationProperties = jwtConfigurationProperties;
         //задаём ключ подписи
         secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256); //or HS384 or HS512
         //создаём парсер
