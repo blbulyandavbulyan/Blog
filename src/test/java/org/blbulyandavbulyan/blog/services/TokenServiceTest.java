@@ -1,9 +1,6 @@
 package org.blbulyandavbulyan.blog.services;
 
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.JwtParserBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.blbulyandavbulyan.blog.configs.JwtConfigurationProperties;
 import org.junit.jupiter.api.Test;
@@ -23,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -36,12 +34,13 @@ class TokenServiceTest {
     void generateToken() {
         Duration expectedLifetime = Duration.ofMinutes(10);
         when(jwtConfigurationProperties.getLifetime()).thenReturn(expectedLifetime);
-        try (MockedStatic<Jwts> jwtsMockedStatic = Mockito.mockStatic(Jwts.class); MockedStatic<Keys> keysMockedStatic = Mockito.mockStatic(Keys.class)) {
+        try (MockedStatic<Jwts> jwtsMockedStatic = Mockito.mockStatic(Jwts.class);
+             MockedStatic<Keys> keysMockedStatic = Mockito.mockStatic(Keys.class)) {
             JwtParserBuilder mockParserBuilder = mock(JwtParserBuilder.class);
             jwtsMockedStatic.when(Jwts::parserBuilder).thenReturn(mockParserBuilder);
             Key keyMock = Mockito.mock(SecretKey.class);
             when(mockParserBuilder.setSigningKey(keyMock)).thenAnswer(InvocationOnMock::getMock);
-            keysMockedStatic.when(()->Keys.secretKeyFor(SignatureAlgorithm.HS256)).thenReturn(keyMock);
+            keysMockedStatic.when(() -> Keys.secretKeyFor(SignatureAlgorithm.HS256)).thenReturn(keyMock);
             var underTest = new TokenService(jwtConfigurationProperties);
             String expectedName = "testuser";
             var expectedRoles = List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_COMMENTER"));
@@ -54,7 +53,7 @@ class TokenServiceTest {
             when(mockJwtBuilder.signWith(any(SecretKey.class))).thenAnswer(InvocationOnMock::getMock);
             when(mockJwtBuilder.compact()).thenReturn(expectedJwtToken);
             jwtsMockedStatic.when(Jwts::builder).thenReturn(mockJwtBuilder);
-            String actualToken =  underTest.generateToken(expectedName, expectedRoles);
+            String actualToken = underTest.generateToken(expectedName, expectedRoles);
             assertSame(expectedJwtToken, actualToken);
             HashMap<String, Object> expectedClaims = new HashMap<>();
             expectedClaims.put("roles", expectedRoles.stream().map(SimpleGrantedAuthority::getAuthority).toList());
@@ -70,5 +69,46 @@ class TokenServiceTest {
             assertEquals(expiration.getTime() - issuedAt.getTime(), expectedLifetime.toMillis());
             verify(mockJwtBuilder, times(1)).signWith(keyMock);
         }
+    }
+
+    private void executeWithMockClaims(Consumer<Claims> claimsConsumer, String token) {
+        try (MockedStatic<Jwts> jwtsMockedStatic = Mockito.mockStatic(Jwts.class);
+             MockedStatic<Keys> keysMockedStatic = Mockito.mockStatic(Keys.class)) {
+            JwtParserBuilder mockParserBuilder = mock(JwtParserBuilder.class);
+            jwtsMockedStatic.when(Jwts::parserBuilder).thenReturn(mockParserBuilder);
+            Key keyMock = Mockito.mock(SecretKey.class);
+            when(mockParserBuilder.setSigningKey(keyMock)).thenAnswer(InvocationOnMock::getMock);
+            JwtParser mockJwtParser = mock(JwtParser.class);
+            when(mockParserBuilder.build()).thenReturn(mockJwtParser);
+            keysMockedStatic.when(() -> Keys.secretKeyFor(SignatureAlgorithm.HS256)).thenReturn(keyMock);
+            Jws<Claims> jwsMock = mock(Jws.class);
+            when(mockJwtParser.parseClaimsJws(token)).thenReturn(jwsMock);
+            Claims mockClaims = mock(Claims.class);
+            when(jwsMock.getBody()).thenReturn(mockClaims);
+            claimsConsumer.accept(mockClaims);
+        }
+    }
+
+    @Test
+    void getUserName() {
+        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+        executeWithMockClaims((claims) -> {
+            String expectedUsername = "testusername";
+            when(claims.getSubject()).thenReturn(expectedUsername);
+            TokenService underTest = new TokenService(jwtConfigurationProperties);
+            String actualUsername = assertDoesNotThrow(() -> underTest.getUserName(token));
+            assertSame(expectedUsername, actualUsername);
+        }, token);
+    }
+    @Test
+    void getRoles(){
+        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+        executeWithMockClaims((claims) -> {
+            List<String> expectedRoles = List.of();
+            when(claims.get("roles", List.class)).thenReturn(expectedRoles);
+            TokenService underTest = new TokenService(jwtConfigurationProperties);
+            List<String> actualRoles = assertDoesNotThrow(() -> underTest.getRoles(token));
+            assertSame(expectedRoles, actualRoles);
+        }, token);
     }
 }
