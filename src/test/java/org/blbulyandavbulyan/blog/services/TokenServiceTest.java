@@ -19,7 +19,6 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,7 +44,7 @@ class TokenServiceTest {
             jwtsMockedStatic.when(Jwts::parserBuilder).thenReturn(mockParserBuilder);
             when(mockParserBuilder.setSigningKey(keyMock)).thenAnswer(InvocationOnMock::getMock);
             keysMockedStatic.when(() -> Keys.secretKeyFor(SignatureAlgorithm.HS256)).thenReturn(keyMock);
-            when(mockJwtBuilder.setClaims(any(Map.class))).thenAnswer(InvocationOnMock::getMock);
+            when(mockJwtBuilder.setClaims(anyMap())).thenAnswer(InvocationOnMock::getMock);
             when(mockJwtBuilder.setSubject(anyString())).thenAnswer(InvocationOnMock::getMock);
             when(mockJwtBuilder.setIssuedAt(any(Date.class))).thenAnswer(InvocationOnMock::getMock);
             when(mockJwtBuilder.setExpiration(any(Date.class))).thenAnswer(InvocationOnMock::getMock);
