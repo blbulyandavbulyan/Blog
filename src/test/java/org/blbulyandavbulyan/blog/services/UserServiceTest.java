@@ -10,7 +10,7 @@ import org.blbulyandavbulyan.blog.repositories.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {UserService.class, UserServiceTest.TestConfig.class})
@@ -58,10 +60,10 @@ class UserServiceTest {
         expectedUser.setName(userName);
         expectedUser.setPasswordHash(passwordEncoder.encode(password));
         expectedUser.setUserId(1L);
-        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(expectedUser);
-        Mockito.when(userRepository.existsByName(userName)).thenReturn(false);
+        when(userRepository.save(any(User.class))).thenReturn(expectedUser);
+        when(userRepository.existsByName(userName)).thenReturn(false);
         User user = userService.registerUser(userName, password);
-        Mockito.verify(userRepository).existsByName(userName);
+        verify(userRepository).existsByName(userName);
         assertEquals(userName, user.getName());
         assertTrue(passwordEncoder.matches(password, user.getPassword()));
         assertEquals(expectedUser.getUserId(), user.getUserId());
@@ -70,25 +72,25 @@ class UserServiceTest {
     @Test
     public void testRegisterExistingUser(){
         String userName = "david";
-        Mockito.when(userRepository.existsByName(userName)).thenReturn(true);
+        when(userRepository.existsByName(userName)).thenReturn(true);
         assertThrows(UserAlreadyExistsException.class, ()->userService.registerUser(userName, "1234"));
     }
     @DisplayName("exists test, when user really exists")
     @Test
     public void testExistUser(){
         String userName = "david";
-        Mockito.when(userRepository.existsByName(userName)).thenReturn(true);
+        when(userRepository.existsByName(userName)).thenReturn(true);
         boolean exists = userService.exists(userName);
-        Mockito.verify(userRepository).existsByName(userName);
+        verify(userRepository).existsByName(userName);
         assertTrue(exists);
     }
     @DisplayName("exists test, when user doesn't exist")
     @Test
     public void testDoesNotExistUser(){
         String userName = "david";
-        Mockito.when(userRepository.existsByName(userName)).thenReturn(false);
+        when(userRepository.existsByName(userName)).thenReturn(false);
         boolean exists = userService.exists(userName);
-        Mockito.verify(userRepository).existsByName(userName);
+        verify(userRepository).existsByName(userName);
         assertFalse(exists);
     }
     @DisplayName("load user by user name, when user exists")
@@ -101,9 +103,9 @@ class UserServiceTest {
         user.setRoles(Collections.emptyList());
         user.setArticles(Collections.emptyList());
         user.setRegistrationDate(ZonedDateTime.now());
-        Mockito.when(userRepository.findByName(userName)).thenReturn(Optional.of(user));
+        when(userRepository.findByName(userName)).thenReturn(Optional.of(user));
         UserDetails userDetails = userService.loadUserByUsername(userName);
-        Mockito.verify(userRepository).findByName(userName);
+        verify(userRepository).findByName(userName);
         assertEquals(user.getName(), userDetails.getUsername());
         assertEquals(user.getPassword(), userDetails.getPassword());
         assertEquals(user.getAuthorities(), userDetails.getAuthorities());
@@ -112,8 +114,8 @@ class UserServiceTest {
     @Test
     public void loadUserByUsernameShouldThrowUserNotFoundExceptionIfUserWasNotFound(){
         String userName = "david";
-        Mockito.when(userRepository.findByName(userName)).thenReturn(Optional.empty());
-        Mockito.when(userRepository.existsByName(userName)).thenReturn(false);
+        when(userRepository.findByName(userName)).thenReturn(Optional.empty());
+        when(userRepository.existsByName(userName)).thenReturn(false);
         assertThrows(UsernameNotFoundException.class, ()->userService.loadUserByUsername(userName));
     }
     @DisplayName("find by name should not throw exception, when user is exists")
@@ -121,16 +123,16 @@ class UserServiceTest {
     public void findByNameWhenUserExists(){
         User expected = new User();
         expected.setName("david");
-        Mockito.when(userRepository.findByName(expected.getName())).thenReturn(Optional.of(expected));
+        when(userRepository.findByName(expected.getName())).thenReturn(Optional.of(expected));
         User actual = userService.findByName(expected.getName());
-        Mockito.verify(userRepository).findByName(expected.getName());
+        verify(userRepository).findByName(expected.getName());
         assertEquals(expected, actual);
     }
     @DisplayName("find by name should throw UserNotFoundException, if user doesn't exist")
     @Test
     public void findByNameWhenUserDoesNotExist(){
         String userName = "david";
-        Mockito.when(userRepository.findByName(userName)).thenReturn(Optional.empty());
+        when(userRepository.findByName(userName)).thenReturn(Optional.empty());
         assertThrows(UserNotFoundException.class, ()->userService.findByName(userName));
     }
     @DisplayName("get user info by id, when user exists")
@@ -152,18 +154,18 @@ class UserServiceTest {
                 return Collections.emptyList();
             }
         };
-        Mockito.when(userRepository.findByUserId(expected.getUserId(), UserInfoDTO.class)).thenReturn(Optional.of(expected));
+        when(userRepository.findByUserId(expected.getUserId(), UserInfoDTO.class)).thenReturn(Optional.of(expected));
         UserInfoDTO actual = userService.getUserInfo(expected.getUserId());
-        Mockito.verify(userRepository).findByUserId(expected.getUserId(), UserInfoDTO.class);
+        verify(userRepository).findByUserId(expected.getUserId(), UserInfoDTO.class);
         assertEquals(expected, actual);
     }
     @DisplayName("get user info by id, when user doesn't exist")
     @Test
     public void getUserInfoWhenUserDoesNotExists(){
         Long userId = 1L;
-        Mockito.when(userRepository.findByUserId(userId, UserInfoDTO.class)).thenReturn(Optional.empty());
+        when(userRepository.findByUserId(userId, UserInfoDTO.class)).thenReturn(Optional.empty());
         assertThrows(UserNotFoundException.class, ()->userService.getUserInfo(userId));
-        Mockito.verify(userRepository).findByUserId(userId, UserInfoDTO.class);
+        verify(userRepository).findByUserId(userId, UserInfoDTO.class);
     }
     @DisplayName("create not existing user")
     @Test
@@ -175,18 +177,18 @@ class UserServiceTest {
         expectedUser.setRoles(rolesNames.stream().map(Role::new).toList());
         String password = "1234";
         expectedUser.setPasswordHash(passwordEncoder.encode(password));
-        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(expectedUser);
-        Mockito.when(userRepository.existsByName(expectedUser.getName())).thenReturn(false);
-        Mockito.when(roleService.existsByRoleName(Mockito.argThat(rolesNames::contains))).thenReturn(true);
+        when(userRepository.save(any(User.class))).thenReturn(expectedUser);
+        when(userRepository.existsByName(expectedUser.getName())).thenReturn(false);
+        when(roleService.existsByRoleName(argThat(rolesNames::contains))).thenReturn(true);
         UserCreateRequest userCreateRequest = new UserCreateRequest(expectedUser.getName(), password, rolesNames);
         userService.createUser(userCreateRequest);
-        Mockito.verify(userRepository).existsByName(expectedUser.getName());
-        Mockito.verify(userRepository).save(
-                Mockito.argThat(user -> passwordEncoder.matches(password, user.getPassword()))
+        verify(userRepository).existsByName(expectedUser.getName());
+        verify(userRepository).save(
+                argThat(user -> passwordEncoder.matches(password, user.getPassword()))
         );
         rolesNames.forEach(roleName->{
-            Mockito.verify(roleService).existsByRoleName(roleName);
-            Mockito.verify(roleService).getReferenceByRoleName(roleName);
+            verify(roleService).existsByRoleName(roleName);
+            verify(roleService).getReferenceByRoleName(roleName);
         });
 
     }
@@ -194,37 +196,58 @@ class UserServiceTest {
     @Test
     public void deleteByIdWhenUserExists(){
         Long id = 1L;
-        Mockito.when(userRepository.existsById(id)).thenReturn(true);
+        when(userRepository.existsById(id)).thenReturn(true);
         userService.deleteById(id);
-        Mockito.verify(userRepository).existsById(id);
-        Mockito.verify(userRepository).deleteById(id);
+        verify(userRepository).existsById(id);
+        verify(userRepository).deleteById(id);
     }
     @DisplayName("delete by id, when user doesn't exist")
     @Test
     public void deleteByIdWhenUserDoesNotExist(){
         Long id = 1L;
-        Mockito.when(userRepository.existsById(id)).thenReturn(false);
+        when(userRepository.existsById(id)).thenReturn(false);
         assertThrows(UserNotFoundException.class, ()->userService.deleteById(id));
-        Mockito.verify(userRepository).existsById(id);
+        verify(userRepository).existsById(id);
     }
     @DisplayName("get reference by name, when user exists")
     @Test
     public void getReferenceForExistingUser(){
         User expected = new User();
         expected.setName("david");
-        Mockito.when(userRepository.getReferenceByName(expected.getName())).thenReturn(expected);
-        Mockito.when(userRepository.existsByName(expected.getName())).thenReturn(true);
+        when(userRepository.getReferenceByName(expected.getName())).thenReturn(expected);
+        when(userRepository.existsByName(expected.getName())).thenReturn(true);
         User actual = userService.getReferenceByName(expected.getName());
-        Mockito.verify(userRepository).getReferenceByName(expected.getName());
-        Mockito.verify(userRepository).existsByName(expected.getName());
+        verify(userRepository).getReferenceByName(expected.getName());
+        verify(userRepository).existsByName(expected.getName());
         assertEquals(expected, actual);
     }
     @DisplayName("get reference by name, when user doesn't exist")
     @Test
     public void getReferenceForNotExistingUser(){
         String userName = "david";
-        Mockito.when(userRepository.existsByName(userName)).thenReturn(false);
+        when(userRepository.existsByName(userName)).thenReturn(false);
         assertThrows(UserNotFoundException.class, ()->userService.getReferenceByName(userName));
-        Mockito.verify(userRepository).existsByName(userName);
+        verify(userRepository).existsByName(userName);
+    }
+
+    @Test
+    @DisplayName("updateUserPassword when user exists")
+    void updateUserPasswordWhenUserExists() {
+        String targetUsername = "david";
+        String password = "testpassword";
+        when(userRepository.updatePasswordHashByName(anyString(), eq(targetUsername))).thenReturn(1);
+        assertDoesNotThrow(()->userService.updateUserPassword(targetUsername, password));
+        ArgumentCaptor<String> passwordHashArgumentCaptor = ArgumentCaptor.forClass(String.class);
+        verify(userRepository, only()).updatePasswordHashByName(passwordHashArgumentCaptor.capture(), eq(targetUsername));
+        assertTrue(passwordEncoder.matches(password, passwordHashArgumentCaptor.getValue()));
+    }
+
+    @Test
+    @DisplayName("updateUserPassword when user doesn't exist")
+    void updateUserPasswordWhenUserDoesNotExist() {
+        String targetUsername = "david";
+        String password = "testpassword";
+        when(userRepository.updatePasswordHashByName(anyString(), eq(targetUsername))).thenReturn(0);
+        assertThrows(UserNotFoundException.class, ()-> userService.updateUserPassword(targetUsername, password));
     }
 }
