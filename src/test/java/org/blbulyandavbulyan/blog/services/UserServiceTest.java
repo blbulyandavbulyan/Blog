@@ -24,6 +24,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -249,5 +250,35 @@ class UserServiceTest {
         String password = "testpassword";
         when(userRepository.updatePasswordHashByName(anyString(), eq(targetUsername))).thenReturn(0);
         assertThrows(UserNotFoundException.class, ()-> userService.updateUserPassword(targetUsername, password));
+    }
+
+    @Test
+    @DisplayName("updateRoles when user exists")
+    void updateRolesWhenUserExists() {
+        long userId = 1L;
+        User user = mock(User.class);
+        List<String> rolesNames = List.of("ROLE_COMMENTER", "ROLE_PUBLISHER");
+        HashMap<String, Role> nameToRole = new HashMap<>();
+        rolesNames.forEach(e->nameToRole.put(e, new Role(e)));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(roleService.getReferenceByRoleName(anyString()))
+                .then(invocation -> nameToRole.get(invocation.getArgument(0, String.class)));
+        assertDoesNotThrow(()-> userService.updateRoles(userId, rolesNames));
+        verify(userRepository, times(1)).save(user);
+        rolesNames.forEach(roleName->verify(roleService, times(1)).getReferenceByRoleName(roleName));
+        verifyNoMoreInteractions(roleService);
+        ArgumentCaptor<List<Role>> rolesCaptor = ArgumentCaptor.forClass(List.class);
+        verify(user, only()).setRoles(rolesCaptor.capture());
+        List<Role> actualRoles = rolesCaptor.getValue();
+        assertTrue(actualRoles.containsAll(nameToRole.values()));
+        assertEquals(nameToRole.values().size(), actualRoles.size());
+    }
+
+    @Test
+    @DisplayName("updateRoles when user doesn't exist")
+    void updateRolesWhenUserDoesNotExists() {
+        long userId = 1L;
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class, ()->userService.updateRoles(userId, List.of()));
     }
 }
