@@ -61,7 +61,7 @@ public class TokenService {
                 .signWith(secretKey).compact();
     }
 
-    public Claims getAllClaimsFromToken(String token){
+    private Claims getAllClaimsFromToken(String token){
         return parser.parseClaimsJws(token).getBody();
     }
 
