@@ -103,4 +103,19 @@ class ArticleRepositoryTest {
         assertThat(article.getTitle()).isEqualTo(expectedTitle);
         assertThat(article.getText()).isEqualTo(expectedText);
     }
+
+    @Test
+    void findAuthorNameByArticleIdWhenArticleExists() {
+        User publisher = createAndSaveUser();
+        Article article = underTest.saveAndFlush(new Article(publisher, "test title", "test text"));
+        Optional<String> authorNameOptional = underTest.findArticleAuthorNameByArticleId(article.getArticleId());
+        assertThat(authorNameOptional).isPresent();
+        assertThat(authorNameOptional.get()).isEqualTo(publisher.getName());
+    }
+
+    @Test
+    void findAuthorNameByArticleIdWhenArticleDoesNotExist() {
+        Optional<String> authorNameOptional = underTest.findArticleAuthorNameByArticleId(200L);
+        assertThat(authorNameOptional).isEmpty();
+    }
 }
