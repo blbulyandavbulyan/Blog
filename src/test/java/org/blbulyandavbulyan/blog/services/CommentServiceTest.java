@@ -1,8 +1,10 @@
 package org.blbulyandavbulyan.blog.services;
 
+import org.blbulyandavbulyan.blog.dtos.comment.CommentResponse;
 import org.blbulyandavbulyan.blog.entities.Article;
 import org.blbulyandavbulyan.blog.entities.Comment;
 import org.blbulyandavbulyan.blog.entities.User;
+import org.blbulyandavbulyan.blog.exceptions.articles.ArticleNotFoundException;
 import org.blbulyandavbulyan.blog.exceptions.comments.CommentNotFoundException;
 import org.blbulyandavbulyan.blog.exceptions.security.AccessDeniedException;
 import org.blbulyandavbulyan.blog.repositories.CommentRepository;
@@ -13,6 +15,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 
 import java.util.Optional;
@@ -103,6 +107,7 @@ class CommentServiceTest {
     }
 
     @Test
+    @DisplayName("editComment when author doesn't equal to executor")
     void editCommentWhenAuthorDoesNotEqualToExecutor() {
         long commentId = 1L;
         String authorName = "testauthor";
@@ -110,5 +115,27 @@ class CommentServiceTest {
         when(commentRepository.findCommentAuthorNameByCommentId(commentId)).thenReturn(Optional.of(authorName));
         assertThrows(AccessDeniedException.class, ()-> underTest.editComment(commentId, text, "test"));
         verify(commentRepository, never()).updateTextByCommentId(commentId, text);
+    }
+
+    @Test
+    @DisplayName("getCommentDTOsForArticleId when article exists")
+    void getCommentDTOsForArticleIdWhenArticleExists() {
+        long articleId = 1L;
+        int pageNumber = 0;
+        int pageSize = 10;
+        Page<CommentResponse> expectedPage = mock(Page.class);
+        when(articlesService.existsById(articleId)).thenReturn(true);
+        when(commentRepository.findAllByArticleArticleId(eq(articleId), eq(PageRequest.of(pageNumber, pageSize)), eq(CommentResponse.class))).thenReturn(expectedPage);
+        Page<CommentResponse> actualPage = assertDoesNotThrow(() -> underTest.getCommentDTOsForArticleId(articleId, pageNumber, pageSize));
+        assertSame(expectedPage, actualPage);
+    }
+
+    @Test
+    @DisplayName("getCommentDTOsForArticleId when article doesn't exist")
+    void getCommentDTOsForNotExistingArticle() {
+        long articleId = 1L;
+        when(articlesService.existsById(articleId)).thenReturn(false);
+        assertThrows(ArticleNotFoundException.class, ()->underTest.getCommentDTOsForArticleId(articleId, 0, 10));
+        verifyNoInteractions(commentRepository);
     }
 }
