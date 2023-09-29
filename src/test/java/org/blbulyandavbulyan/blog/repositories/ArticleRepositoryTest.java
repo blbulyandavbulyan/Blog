@@ -118,4 +118,13 @@ class ArticleRepositoryTest {
         Optional<String> authorNameOptional = underTest.findArticleAuthorNameByArticleId(200L);
         assertThat(authorNameOptional).isEmpty();
     }
+
+    @Test
+    void deleteArticleById() {
+        //этот тест нужен поскольку в ArticleRepository для deleteById прописан Query
+        Long articleId =  underTest.saveAndFlush(new Article(createAndSaveUser(), "test title", "test text")).getArticleId();
+        underTest.deleteById(articleId);
+        boolean actualExistById = underTest.existsById(articleId);
+        assertThat(actualExistById).isFalse();
+    }
 }
