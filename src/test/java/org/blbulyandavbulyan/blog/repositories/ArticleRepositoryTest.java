@@ -92,6 +92,8 @@ class ArticleRepositoryTest {
     @Test
     void updateArticleById() {
         Article article = underTest.saveAndFlush(new Article(createAndSaveUser(), "test title", "test text"));
+        String expectedPublisherName = article.getPublisher().getName();
+        ZonedDateTime expectedPublishDate = article.getPublishDate();
         long articleId = article.getArticleId();
         String expectedText = "New text";
         String expectedTitle = "New Title";
@@ -102,6 +104,8 @@ class ArticleRepositoryTest {
         article = articleOptional.get();
         assertThat(article.getTitle()).isEqualTo(expectedTitle);
         assertThat(article.getText()).isEqualTo(expectedText);
+        assertThat(article.getPublisher().getName()).isEqualTo(expectedPublisherName);
+        assertThat(article.getPublishDate()).isEqualTo(expectedPublishDate);
     }
 
     @Test
