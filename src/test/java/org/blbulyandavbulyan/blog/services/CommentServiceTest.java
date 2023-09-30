@@ -32,7 +32,7 @@ class CommentServiceTest {
     @Mock
     private UserService userService;
     @Mock
-    private ArticlesService articlesService;
+    private ArticleService articleService;
     @Mock
     private SecurityService securityService;
     @InjectMocks
@@ -52,7 +52,7 @@ class CommentServiceTest {
             return argument;
         });
         when(userService.getReferenceByName(publisherName)).thenReturn(publisher);
-        when(articlesService.getReferenceById(articleId)).thenReturn(article);
+        when(articleService.getReferenceById(articleId)).thenReturn(article);
         assertDoesNotThrow(()-> underTest.publishComment(publisherName, articleId, text));
         ArgumentCaptor<Comment> commentArgumentCaptor = ArgumentCaptor.forClass(Comment.class);
         verify(commentRepository, only()).save(commentArgumentCaptor.capture());
@@ -124,7 +124,7 @@ class CommentServiceTest {
         int pageNumber = 0;
         int pageSize = 10;
         Page<CommentResponse> expectedPage = mock(Page.class);
-        when(articlesService.existsById(articleId)).thenReturn(true);
+        when(articleService.existsById(articleId)).thenReturn(true);
         when(commentRepository.findAllByArticleArticleId(eq(articleId), eq(PageRequest.of(pageNumber, pageSize)), eq(CommentResponse.class))).thenReturn(expectedPage);
         Page<CommentResponse> actualPage = assertDoesNotThrow(() -> underTest.getCommentDTOsForArticleId(articleId, pageNumber, pageSize));
         assertSame(expectedPage, actualPage);
@@ -134,7 +134,7 @@ class CommentServiceTest {
     @DisplayName("getCommentDTOsForArticleId when article doesn't exist")
     void getCommentDTOsForNotExistingArticle() {
         long articleId = 1L;
-        when(articlesService.existsById(articleId)).thenReturn(false);
+        when(articleService.existsById(articleId)).thenReturn(false);
         assertThrows(ArticleNotFoundException.class, ()->underTest.getCommentDTOsForArticleId(articleId, 0, 10));
         verifyNoInteractions(commentRepository);
     }

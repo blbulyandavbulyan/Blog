@@ -29,7 +29,7 @@ public class CommentService {
     /**
      * Сервис для работы со статьями
      */
-    private final ArticlesService articlesService;
+    private final ArticleService articleService;
     private final SecurityService securityService;
     /**
      * Получает комментарии для определённой статьи
@@ -39,7 +39,7 @@ public class CommentService {
      * @return страница, содержащая искомые комментарии
      */
     public Page<CommentResponse> getCommentDTOsForArticleId(Long articleId, int pageNumber, int pageSize){
-        if(!articlesService.existsById(articleId))
+        if(!articleService.existsById(articleId))
             throw new ArticleNotFoundException("Article with articleId " + articleId + " not found!");
         return commentRepository.findAllByArticleArticleId(articleId, PageRequest.of(pageNumber, pageSize), CommentResponse.class);
     }
@@ -53,7 +53,7 @@ public class CommentService {
      * @throws org.blbulyandavbulyan.blog.exceptions.users.UserNotFoundException если не найден публикатор
      */
     public CommentResponse publishComment(String publisherName, Long articleId, String text){
-        Comment comment = commentRepository.save(new Comment(userService.getReferenceByName(publisherName), articlesService.getReferenceById(articleId), text));
+        Comment comment = commentRepository.save(new Comment(userService.getReferenceByName(publisherName), articleService.getReferenceById(articleId), text));
         return new CommentResponse(comment.getCommentId(), publisherName, comment.getText(), comment.getPublishDate());
     }
 
