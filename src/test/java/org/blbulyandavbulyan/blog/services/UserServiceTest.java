@@ -41,7 +41,7 @@ class UserServiceTest {
     private RoleService roleService;
 
     @Autowired
-    private UserService userService;
+    private UserService underTest;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @TestConfiguration
@@ -63,7 +63,7 @@ class UserServiceTest {
         expectedUser.setUserId(1L);
         when(userRepository.save(any(User.class))).thenReturn(expectedUser);
         when(userRepository.existsByName(userName)).thenReturn(false);
-        User user = userService.registerUser(userName, password);
+        User user = underTest.registerUser(userName, password);
         verify(userRepository).existsByName(userName);
         assertEquals(userName, user.getName());
         assertTrue(passwordEncoder.matches(password, user.getPassword()));
@@ -74,14 +74,14 @@ class UserServiceTest {
     public void testRegisterExistingUser(){
         String userName = "david";
         when(userRepository.existsByName(userName)).thenReturn(true);
-        assertThrows(UserAlreadyExistsException.class, ()->userService.registerUser(userName, "1234"));
+        assertThrows(UserAlreadyExistsException.class, ()-> underTest.registerUser(userName, "1234"));
     }
     @DisplayName("exists test, when user really exists")
     @Test
     public void testExistUser(){
         String userName = "david";
         when(userRepository.existsByName(userName)).thenReturn(true);
-        boolean exists = userService.exists(userName);
+        boolean exists = underTest.exists(userName);
         verify(userRepository).existsByName(userName);
         assertTrue(exists);
     }
@@ -90,7 +90,7 @@ class UserServiceTest {
     public void testDoesNotExistUser(){
         String userName = "david";
         when(userRepository.existsByName(userName)).thenReturn(false);
-        boolean exists = userService.exists(userName);
+        boolean exists = underTest.exists(userName);
         verify(userRepository).existsByName(userName);
         assertFalse(exists);
     }
@@ -105,7 +105,7 @@ class UserServiceTest {
         user.setArticles(Collections.emptyList());
         user.setRegistrationDate(ZonedDateTime.now());
         when(userRepository.findByName(userName)).thenReturn(Optional.of(user));
-        UserDetails userDetails = userService.loadUserByUsername(userName);
+        UserDetails userDetails = underTest.loadUserByUsername(userName);
         verify(userRepository).findByName(userName);
         assertEquals(user.getName(), userDetails.getUsername());
         assertEquals(user.getPassword(), userDetails.getPassword());
@@ -117,7 +117,7 @@ class UserServiceTest {
         String userName = "david";
         when(userRepository.findByName(userName)).thenReturn(Optional.empty());
         when(userRepository.existsByName(userName)).thenReturn(false);
-        assertThrows(UsernameNotFoundException.class, ()->userService.loadUserByUsername(userName));
+        assertThrows(UsernameNotFoundException.class, ()-> underTest.loadUserByUsername(userName));
     }
     @DisplayName("find by name should not throw exception, when user is exists")
     @Test
@@ -125,7 +125,7 @@ class UserServiceTest {
         User expected = new User();
         expected.setName("david");
         when(userRepository.findByName(expected.getName())).thenReturn(Optional.of(expected));
-        User actual = userService.findByName(expected.getName());
+        User actual = underTest.findByName(expected.getName());
         verify(userRepository).findByName(expected.getName());
         assertEquals(expected, actual);
     }
@@ -134,7 +134,7 @@ class UserServiceTest {
     public void findByNameWhenUserDoesNotExist(){
         String userName = "david";
         when(userRepository.findByName(userName)).thenReturn(Optional.empty());
-        assertThrows(UserNotFoundException.class, ()->userService.findByName(userName));
+        assertThrows(UserNotFoundException.class, ()-> underTest.findByName(userName));
     }
     @DisplayName("get user info by id, when user exists")
     @Test
@@ -156,7 +156,7 @@ class UserServiceTest {
             }
         };
         when(userRepository.findByUserId(expected.getUserId(), UserInfoDTO.class)).thenReturn(Optional.of(expected));
-        UserInfoDTO actual = userService.getUserInfo(expected.getUserId());
+        UserInfoDTO actual = underTest.getUserInfo(expected.getUserId());
         verify(userRepository).findByUserId(expected.getUserId(), UserInfoDTO.class);
         assertEquals(expected, actual);
     }
@@ -165,7 +165,7 @@ class UserServiceTest {
     public void getUserInfoWhenUserDoesNotExists(){
         Long userId = 1L;
         when(userRepository.findByUserId(userId, UserInfoDTO.class)).thenReturn(Optional.empty());
-        assertThrows(UserNotFoundException.class, ()->userService.getUserInfo(userId));
+        assertThrows(UserNotFoundException.class, ()-> underTest.getUserInfo(userId));
         verify(userRepository).findByUserId(userId, UserInfoDTO.class);
     }
     @DisplayName("create not existing user")
@@ -182,7 +182,7 @@ class UserServiceTest {
         when(userRepository.existsByName(expectedUser.getName())).thenReturn(false);
         when(roleService.existsByRoleName(argThat(rolesNames::contains))).thenReturn(true);
         UserCreateRequest userCreateRequest = new UserCreateRequest(expectedUser.getName(), password, rolesNames);
-        userService.createUser(userCreateRequest);
+        underTest.createUser(userCreateRequest);
         verify(userRepository).existsByName(expectedUser.getName());
         verify(userRepository).save(
                 argThat(user -> passwordEncoder.matches(password, user.getPassword()))
@@ -198,7 +198,7 @@ class UserServiceTest {
     public void deleteByIdWhenUserExists(){
         Long id = 1L;
         when(userRepository.existsById(id)).thenReturn(true);
-        userService.deleteById(id);
+        underTest.deleteById(id);
         verify(userRepository).existsById(id);
         verify(userRepository).deleteById(id);
     }
@@ -207,7 +207,7 @@ class UserServiceTest {
     public void deleteByIdWhenUserDoesNotExist(){
         Long id = 1L;
         when(userRepository.existsById(id)).thenReturn(false);
-        assertThrows(UserNotFoundException.class, ()->userService.deleteById(id));
+        assertThrows(UserNotFoundException.class, ()-> underTest.deleteById(id));
         verify(userRepository).existsById(id);
     }
     @DisplayName("get reference by name, when user exists")
@@ -217,7 +217,7 @@ class UserServiceTest {
         expected.setName("david");
         when(userRepository.getReferenceByName(expected.getName())).thenReturn(expected);
         when(userRepository.existsByName(expected.getName())).thenReturn(true);
-        User actual = userService.getReferenceByName(expected.getName());
+        User actual = underTest.getReferenceByName(expected.getName());
         verify(userRepository).getReferenceByName(expected.getName());
         verify(userRepository).existsByName(expected.getName());
         assertEquals(expected, actual);
@@ -227,7 +227,7 @@ class UserServiceTest {
     public void getReferenceForNotExistingUser(){
         String userName = "david";
         when(userRepository.existsByName(userName)).thenReturn(false);
-        assertThrows(UserNotFoundException.class, ()->userService.getReferenceByName(userName));
+        assertThrows(UserNotFoundException.class, ()-> underTest.getReferenceByName(userName));
         verify(userRepository).existsByName(userName);
     }
 
@@ -237,7 +237,7 @@ class UserServiceTest {
         String targetUsername = "david";
         String password = "testpassword";
         when(userRepository.updatePasswordHashByName(anyString(), eq(targetUsername))).thenReturn(1);
-        assertDoesNotThrow(()->userService.updateUserPassword(targetUsername, password));
+        assertDoesNotThrow(()-> underTest.updateUserPassword(targetUsername, password));
         ArgumentCaptor<String> passwordHashArgumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(userRepository, only()).updatePasswordHashByName(passwordHashArgumentCaptor.capture(), eq(targetUsername));
         assertTrue(passwordEncoder.matches(password, passwordHashArgumentCaptor.getValue()));
@@ -249,7 +249,7 @@ class UserServiceTest {
         String targetUsername = "david";
         String password = "testpassword";
         when(userRepository.updatePasswordHashByName(anyString(), eq(targetUsername))).thenReturn(0);
-        assertThrows(UserNotFoundException.class, ()-> userService.updateUserPassword(targetUsername, password));
+        assertThrows(UserNotFoundException.class, ()-> underTest.updateUserPassword(targetUsername, password));
     }
 
     @Test
@@ -263,7 +263,7 @@ class UserServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(roleService.getReferenceByRoleName(anyString()))
                 .then(invocation -> nameToRole.get(invocation.getArgument(0, String.class)));
-        assertDoesNotThrow(()-> userService.updateRoles(userId, rolesNames));
+        assertDoesNotThrow(()-> underTest.updateRoles(userId, rolesNames));
         verify(userRepository, times(1)).save(user);
         rolesNames.forEach(roleName->verify(roleService, times(1)).getReferenceByRoleName(roleName));
         verifyNoMoreInteractions(roleService);
@@ -279,6 +279,6 @@ class UserServiceTest {
     void updateRolesWhenUserDoesNotExists() {
         long userId = 1L;
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
-        assertThrows(UserNotFoundException.class, ()->userService.updateRoles(userId, List.of()));
+        assertThrows(UserNotFoundException.class, ()-> underTest.updateRoles(userId, List.of()));
     }
 }
