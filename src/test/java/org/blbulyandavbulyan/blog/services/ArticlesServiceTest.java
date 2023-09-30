@@ -1,5 +1,6 @@
 package org.blbulyandavbulyan.blog.services;
 
+import org.blbulyandavbulyan.blog.dtos.article.ArticleInfoDTO;
 import org.blbulyandavbulyan.blog.dtos.article.ArticlePublishedResponse;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleResponse;
 import org.blbulyandavbulyan.blog.dtos.article.CreateArticleRequest;
@@ -16,9 +17,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.security.core.Authentication;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -164,5 +170,23 @@ class ArticlesServiceTest {
         assertThrows(AccessDeniedException.class, ()->underTest.updateArticle(articleId, "Test text", "ttlte", "executor"));
         verify(articleRepository, never()).updateTitleAndTextByArticleId(any(), any(), any());
     }
-    // TODO: 23.09.2023 Дописать тест для метода getInfoABoutAll
+    @Test
+    void getInfoAboutAll() {
+        int pageNumber = 0;
+        int pageSize = 10;
+        Specification<Article> mockSpec = mock(Specification.class);
+        Page<ArticleInfoDTO> expectedPage = mock(Page.class);
+        when(articleRepository.findBy(same(mockSpec), any(Function.class))).thenReturn(expectedPage);
+        Page<ArticleInfoDTO> actualPage = assertDoesNotThrow(() -> underTest.getInfoAboutAll(mockSpec, pageSize, pageNumber));
+        assertSame(expectedPage, actualPage);
+        ArgumentCaptor<Function<FluentQuery.FetchableFluentQuery<Article>, Page<ArticleInfoDTO>>> uArgumentCaptor = ArgumentCaptor.forClass(Function.class);
+        verify(articleRepository, only()).findBy(same(mockSpec), uArgumentCaptor.capture());
+        var actualFunction = uArgumentCaptor.getValue();
+        FluentQuery.FetchableFluentQuery fluentQueryMock = mock(FluentQuery.FetchableFluentQuery.class);
+        when(fluentQueryMock.project("articleId", "title", "publishDate", "publisher.name")).thenReturn(fluentQueryMock);
+        when(fluentQueryMock.as(ArticleInfoDTO.class)).thenReturn(fluentQueryMock);
+        when(fluentQueryMock.page(PageRequest.of(pageNumber, pageSize))).thenReturn(expectedPage);
+        Page page = actualFunction.apply(fluentQueryMock);
+        assertSame(expectedPage, page);
+    }
 }
