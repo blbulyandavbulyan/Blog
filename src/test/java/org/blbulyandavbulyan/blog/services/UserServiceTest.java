@@ -11,16 +11,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -31,28 +29,17 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {UserService.class, UserServiceTest.TestConfig.class})
+@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
-    @MockBean
+    @Spy
+    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Mock
     private UserRepository userRepository;
-    @MockBean
+    @Mock
     private RoleService roleService;
 
-    @Autowired
+    @InjectMocks
     private UserService underTest;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @TestConfiguration
-    static class TestConfig {
-
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-            return new BCryptPasswordEncoder();
-        }
-
-    }
     @DisplayName("testing registration not existing user")
     @Test public void testRegisterNotExistingUser(){
         String userName = "david";
@@ -116,7 +103,6 @@ class UserServiceTest {
     public void loadUserByUsernameShouldThrowUserNotFoundExceptionIfUserWasNotFound(){
         String userName = "david";
         when(userRepository.findByName(userName)).thenReturn(Optional.empty());
-        when(userRepository.existsByName(userName)).thenReturn(false);
         assertThrows(UsernameNotFoundException.class, ()-> underTest.loadUserByUsername(userName));
     }
     @DisplayName("find by name should not throw exception, when user is exists")
