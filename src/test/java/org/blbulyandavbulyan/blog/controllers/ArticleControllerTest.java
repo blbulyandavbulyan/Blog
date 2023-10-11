@@ -5,7 +5,7 @@ import org.blbulyandavbulyan.blog.dtos.article.ArticleResponse;
 import org.blbulyandavbulyan.blog.dtos.article.CreateArticleRequest;
 import org.blbulyandavbulyan.blog.entities.Role;
 import org.blbulyandavbulyan.blog.entities.User;
-import org.blbulyandavbulyan.blog.services.ArticlesService;
+import org.blbulyandavbulyan.blog.services.ArticleService;
 import org.blbulyandavbulyan.blog.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,7 @@ public class ArticleControllerTest {
     @MockBean
     private UserService userService;
     @MockBean
-    private ArticlesService articlesService;
+    private ArticleService articleService;
     @Autowired
     private ObjectMapper objectMapper;
     @BeforeEach
@@ -90,11 +90,11 @@ public class ArticleControllerTest {
     @WithMockUser(username = "david", roles = {"COMMENTER", "PUBLISHER"})
     public void getArticleByIdIfArticleExists() throws Exception {
         ArticleResponse articleResponse = new ArticleResponse("My test article", "Something very long", "david");
-        Mockito.when(articlesService.getById(1L)).thenReturn(articleResponse);
+        Mockito.when(articleService.getById(1L)).thenReturn(articleResponse);
         mockMvc.perform(get("/api/v1/articles/{id}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(articleResponse), true));
-        verify(articlesService).getById(1L);
+        verify(articleService).getById(1L);
     }
 }

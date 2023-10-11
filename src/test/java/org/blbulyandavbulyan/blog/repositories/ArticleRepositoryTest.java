@@ -1,7 +1,8 @@
 package org.blbulyandavbulyan.blog.repositories;
 
-import org.blbulyandavbulyan.blog.dtos.article.ArticleResponse;
+import jakarta.persistence.EntityManager;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleInfoDTO;
+import org.blbulyandavbulyan.blog.dtos.article.ArticleResponse;
 import org.blbulyandavbulyan.blog.entities.Article;
 import org.blbulyandavbulyan.blog.entities.User;
 import org.junit.jupiter.api.Assertions;
@@ -13,7 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -25,7 +28,8 @@ class ArticleRepositoryTest {
     ArticleRepository underTest;
     @Autowired
     UserRepository userRepository;
-
+    @Autowired
+    EntityManager entityManager;
     @BeforeEach
     public void clearDB() {
         underTest.deleteAll();
@@ -83,5 +87,48 @@ class ArticleRepositoryTest {
     void findAllPagesByShouldReturnEmptyPageIfThereIsNoArticles() {
         Page<? extends ArticleInfoDTO> page = underTest.findAllPagesBy(ArticleInfoDTOImpl.class, PageRequest.of(0, 4));
         assertThat(page.isEmpty()).isTrue();
+    }
+
+    @Test
+    void updateArticleById() {
+        Article article = underTest.saveAndFlush(new Article(createAndSaveUser(), "test title", "test text"));
+        String expectedPublisherName = article.getPublisher().getName();
+        ZonedDateTime expectedPublishDate = article.getPublishDate();
+        long articleId = article.getArticleId();
+        String expectedText = "New text";
+        String expectedTitle = "New Title";
+        underTest.updateTitleAndTextByArticleId(articleId, expectedTitle, expectedText);
+        entityManager.clear();
+        Optional<Article> articleOptional = underTest.findById(articleId);
+        assertThat(articleOptional).isPresent();
+        article = articleOptional.get();
+        assertThat(article.getTitle()).isEqualTo(expectedTitle);
+        assertThat(article.getText()).isEqualTo(expectedText);
+        assertThat(article.getPublisher().getName()).isEqualTo(expectedPublisherName);
+        assertThat(article.getPublishDate()).isEqualTo(expectedPublishDate);
+    }
+
+    @Test
+    void findAuthorNameByArticleIdWhenArticleExists() {
+        User publisher = createAndSaveUser();
+        Article article = underTest.saveAndFlush(new Article(publisher, "test title", "test text"));
+        Optional<String> authorNameOptional = underTest.findArticleAuthorNameByArticleId(article.getArticleId());
+        assertThat(authorNameOptional).isPresent();
+        assertThat(authorNameOptional.get()).isEqualTo(publisher.getName());
+    }
+
+    @Test
+    void findAuthorNameByArticleIdWhenArticleDoesNotExist() {
+        Optional<String> authorNameOptional = underTest.findArticleAuthorNameByArticleId(200L);
+        assertThat(authorNameOptional).isEmpty();
+    }
+
+    @Test
+    void deleteArticleById() {
+        //этот тест нужен поскольку в ArticleRepository для deleteById прописан Query
+        Long articleId =  underTest.saveAndFlush(new Article(createAndSaveUser(), "test title", "test text")).getArticleId();
+        underTest.deleteById(articleId);
+        boolean actualExistById = underTest.existsById(articleId);
+        assertThat(actualExistById).isFalse();
     }
 }

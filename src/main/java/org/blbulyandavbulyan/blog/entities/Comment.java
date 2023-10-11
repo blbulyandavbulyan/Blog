@@ -2,6 +2,7 @@ package org.blbulyandavbulyan.blog.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.blbulyandavbulyan.blog.annotations.validation.comment.ValidCommentText;
 import org.hibernate.annotations.CreationTimestamp;
@@ -12,6 +13,7 @@ import java.time.ZonedDateTime;
 @Table(name = "comments")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +31,10 @@ public class Comment {
     @Column(name = "publish_date")
     @CreationTimestamp
     private ZonedDateTime publishDate;
+
+    public Comment(User author, Article article, String text) {
+        this.author = author;
+        this.article = article;
+        this.text = text;
+    }
 }
