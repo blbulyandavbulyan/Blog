@@ -2,12 +2,14 @@ package org.blbulyandavbulyan.blog.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "articles_reactions")
 @Getter
 @Setter
+@NoArgsConstructor
 public class ArticleReaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,4 +23,8 @@ public class ArticleReaction {
     private User liker;
     @Column(name = "liked", nullable = false)
     private boolean liked;
+    public ArticleReaction(Article article, User liker) {
+        this.article = article;
+        this.liker = liker;
+    }
 }
