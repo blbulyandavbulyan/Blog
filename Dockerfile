@@ -16,4 +16,4 @@ ARG DEPENDENCY=/app/target/dependency
 COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
 COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
 COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
-ENTRYPOINT ["java","-cp","./:./lib/*","org.blbulyandavbulyan.blog.BlogApplication"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-cp", "./:./lib/*","org.blbulyandavbulyan.blog.BlogApplication"]
