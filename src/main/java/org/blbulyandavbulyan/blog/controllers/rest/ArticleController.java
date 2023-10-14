@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.annotations.validation.article.ValidArticleId;
 import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageNumber;
 import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageSize;
-import org.blbulyandavbulyan.blog.dtos.article.ArticleResponse;
-import org.blbulyandavbulyan.blog.dtos.article.CreateArticleRequest;
 import org.blbulyandavbulyan.blog.dtos.article.ArticleInfoDTO;
 import org.blbulyandavbulyan.blog.dtos.article.ArticlePublishedResponse;
-import org.blbulyandavbulyan.blog.services.ArticlesService;
+import org.blbulyandavbulyan.blog.dtos.article.ArticleResponse;
+import org.blbulyandavbulyan.blog.dtos.article.CreateArticleRequest;
+import org.blbulyandavbulyan.blog.services.ArticleService;
 import org.blbulyandavbulyan.blog.specs.ArticleSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -27,11 +27,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/articles")
 @Validated
-public class ArticlesController {
+public class ArticleController {
     /**
      * Ссылка на сервис для статей
      */
-    private final ArticlesService articlesService;
+    private final ArticleService articleService;
 
     /**
      * Получает статью по ИД
@@ -40,7 +40,7 @@ public class ArticlesController {
      */
     @GetMapping("/{id}")
     public ArticleResponse getById(@ValidArticleId @PathVariable Long id) {
-        return articlesService.getById(id);
+        return articleService.getById(id);
     }
 
     /**
@@ -50,7 +50,7 @@ public class ArticlesController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteArticleById(@ValidArticleId @PathVariable Long id, Authentication authentication) {
-        articlesService.deleteById(id, authentication);
+        articleService.deleteById(id, authentication);
     }
 
     /**
@@ -63,7 +63,7 @@ public class ArticlesController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ArticlePublishedResponse publishArticle(@Validated @RequestBody CreateArticleRequest createArticleRequest, Principal principal) {
-        return articlesService.publishArticle(createArticleRequest, principal.getName());
+        return articleService.publishArticle(createArticleRequest, principal.getName());
     }
 
     /**
@@ -76,12 +76,12 @@ public class ArticlesController {
     public Page<ArticleInfoDTO> getInfoAboutAllArticles(@ValidPageSize @RequestParam(defaultValue = "5", name = "s") Integer pageSize,
                                                         @ValidPageNumber @RequestParam(defaultValue = "1", name = "p") Integer pageNumber,
                                                         @RequestParam Map<String, String> requestParams) {
-        return articlesService.getInfoAboutAll(new ArticleSpecifications(requestParams).getArticleSpecification(), pageSize, pageNumber - 1);
+        return articleService.getInfoAboutAll(new ArticleSpecifications(requestParams).getArticleSpecification(), pageSize, pageNumber - 1);
     }
     @PatchMapping("/{articleId}")
     public void updateArticle(@ValidArticleId @PathVariable Long articleId,
                               @Validated @RequestBody CreateArticleRequest createArticleRequest,
                               Principal principal){
-        articlesService.updateArticle(articleId, createArticleRequest.title(), createArticleRequest.text(), principal.getName());
+        articleService.updateArticle(articleId, createArticleRequest.title(), createArticleRequest.text(), principal.getName());
     }
 }

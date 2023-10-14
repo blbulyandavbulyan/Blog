@@ -3,7 +3,7 @@ package org.blbulyandavbulyan.blog.controllers.rest;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.authorization.JwtRequest;
 import org.blbulyandavbulyan.blog.dtos.authorization.JwtResponse;
-import org.blbulyandavbulyan.blog.utils.JWTTokenUtils;
+import org.blbulyandavbulyan.blog.services.TokenService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,7 +23,7 @@ public class AuthController {
     /**
      * Ссылка на утилитный класс для управления jwt токенами
      */
-    private final JWTTokenUtils jwtTokenUtils;
+    private final TokenService tokenService;
     /**
      * Ссылка на AuthenticationManager для управления аутентификацией
      */
@@ -38,6 +38,6 @@ public class AuthController {
     @PostMapping
     public JwtResponse createAuthToken(@Validated @RequestBody JwtRequest authRequest){
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.username(), authRequest.password()));
-            return new JwtResponse(jwtTokenUtils.generateToken(authentication.getName(), authentication.getAuthorities()));
+            return new JwtResponse(tokenService.generateToken(authentication.getName(), authentication.getAuthorities()));
     }
 }
