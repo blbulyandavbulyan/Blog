@@ -85,4 +85,10 @@ public class CommentService {
             commentRepository.updateTextByCommentId(commentId, text);
         else throw new AccessDeniedException();
     }
+
+    public Comment getReferenceById(Long id) {
+        if(!commentRepository.existsById(id))
+            throw new CommentNotFoundException("Comment with id " + id + " not found!");
+        return commentRepository.getReferenceById(id);
+    }
 }
