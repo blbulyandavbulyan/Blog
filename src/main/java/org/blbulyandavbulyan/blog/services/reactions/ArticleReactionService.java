@@ -1,10 +1,12 @@
-package org.blbulyandavbulyan.blog.services;
+package org.blbulyandavbulyan.blog.services.reactions;
 
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.entities.Article;
 import org.blbulyandavbulyan.blog.entities.ArticleReaction;
 import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.repositories.ArticleReactionRepository;
+import org.blbulyandavbulyan.blog.services.ArticleService;
+import org.blbulyandavbulyan.blog.services.UserService;
 import org.springframework.stereotype.Service;
 
 @Service

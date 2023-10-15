@@ -3,7 +3,7 @@ package org.blbulyandavbulyan.blog.controllers.rest;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.annotations.validation.article.ValidArticleId;
 import org.blbulyandavbulyan.blog.dtos.reactions.ArticleReactionDTO;
-import org.blbulyandavbulyan.blog.services.ArticleReactionService;
+import org.blbulyandavbulyan.blog.services.reactions.ArticleReactionService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
