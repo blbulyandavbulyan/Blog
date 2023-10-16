@@ -1,4 +1,4 @@
-package org.blbulyandavbulyan.blog.entities;
+package org.blbulyandavbulyan.blog.entities.reactions;
 
 /**
  * Предоставляет интерфейс для реакций

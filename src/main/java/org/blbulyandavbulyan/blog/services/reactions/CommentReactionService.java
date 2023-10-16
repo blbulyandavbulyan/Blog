@@ -1,7 +1,7 @@
 package org.blbulyandavbulyan.blog.services.reactions;
 
 import org.blbulyandavbulyan.blog.entities.Comment;
-import org.blbulyandavbulyan.blog.entities.CommentReaction;
+import org.blbulyandavbulyan.blog.entities.reactions.CommentReaction;
 import org.blbulyandavbulyan.blog.repositories.reactions.CommentReactionRepository;
 import org.blbulyandavbulyan.blog.services.CommentService;
 import org.blbulyandavbulyan.blog.services.UserService;

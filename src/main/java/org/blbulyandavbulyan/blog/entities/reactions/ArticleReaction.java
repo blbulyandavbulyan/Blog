@@ -1,30 +1,31 @@
-package org.blbulyandavbulyan.blog.entities;
+package org.blbulyandavbulyan.blog.entities.reactions;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.blbulyandavbulyan.blog.entities.Article;
+import org.blbulyandavbulyan.blog.entities.User;
 
 @Entity
-@Table(name = "comments_reactions")
+@Table(name = "articles_reactions")
 @Getter
 @Setter
 @NoArgsConstructor
-public class CommentReaction implements IReaction{
+public class ArticleReaction implements IReaction{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "comment_id", nullable = false)
-    private Comment target;
+    @JoinColumn(name = "article_id", nullable = false)
+    private Article target;
     @ManyToOne
     @JoinColumn(name = "liker_id", nullable = false)
     private User liker;
     @Column(name = "liked", nullable = false)
     private boolean liked;
-
-    public CommentReaction(Comment target, User liker) {
+    public ArticleReaction(Article target, User liker) {
         this.target = target;
         this.liker = liker;
     }

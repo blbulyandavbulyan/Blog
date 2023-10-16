@@ -2,8 +2,8 @@ package org.blbulyandavbulyan.blog.services.reactions;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.blbulyandavbulyan.blog.entities.IReaction;
 import org.blbulyandavbulyan.blog.entities.User;
+import org.blbulyandavbulyan.blog.entities.reactions.IReaction;
 import org.blbulyandavbulyan.blog.repositories.reactions.IReactionRepository;
 import org.blbulyandavbulyan.blog.services.UserService;
 

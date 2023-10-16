@@ -1,7 +1,7 @@
 package org.blbulyandavbulyan.blog.repositories.reactions;
 
-import org.blbulyandavbulyan.blog.entities.IReaction;
 import org.blbulyandavbulyan.blog.entities.User;
+import org.blbulyandavbulyan.blog.entities.reactions.IReaction;
 
 import java.util.Optional;
 

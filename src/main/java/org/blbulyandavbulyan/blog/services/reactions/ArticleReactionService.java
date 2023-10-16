@@ -1,7 +1,7 @@
 package org.blbulyandavbulyan.blog.services.reactions;
 
 import org.blbulyandavbulyan.blog.entities.Article;
-import org.blbulyandavbulyan.blog.entities.ArticleReaction;
+import org.blbulyandavbulyan.blog.entities.reactions.ArticleReaction;
 import org.blbulyandavbulyan.blog.repositories.reactions.ArticleReactionRepository;
 import org.blbulyandavbulyan.blog.services.ArticleService;
 import org.blbulyandavbulyan.blog.services.UserService;
