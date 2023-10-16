@@ -10,22 +10,22 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CommentReaction {
+public class CommentReaction implements IReaction{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     @ManyToOne
     @JoinColumn(name = "comment_id", nullable = false)
-    private Comment comment;
+    private Comment target;
     @ManyToOne
     @JoinColumn(name = "liker_id", nullable = false)
     private User liker;
     @Column(name = "liked", nullable = false)
     private boolean liked;
 
-    public CommentReaction(Comment comment, User liker) {
-        this.comment = comment;
+    public CommentReaction(Comment target, User liker) {
+        this.target = target;
         this.liker = liker;
     }
 }
