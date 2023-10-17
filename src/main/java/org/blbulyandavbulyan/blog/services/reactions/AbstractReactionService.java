@@ -2,6 +2,7 @@ package org.blbulyandavbulyan.blog.services.reactions;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.blbulyandavbulyan.blog.dtos.reactions.ReactionStatistics;
 import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.entities.reactions.IReaction;
 import org.blbulyandavbulyan.blog.repositories.reactions.IReactionRepository;
@@ -62,5 +63,15 @@ abstract class AbstractReactionService <RT extends IReaction, TT, R extends IRea
                 .orElseGet(() -> reactionFactory.create(target, liker));
         reaction.setLiked(liked);
         repository.save(reaction);
+    }
+    // TODO: 16.10.2023 дописать здесь метод получения статистики(сколько лайков и дизлайков)
+
+    /**
+     * Метод возвращает статистику по реакциям для заданной цели
+     * @param targetId ИД цели
+     * @return искомая статистика
+     */
+    public ReactionStatistics getStatistics(Long targetId){
+        return repository.getStatistics(getReferenceById(targetId));
     }
 }
