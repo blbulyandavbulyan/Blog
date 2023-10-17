@@ -48,7 +48,7 @@ class CommentServiceTest {
         Article article = new Article();
         when(commentRepository.save(any(Comment.class))).then(invocation -> {
             Comment argument = invocation.getArgument(0, Comment.class);
-            argument.setCommentId(expectedCommentId);
+            argument.setId(expectedCommentId);
             return argument;
         });
         when(userService.getReferenceByName(publisherName)).thenReturn(publisher);
@@ -57,7 +57,7 @@ class CommentServiceTest {
         ArgumentCaptor<Comment> commentArgumentCaptor = ArgumentCaptor.forClass(Comment.class);
         verify(commentRepository, only()).save(commentArgumentCaptor.capture());
         Comment savedComment = commentArgumentCaptor.getValue();
-        assertEquals(expectedCommentId, savedComment.getCommentId());
+        assertEquals(expectedCommentId, savedComment.getId());
         assertEquals(text, savedComment.getText());
         assertEquals(publisher, savedComment.getAuthor());
         assertEquals(article, savedComment.getArticle());

@@ -54,7 +54,7 @@ public class CommentService {
      */
     public CommentResponse publishComment(String publisherName, Long articleId, String text){
         Comment comment = commentRepository.save(new Comment(userService.getReferenceByName(publisherName), articleService.getReferenceById(articleId), text));
-        return new CommentResponse(comment.getCommentId(), publisherName, comment.getText(), comment.getPublishDate());
+        return new CommentResponse(comment.getId(), publisherName, comment.getText(), comment.getPublishDate());
     }
 
     /**
