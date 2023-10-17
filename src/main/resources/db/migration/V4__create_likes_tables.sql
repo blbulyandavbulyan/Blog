@@ -18,3 +18,5 @@ CREATE TABLE comments_reactions
     FOREIGN KEY (liker_id) REFERENCES users (user_id),
     FOREIGN KEY (comment_id) REFERENCES comments (comment_id)
 );
+CREATE INDEX article_id_in_reactions ON articles_reactions (article_id);
+CREATE INDEX comment_id_in_reactions ON comments_reactions(comment_id);
