@@ -71,8 +71,8 @@ app.controller('ArticlesController', function ($scope, $timeout, ArticleService,
         ArticleService.openArticle(articleId)
     };
     $scope.deleteItem = function (article){
-        ArticleService.deleteArticle(article.articleId)
-            .then(() => deleteItemAndGetNewPage($scope.articles, $scope.totalPages, $scope.currentPage, a => a.articleId === article.articleId, $scope.getPage))
+        ArticleService.deleteArticle(article.id)
+            .then(() => deleteItemAndGetNewPage($scope.articles, $scope.totalPages, $scope.currentPage, a => a.id === article.id, $scope.getPage))
             .catch(function (error) {
                 showErrorToast("Ошибка", "Ошибка удаления статьи");
                 console.log(error);

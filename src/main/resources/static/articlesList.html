@@ -39,7 +39,7 @@
     <div ng-show="loadingError != null" class="alert alert-danger">{{loadingError}}</div>
     <div ng-show="!contentLoading" class="card me-3" ng-repeat="item in articles">
         <div class="card-body">
-            <h5 class="card-title"><a href="javascript:;" ng-click="goToArticle(item.articleId)">{{ item.title }}</a></h5>
+            <h5 class="card-title"><a href="javascript:;" ng-click="goToArticle(item.id)">{{ item.title }}</a></h5>
             <p class="card-text">Издатель: {{ item.publisher.name }}</p>
             <p class="card-text"><small class="text-muted">{{ item.publishDate | date:'dd.MM.yyyy HH:mm:ss' }}</small></p>
             <div ng-include="'fragments/additional-actions.html'"></div>
