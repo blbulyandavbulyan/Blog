@@ -17,10 +17,10 @@ public class ArticleReaction implements IReaction{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id", nullable = false)
     private Article target;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "liker_id", nullable = false)
     private User liker;
     @Column(name = "liked", nullable = false)
