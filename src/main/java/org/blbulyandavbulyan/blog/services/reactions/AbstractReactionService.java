@@ -64,7 +64,6 @@ abstract class AbstractReactionService <RT extends IReaction, TT, R extends IRea
         reaction.setLiked(liked);
         repository.save(reaction);
     }
-    // TODO: 16.10.2023 дописать здесь метод получения статистики(сколько лайков и дизлайков)
 
     /**
      * Метод возвращает статистику по реакциям для заданной цели
