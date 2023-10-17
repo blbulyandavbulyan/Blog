@@ -42,7 +42,7 @@ public class ArticleService {
     private ArticlePublishedResponse publishArticle(String title, String text, User publisher){
         Article article = new Article(publisher, title, text);
         articleRepository.save(article);
-        return new ArticlePublishedResponse(article.getArticleId());
+        return new ArticlePublishedResponse(article.getId());
     }
 
     /**
@@ -51,7 +51,7 @@ public class ArticleService {
      * @return DTO, содержащее статью
      */
     public ArticleResponse getById(Long id) {
-        return articleRepository.findByArticleId(id, ArticleResponse.class).orElseThrow(()->new ArticleNotFoundException("Article with id " + id + " not found"));
+        return articleRepository.findById(id, ArticleResponse.class).orElseThrow(()->new ArticleNotFoundException("Article with id " + id + " not found"));
     }
 
     /**
@@ -73,7 +73,7 @@ public class ArticleService {
      * @return страницу, содержащую статьи
      */
     public Page<ArticleInfoDTO> getInfoAboutAll(Specification<Article> spec, int pageSize, int pageNumber) {
-        return articleRepository.findBy(spec, q-> q.project("articleId", "title", "publishDate", "publisher.name").as(ArticleInfoDTO.class).page(PageRequest.of(pageNumber, pageSize)));
+        return articleRepository.findBy(spec, q-> q.project("id", "title", "publishDate", "publisher.name").as(ArticleInfoDTO.class).page(PageRequest.of(pageNumber, pageSize)));
     }
 
     /**

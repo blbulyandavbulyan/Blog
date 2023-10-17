@@ -19,7 +19,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Modifying
     @Query("update Comment c set c.text = :text where c.commentId = :id")
     void updateTextByCommentId(@Param("id") Long commentId, @Param("text") String text);
-    <T> Page<T> findAllByArticleArticleId(Long id, Pageable pageable, Class<T> dtoType);
+    <T> Page<T> findAllByArticleId(Long id, Pageable pageable, Class<T> dtoType);
     @Query("SELECT c.author.name FROM Comment c WHERE c.commentId = :commentId")
     Optional<String> findCommentAuthorNameByCommentId(@Param("commentId") Long commentId);
 

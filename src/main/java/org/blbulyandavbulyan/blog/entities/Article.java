@@ -20,7 +20,7 @@ public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "article_id")
-    private Long articleId;
+    private Long id;
     @ManyToOne
     @JoinColumn(name = "author_id")
     private User publisher;

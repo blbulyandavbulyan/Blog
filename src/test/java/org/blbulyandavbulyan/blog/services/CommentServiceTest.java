@@ -125,7 +125,7 @@ class CommentServiceTest {
         int pageSize = 10;
         Page<CommentResponse> expectedPage = mock(Page.class);
         when(articleService.existsById(articleId)).thenReturn(true);
-        when(commentRepository.findAllByArticleArticleId(eq(articleId), eq(PageRequest.of(pageNumber, pageSize)), eq(CommentResponse.class))).thenReturn(expectedPage);
+        when(commentRepository.findAllByArticleId(eq(articleId), eq(PageRequest.of(pageNumber, pageSize)), eq(CommentResponse.class))).thenReturn(expectedPage);
         Page<CommentResponse> actualPage = assertDoesNotThrow(() -> underTest.getCommentDTOsForArticleId(articleId, pageNumber, pageSize));
         assertSame(expectedPage, actualPage);
     }

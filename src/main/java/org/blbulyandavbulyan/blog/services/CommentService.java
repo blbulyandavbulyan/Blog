@@ -41,7 +41,7 @@ public class CommentService {
     public Page<CommentResponse> getCommentDTOsForArticleId(Long articleId, int pageNumber, int pageSize){
         if(!articleService.existsById(articleId))
             throw new ArticleNotFoundException("Article with articleId " + articleId + " not found!");
-        return commentRepository.findAllByArticleArticleId(articleId, PageRequest.of(pageNumber, pageSize), CommentResponse.class);
+        return commentRepository.findAllByArticleId(articleId, PageRequest.of(pageNumber, pageSize), CommentResponse.class);
     }
 
     /**
