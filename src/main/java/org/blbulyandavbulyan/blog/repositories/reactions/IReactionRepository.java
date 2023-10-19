@@ -1,9 +1,7 @@
 package org.blbulyandavbulyan.blog.repositories.reactions;
 
 import org.blbulyandavbulyan.blog.dtos.reactions.ReactionStatistics;
-import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.entities.reactions.IReaction;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,13 +11,11 @@ import java.util.Optional;
 /**
  * Этот интерфейс предоставляет абстракцию для репозитория реакций
  * @param <RT> тип реакции, предполагается что это JPA Entity, должен имплементировать {@link IReaction}
- * @param <TT> тип цели, для которой предназначена реакция, поле этого типа должно быть в классе типа RT и оно должно называться target
  */
-public interface IReactionRepository<RT extends IReaction, TT> {
-    Optional<RT> findByTargetAndLiker(TT target, User liker);
-    @Modifying
+public interface IReactionRepository<RT extends IReaction> {
+    Optional<RT> findByTargetIdAndLikerName(Long targetId, String likerName);
     @Transactional
-    void deleteByTargetAndLiker(TT target, User liker);
+    void deleteByTargetIdAndLikerName(Long targetId, String likerName);
     @Query("""
         SELECT
             new org.blbulyandavbulyan.blog.dtos.reactions.ReactionStatistics(
@@ -29,8 +25,8 @@ public interface IReactionRepository<RT extends IReaction, TT> {
         FROM
             #{#entityName} e
         WHERE
-        e.target = :target
+        e.target.id = :targetId
     """)
-    ReactionStatistics getStatistics(@Param("target") TT target);
+    ReactionStatistics getStatistics(@Param("targetId") Long targetId);
     RT save(RT reaction);
 }

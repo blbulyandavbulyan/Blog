@@ -17,7 +17,7 @@ import java.util.function.Function;
  * @param <R> тип репозитория реакций, должен быть наследником от {@link IReactionRepository}
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-abstract class AbstractReactionService <RT extends IReaction, TT, R extends IReactionRepository<RT, TT>>{
+abstract class AbstractReactionService <RT extends IReaction, TT, R extends IReactionRepository<RT>>{
     /**
      * Предоставляет фабрику реакций
      * @param <RT> тип реакций, производимый фабрикой, должен быть наследником {@link IReaction}
@@ -47,7 +47,7 @@ abstract class AbstractReactionService <RT extends IReaction, TT, R extends IRea
      * @param actorUsername имя реагировавшего пользователя
      */
     public void removeReaction(Long targetId, String actorUsername){
-        repository.deleteByTargetAndLiker(getReferenceById(targetId), userService.getReferenceByName(actorUsername));
+        repository.deleteByTargetIdAndLikerName(targetId, actorUsername);
     }
 
     /**
@@ -57,10 +57,12 @@ abstract class AbstractReactionService <RT extends IReaction, TT, R extends IRea
      * @param liked true если понравилось, иначе false
      */
     public void react(Long targetId, String actorUsername, boolean liked){
-        var target =  getReferenceById(targetId);
-        User liker = userService.getReferenceByName(actorUsername);
-        RT reaction = repository.findByTargetAndLiker(target, liker)
-                .orElseGet(() -> reactionFactory.create(target, liker));
+        RT reaction = repository.findByTargetIdAndLikerName(targetId, actorUsername)
+                .orElseGet(() -> {
+                    var target =  getReferenceById(targetId);
+                    User liker = userService.getReferenceByName(actorUsername);
+                    return reactionFactory.create(target, liker);
+                });
         reaction.setLiked(liked);
         repository.save(reaction);
     }
@@ -71,6 +73,6 @@ abstract class AbstractReactionService <RT extends IReaction, TT, R extends IRea
      * @return искомая статистика
      */
     public ReactionStatistics getStatistics(Long targetId){
-        return repository.getStatistics(getReferenceById(targetId));
+        return repository.getStatistics(targetId);
     }
 }
