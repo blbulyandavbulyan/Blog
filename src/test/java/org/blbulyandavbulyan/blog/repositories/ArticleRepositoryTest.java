@@ -50,7 +50,7 @@ class ArticleRepositoryTest {
         Article article = new Article(publisher, "Test title", "Test text");
         underTest.save(article);
         //when
-        Optional<ArticleResponse> articleDtoOptional = underTest.findByArticleId(article.getArticleId(), ArticleResponse.class);
+        Optional<ArticleResponse> articleDtoOptional = underTest.findById(article.getId(), ArticleResponse.class);
         //then
         assertThat(articleDtoOptional).isPresent();
         ArticleResponse articleResponse = articleDtoOptional.get();
@@ -61,7 +61,7 @@ class ArticleRepositoryTest {
 
     @Test
     void findArticleDtoByIdShouldReturnEmptyOptionalIfArticleDoesNotExists() {
-        Optional<ArticleResponse> articleDtoOptional = underTest.findByArticleId(2L, ArticleResponse.class);
+        Optional<ArticleResponse> articleDtoOptional = underTest.findById(2L, ArticleResponse.class);
         assertThat(articleDtoOptional).isNotPresent();
     }
 
@@ -78,7 +78,7 @@ class ArticleRepositoryTest {
         Page<ArticleInfoDTOImpl> page = underTest.findAllPagesBy(ArticleInfoDTOImpl.class, PageRequest.of(0, 4));
         List<ArticleInfoDTOImpl> actual = page.get().toList();
         Set<ArticleInfoDTOImpl> expected = articles.stream().map(a ->
-                new ArticleInfoDTOImpl(a.getArticleId(), a.getPublisher().getName(), a.getPublishDate(), a.getTitle())
+                new ArticleInfoDTOImpl(a.getId(), a.getPublisher().getName(), a.getPublishDate(), a.getTitle())
         ).collect(Collectors.toSet());
         Assertions.assertTrue(expected.containsAll(actual));
     }
@@ -94,7 +94,7 @@ class ArticleRepositoryTest {
         Article article = underTest.saveAndFlush(new Article(createAndSaveUser(), "test title", "test text"));
         String expectedPublisherName = article.getPublisher().getName();
         ZonedDateTime expectedPublishDate = article.getPublishDate();
-        long articleId = article.getArticleId();
+        long articleId = article.getId();
         String expectedText = "New text";
         String expectedTitle = "New Title";
         underTest.updateTitleAndTextByArticleId(articleId, expectedTitle, expectedText);
@@ -112,7 +112,7 @@ class ArticleRepositoryTest {
     void findAuthorNameByArticleIdWhenArticleExists() {
         User publisher = createAndSaveUser();
         Article article = underTest.saveAndFlush(new Article(publisher, "test title", "test text"));
-        Optional<String> authorNameOptional = underTest.findArticleAuthorNameByArticleId(article.getArticleId());
+        Optional<String> authorNameOptional = underTest.findArticleAuthorNameByArticleId(article.getId());
         assertThat(authorNameOptional).isPresent();
         assertThat(authorNameOptional.get()).isEqualTo(publisher.getName());
     }
@@ -126,7 +126,7 @@ class ArticleRepositoryTest {
     @Test
     void deleteArticleById() {
         //этот тест нужен поскольку в ArticleRepository для deleteById прописан Query
-        Long articleId =  underTest.saveAndFlush(new Article(createAndSaveUser(), "test title", "test text")).getArticleId();
+        Long articleId =  underTest.saveAndFlush(new Article(createAndSaveUser(), "test title", "test text")).getId();
         underTest.deleteById(articleId);
         boolean actualExistById = underTest.existsById(articleId);
         assertThat(actualExistById).isFalse();

@@ -51,7 +51,7 @@ class ArticleServiceTest {
         expectedPublisher.setName(publisherName);
         when(articleRepository.save(any(Article.class))).then((Answer<Article>) invocation -> {
             Article argument = invocation.getArgument(0, Article.class);
-            argument.setArticleId(expectedId);
+            argument.setId(expectedId);
             return argument;
         });
         when(userService.getReferenceByName(publisherName)).thenReturn(expectedPublisher);
@@ -70,17 +70,17 @@ class ArticleServiceTest {
     void getByIdShouldReturnIfArticleExists() {
         Long articleId = 1L;
         ArticleResponse expectedResponse = new ArticleResponse("Test article", "Test text", "testpublisher");
-        when(articleRepository.findByArticleId(articleId, ArticleResponse.class)).thenReturn(Optional.of(expectedResponse));
+        when(articleRepository.findById(articleId, ArticleResponse.class)).thenReturn(Optional.of(expectedResponse));
         ArticleResponse actualResponse = assertDoesNotThrow(() -> underTest.getById(articleId));
         assertSame(expectedResponse, actualResponse);
-        verify(articleRepository, only()).findByArticleId(articleId, ArticleResponse.class);
+        verify(articleRepository, only()).findById(articleId, ArticleResponse.class);
     }
     
     @Test
     @DisplayName("get by id should throw ArticleNotFoundException if article doesn't exist")
     void getByIdShouldThrowIfArticleDoesNotExist(){
         Long articleId = 1L;
-        when(articleRepository.findByArticleId(articleId, ArticleResponse.class)).thenReturn(Optional.empty());
+        when(articleRepository.findById(articleId, ArticleResponse.class)).thenReturn(Optional.empty());
         assertThrows(ArticleNotFoundException.class, ()->underTest.getById(articleId));
     }
 
@@ -183,7 +183,7 @@ class ArticleServiceTest {
         verify(articleRepository, only()).findBy(same(mockSpec), uArgumentCaptor.capture());
         var actualFunction = uArgumentCaptor.getValue();
         FluentQuery.FetchableFluentQuery fluentQueryMock = mock(FluentQuery.FetchableFluentQuery.class);
-        when(fluentQueryMock.project("articleId", "title", "publishDate", "publisher.name")).thenReturn(fluentQueryMock);
+        when(fluentQueryMock.project("id", "title", "publishDate", "publisher.name")).thenReturn(fluentQueryMock);
         when(fluentQueryMock.as(ArticleInfoDTO.class)).thenReturn(fluentQueryMock);
         when(fluentQueryMock.page(PageRequest.of(pageNumber, pageSize))).thenReturn(expectedPage);
         Page page = actualFunction.apply(fluentQueryMock);
