@@ -17,14 +17,14 @@ import java.util.Optional;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Transactional
     @Modifying
-    @Query("update Comment c set c.text = :text where c.commentId = :id")
+    @Query("update Comment c set c.text = :text where c.id = :id")
     void updateTextByCommentId(@Param("id") Long commentId, @Param("text") String text);
-    <T> Page<T> findAllByArticleArticleId(Long id, Pageable pageable, Class<T> dtoType);
-    @Query("SELECT c.author.name FROM Comment c WHERE c.commentId = :commentId")
+    <T> Page<T> findAllByArticleId(Long id, Pageable pageable, Class<T> dtoType);
+    @Query("SELECT c.author.name FROM Comment c WHERE c.id = :commentId")
     Optional<String> findCommentAuthorNameByCommentId(@Param("commentId") Long commentId);
 
     @Override
     @Modifying
-    @Query("DELETE FROM Comment WHERE commentId = :id")
+    @Query("DELETE FROM Comment WHERE id = :id")
     void deleteById(@NonNull @Param("id") Long commentId);
 }

@@ -3,7 +3,7 @@ package org.blbulyandavbulyan.blog.dtos.article;
 import java.time.ZonedDateTime;
 
 public interface ArticleInfoDTO {
-    Long getArticleId();
+    Long getId();
 
     UserDto getPublisher();
 
