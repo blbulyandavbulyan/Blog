@@ -3,7 +3,6 @@ package org.blbulyandavbulyan.blog.repositories;
 import jakarta.persistence.EntityManager;
 import org.blbulyandavbulyan.blog.entities.Article;
 import org.blbulyandavbulyan.blog.entities.Comment;
-import org.blbulyandavbulyan.blog.entities.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +28,9 @@ class CommentRepositoryTest {
         articleRepository.deleteAll();
         userRepository.deleteAll();
     }
-    private User createAndSaveUser() {
-        User publisher = new User();
-        publisher.setName("davdfdsfafid");
-        publisher.setPasswordHash("fdfdf");
-        return userRepository.saveAndFlush(publisher);
-    }
+
     private Article createAndSaveArticle(){
-        return articleRepository.save(new Article(createAndSaveUser(), "Test title", "Test text"));
+        return articleRepository.save(new Article(RepositoryTestUtils.createAndSaveUser(userRepository), "Test title", "Test text"));
     }
     @Test
     void deleteById() {

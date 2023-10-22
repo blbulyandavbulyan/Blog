@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.blbulyandavbulyan.blog.repositories.RepositoryTestUtils.createAndSaveUser;
 
 @DataJpaTest
 class ArticleRepositoryTest {
@@ -36,17 +37,10 @@ class ArticleRepositoryTest {
         userRepository.deleteAll();
     }
 
-    private User createAndSaveUser() {
-        User publisher = new User();
-        publisher.setName("davdfdsfafid");
-        publisher.setPasswordHash("fdfdf");
-        return userRepository.saveAndFlush(publisher);
-    }
-
     @Test
     void findArticleDtoById() {
         //give
-        User publisher = createAndSaveUser();
+        User publisher = createAndSaveUser(userRepository);
         Article article = new Article(publisher, "Test title", "Test text");
         underTest.save(article);
         //when
@@ -67,7 +61,7 @@ class ArticleRepositoryTest {
 
     @Test
     void findAllPagesBy() {
-        User publisher = createAndSaveUser();
+        User publisher = createAndSaveUser(userRepository);
         List<Article> articles = List.of(
                 new Article(publisher, "Article 1", "Text 1"),
                 new Article(publisher, "Aritcle 2", "Text 2"),
@@ -91,7 +85,7 @@ class ArticleRepositoryTest {
 
     @Test
     void updateArticleById() {
-        Article article = underTest.saveAndFlush(new Article(createAndSaveUser(), "test title", "test text"));
+        Article article = underTest.saveAndFlush(new Article(createAndSaveUser(userRepository), "test title", "test text"));
         String expectedPublisherName = article.getPublisher().getName();
         ZonedDateTime expectedPublishDate = article.getPublishDate();
         long articleId = article.getId();
@@ -110,7 +104,7 @@ class ArticleRepositoryTest {
 
     @Test
     void findAuthorNameByArticleIdWhenArticleExists() {
-        User publisher = createAndSaveUser();
+        User publisher = createAndSaveUser(userRepository);
         Article article = underTest.saveAndFlush(new Article(publisher, "test title", "test text"));
         Optional<String> authorNameOptional = underTest.findArticleAuthorNameByArticleId(article.getId());
         assertThat(authorNameOptional).isPresent();
@@ -126,7 +120,7 @@ class ArticleRepositoryTest {
     @Test
     void deleteArticleById() {
         //этот тест нужен поскольку в ArticleRepository для deleteById прописан Query
-        Long articleId =  underTest.saveAndFlush(new Article(createAndSaveUser(), "test title", "test text")).getId();
+        Long articleId =  underTest.saveAndFlush(new Article(createAndSaveUser(userRepository), "test title", "test text")).getId();
         underTest.deleteById(articleId);
         boolean actualExistById = underTest.existsById(articleId);
         assertThat(actualExistById).isFalse();

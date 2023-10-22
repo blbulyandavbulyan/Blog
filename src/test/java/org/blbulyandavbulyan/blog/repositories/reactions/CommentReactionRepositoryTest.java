@@ -7,6 +7,7 @@ import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.entities.reactions.CommentReaction;
 import org.blbulyandavbulyan.blog.repositories.ArticleRepository;
 import org.blbulyandavbulyan.blog.repositories.CommentRepository;
+import org.blbulyandavbulyan.blog.repositories.RepositoryTestUtils;
 import org.blbulyandavbulyan.blog.repositories.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -35,9 +36,7 @@ class CommentReactionRepositoryTest {
         assertThat(actual.getTarget()).isEqualTo(expected.getTarget());
         assertThat(actual.getLiker()).isEqualTo(expected.getLiker());
     }
-    private User createAndSaveUser(String username){
-        return userRepository.save(new User(username, "eafafaw"));
-    }
+
     private Article createAndSaveArticle(User author){
         return articleRepository.save(new Article(author, "Test title", "test text"));
     }
@@ -61,8 +60,8 @@ class CommentReactionRepositoryTest {
     }
     @Test
     void findByTargetIdAndLikerNameIfExists() {
-        User liker = createAndSaveUser("testuser");
-        User commentAuthor = createAndSaveUser("commenter");
+        User liker = RepositoryTestUtils.createAndSaveUser(userRepository, "testuser");
+        User commentAuthor = RepositoryTestUtils.createAndSaveUser(userRepository, "commenter");
         Comment target = createAndSaveComment(commentAuthor);
         CommentReaction expected = createAndSaveReaction(liker, target);
         Optional<CommentReaction> optionalCommentReaction = underTest.findByTargetIdAndLikerName(target.getId(), liker.getName());
@@ -78,8 +77,8 @@ class CommentReactionRepositoryTest {
     void deleteByTargetIdAndLikerName(){
         //для комплексного теста, нужно сделать так, чтобы на удаляемую цель отреагировало два человека
         //И так же, чтобы была другая реакция, на которую тоже кто-то другой отреагировал, или тот же
-        User commentAuthor = createAndSaveUser("commenter");
-        User otherUser = createAndSaveUser("otheruser1");
+        User commentAuthor = RepositoryTestUtils.createAndSaveUser(userRepository, "commenter");
+        User otherUser = RepositoryTestUtils.createAndSaveUser(userRepository, "otheruser1");
         Comment comment1 = createAndSaveComment(commentAuthor);
         Comment comment2 = createAndSaveComment(otherUser);
         CommentReaction deletingReaction = createAndSaveReaction(commentAuthor, comment1);
@@ -100,18 +99,18 @@ class CommentReactionRepositoryTest {
     }
     @Test
     void getStatisticsWhenTargetExistsAndNoReactions() {
-        Comment target = createAndSaveComment(createAndSaveUser("commentauthor"));
+        Comment target = createAndSaveComment(RepositoryTestUtils.createAndSaveUser(userRepository, "commentauthor"));
         ReactionStatistics statistics = underTest.getStatistics(target.getId());
         assertThat(statistics.dislikesCount()).isEqualTo(0L);
         assertThat(statistics.likesCount()).isEqualTo(0L);
     }
     @Test
     void getStatisticsWhenTargetExistsAndReactionsFound(){
-        Comment target = createAndSaveComment(createAndSaveUser("commentauthor"));
-        createAndSaveReaction(createAndSaveUser("test1"), target, true);
-        createAndSaveReaction(createAndSaveUser("test2"), target, false);
-        createAndSaveReaction(createAndSaveUser("test3"), target, false);
-        createAndSaveReaction(createAndSaveUser("test4"), target, true);
+        Comment target = createAndSaveComment(RepositoryTestUtils.createAndSaveUser(userRepository, "commentauthor"));
+        createAndSaveReaction(RepositoryTestUtils.createAndSaveUser(userRepository, "test1"), target, true);
+        createAndSaveReaction(RepositoryTestUtils.createAndSaveUser(userRepository, "test2"), target, false);
+        createAndSaveReaction(RepositoryTestUtils.createAndSaveUser(userRepository, "test3"), target, false);
+        createAndSaveReaction(RepositoryTestUtils.createAndSaveUser(userRepository, "test4"), target, true);
         ReactionStatistics statistics = underTest.getStatistics(target.getId());
         assertThat(statistics.likesCount()).isEqualTo(2);
         assertThat(statistics.dislikesCount()).isEqualTo(2);
