@@ -44,6 +44,11 @@ class CommentReactionRepositoryTest {
     private CommentReaction createAndSaveReaction(User liker, Comment target){
         return underTest.save(new CommentReaction(target, liker));
     }
+    private CommentReaction createAndSaveReaction(User liker, Comment target, boolean liked){
+        CommentReaction reaction = new CommentReaction(target, liker);
+        reaction.setLiked(liked);
+        return commentReactionRepository.saveAndFlush(reaction);
+    }
     private Comment createAndSaveComment(User author){
         return commentRepository.save(new Comment(author, createAndSaveArticle(author), "Test text"));
     }
@@ -102,6 +107,13 @@ class CommentReactionRepositoryTest {
     }
     @Test
     void getStatisticsWhenTargetExistsAndReactionsFound(){
-        // TODO: 21.10.2023 дописать тест метода getStatistics
+        Comment target = createAndSaveComment(createAndSaveUser("commentauthor"));
+        createAndSaveReaction(createAndSaveUser("test1"), target, true);
+        createAndSaveReaction(createAndSaveUser("test2"), target, false);
+        createAndSaveReaction(createAndSaveUser("test3"), target, false);
+        createAndSaveReaction(createAndSaveUser("test4"), target, true);
+        ReactionStatistics statistics = underTest.getStatistics(target.getId());
+        assertThat(statistics.likesCount()).isEqualTo(2);
+        assertThat(statistics.dislikesCount()).isEqualTo(2);
     }
 }
