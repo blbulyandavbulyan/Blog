@@ -73,6 +73,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/info").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/v1/reactions/**").authenticated()
+                        .requestMatchers("/api/v1/reactions/article/{articleId}").authenticated()
+                        .requestMatchers("/api/v1/reactions/comment/{commentId}").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/reactions/**").authenticated()
                         .anyRequest().permitAll()
                 )
