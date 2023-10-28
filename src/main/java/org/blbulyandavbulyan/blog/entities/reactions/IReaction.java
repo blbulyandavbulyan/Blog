@@ -9,4 +9,5 @@ public interface IReaction {
      * @param liked true если понравилось, иначе false
      */
     void setLiked(boolean liked);
+    boolean isLiked();
 }
