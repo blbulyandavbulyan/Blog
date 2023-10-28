@@ -27,17 +27,8 @@
     <div ng-controller="ArticleController">
         <h1>{{article.title}}</h1>
         <p>{{article.text}}</p>
-        <div ng-controller="ArticleReactionController"  data-ng-init="targetId = article.id" class="reactions">
-            <label class="btn">
-                <input ng-class="{ 'disabled':  !canReact()  }" ng-checked="liked" ng-click="setLiked(true)" type="radio" class="btn-check" name="reaction" autocomplete="off">
-                <span class="bi bi-hand-thumbs-up-fill"></span>
-                {{reactionStatistics.likesCount}}
-            </label>
-            <label class="btn">
-                <input ng-class="{ 'disabled':  !canReact()  }" ng-checked="!liked && liked != null" ng-click="setLiked(false)" type="radio" class="btn-check" name="reaction" autocomplete="off">
-                <span class="bi bi-hand-thumbs-down-fill"></span>
-                {{reactionStatistics.dislikesCount}}
-            </label>
+        <div ng-if="article">
+            <div ng-controller="ArticleReactionController" ng-init="targetId = article.id" class="reactions" ng-include="'fragments/reaction-control.html'"></div>
         </div>
     </div>
     <h2>Комментарии:</h2>
@@ -56,6 +47,7 @@
                     <p class="card-text">{{ item.text }}</p>
                     <small class="text-muted">{{ item.publishDate | date:'dd.MM.yyyy HH:mm' }}</small>
                     <div ng-include="'fragments/additional-actions.html'"></div>
+                    <div ng-controller="CommentReactionController" ng-init="targetId = item.id" class="reactions" ng-include="'fragments/reaction-control.html'"></div>
                 </div>
             </div>
             <div ng-include="'fragments/pagination.html'"></div>
