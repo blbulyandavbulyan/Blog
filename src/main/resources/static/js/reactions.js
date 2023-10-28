@@ -11,6 +11,9 @@ app.service('ArticleReactionsService', function ($http) {
             return $http.delete(`${articleReactionsApiPath}/${articleId}`);
         },
         getStatistics: function (articleId){
+            return $http.get(`${articleReactionsApiPath}/statistics/${articleId}`);
+        },
+        getMyReaction: function (articleId){
             return $http.get(`${articleReactionsApiPath}/${articleId}`);
         }
     }
@@ -28,6 +31,9 @@ app.service('CommentReactionService', function ($http) {
             return $http.delete(`${commentReactionsApiPath}/${commentId}`);
         },
         getStatistics: function (commentId){
+            return $http.get(`${commentReactionsApiPath}/statistics/${commentId}`);
+        },
+        getMyReaction: function (commentId){
             return $http.get(`${commentReactionsApiPath}/${commentId}`);
         }
     }
