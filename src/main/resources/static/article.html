@@ -27,7 +27,7 @@
     <div ng-controller="ArticleController">
         <h1>{{article.title}}</h1>
         <p>{{article.text}}</p>
-        <div ng-controller="ArticleReactionController" class="reactions">
+        <div ng-controller="ArticleReactionController"  data-ng-init="targetId = article.id" class="reactions">
             <label class="btn">
                 <input ng-class="{ 'disabled':  !canReact()  }" ng-checked="liked" ng-click="setLiked(true)" type="radio" class="btn-check" name="reaction" autocomplete="off">
                 <span class="bi bi-hand-thumbs-up-fill"></span>
