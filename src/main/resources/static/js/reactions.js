@@ -56,7 +56,7 @@ app.controller('ReactionController', function ($scope, ReactionService, AuthServ
                        $scope.reactionStatistics.dislikesCount = data.dislikesCount;
                    }
                );
-           if (AuthService.isAuthenticated) {
+           if (AuthService.isAuthenticated()) {
                ReactionService.getMyReaction($scope.targetId)
                    .then(
                        function (response) {
