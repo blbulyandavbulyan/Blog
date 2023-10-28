@@ -8,6 +8,7 @@ import org.blbulyandavbulyan.blog.entities.reactions.IReaction;
 import org.blbulyandavbulyan.blog.repositories.reactions.IReactionRepository;
 import org.blbulyandavbulyan.blog.services.UserService;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -74,5 +75,8 @@ abstract class AbstractReactionService <RT extends IReaction, TT, R extends IRea
      */
     public ReactionStatistics getStatistics(Long targetId){
         return repository.getStatistics(targetId);
+    }
+    public Optional<RT> getReaction(Long targetId, String likerName){
+        return repository.findByTargetIdAndLikerName(targetId, likerName);
     }
 }
