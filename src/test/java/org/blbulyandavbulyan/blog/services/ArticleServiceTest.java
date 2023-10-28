@@ -23,6 +23,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.security.core.Authentication;
 
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -69,7 +70,7 @@ class ArticleServiceTest {
     @DisplayName("get by id should return if article exists")
     void getByIdShouldReturnIfArticleExists() {
         Long articleId = 1L;
-        ArticleResponse expectedResponse = new ArticleResponse("Test article", "Test text", "testpublisher");
+        ArticleResponse expectedResponse = new ArticleResponse("Test article", "Test text", "testpublisher", ZonedDateTime.now(), 1L);
         when(articleRepository.findById(articleId, ArticleResponse.class)).thenReturn(Optional.of(expectedResponse));
         ArticleResponse actualResponse = assertDoesNotThrow(() -> underTest.getById(articleId));
         assertSame(expectedResponse, actualResponse);
