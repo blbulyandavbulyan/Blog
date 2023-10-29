@@ -1,28 +1,3 @@
-<style>
-    .comment{
-        width: 50%;
-        height: 15%;
-        border: 3px solid rgba(0, 0, 255, 0.5);
-        border-radius: 10mm;
-    }
-    /* Скрыть радио-кнопки */
-    input[type="radio"] {
-        display: none;
-    }
-
-    .btn {
-        cursor: pointer;
-    }
-
-    /* Изменение стилей иконок в зависимости от состояния радио-кнопок */
-    input[type="radio"]:checked + .bi-hand-thumbs-up-fill {
-        color: green;
-    }
-
-    input[type="radio"]:checked + .bi-hand-thumbs-down-fill {
-        color: red;
-    }
-</style>
 <div class="container">
     <div ng-controller="ArticleController">
         <h1>{{article.title}}</h1>
