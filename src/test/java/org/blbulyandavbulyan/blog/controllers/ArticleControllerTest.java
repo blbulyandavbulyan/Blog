@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,7 +90,7 @@ public class ArticleControllerTest {
     @Test
     @WithMockUser(username = "david", roles = {"COMMENTER", "PUBLISHER"})
     public void getArticleByIdIfArticleExists() throws Exception {
-        ArticleResponse articleResponse = new ArticleResponse("My test article", "Something very long", "david");
+        ArticleResponse articleResponse = new ArticleResponse("My test article", "Something very long", "david", ZonedDateTime.now(), 1L);
         Mockito.when(articleService.getById(1L)).thenReturn(articleResponse);
         mockMvc.perform(get("/api/v1/articles/{id}", 1L))
                 .andExpect(status().isOk())

@@ -158,6 +158,12 @@ app.service('RoleService', function (TokenService) {
                 return TokenService.getTokenPayload().roles.includes('ROLE_ADMIN');
             }
         },
+        canReactOnArticle: function (){
+            return TokenService.isValidToken();
+        },
+        canReactOnComment: function (){
+            return TokenService.isValidToken();
+        },
         getAvailableRoles: function () {
             return ['ROLE_COMMENTER', 'ROLE_PUBLISHER', 'ROLE_ADMIN'];
         }

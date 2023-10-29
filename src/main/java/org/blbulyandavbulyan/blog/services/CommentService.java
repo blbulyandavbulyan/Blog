@@ -41,7 +41,7 @@ public class CommentService {
     public Page<CommentResponse> getCommentDTOsForArticleId(Long articleId, int pageNumber, int pageSize){
         if(!articleService.existsById(articleId))
             throw new ArticleNotFoundException("Article with articleId " + articleId + " not found!");
-        return commentRepository.findAllByArticleArticleId(articleId, PageRequest.of(pageNumber, pageSize), CommentResponse.class);
+        return commentRepository.findAllByArticleId(articleId, PageRequest.of(pageNumber, pageSize), CommentResponse.class);
     }
 
     /**
@@ -54,7 +54,7 @@ public class CommentService {
      */
     public CommentResponse publishComment(String publisherName, Long articleId, String text){
         Comment comment = commentRepository.save(new Comment(userService.getReferenceByName(publisherName), articleService.getReferenceById(articleId), text));
-        return new CommentResponse(comment.getCommentId(), publisherName, comment.getText(), comment.getPublishDate());
+        return new CommentResponse(comment.getId(), publisherName, comment.getText(), comment.getPublishDate());
     }
 
     /**
@@ -84,5 +84,11 @@ public class CommentService {
         if(authorName.equals(executorName))
             commentRepository.updateTextByCommentId(commentId, text);
         else throw new AccessDeniedException();
+    }
+
+    public Comment getReferenceById(Long id) {
+        if(!commentRepository.existsById(id))
+            throw new CommentNotFoundException("Comment with id " + id + " not found!");
+        return commentRepository.getReferenceById(id);
     }
 }

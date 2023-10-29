@@ -18,17 +18,17 @@ import java.util.Optional;
 public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
     @Transactional
     @Modifying
-    @Query("update Article a set a.title = :title, a.text = :text where a.articleId = :articleId")
+    @Query("update Article a set a.title = :title, a.text = :text where a.id = :articleId")
     void updateTitleAndTextByArticleId(@Param("articleId") Long articleId, @Param("title") String title, @Param("text") String text);
 
-    <T> Optional<T> findByArticleId(Long articleId, Class<T> dtoType);
+    <T> Optional<T> findById(Long articleId, Class<T> dtoType);
 
     <T> Page<T> findAllPagesBy(Class<T> type, final Pageable pageable);
-    @Query("SELECT a.publisher.name FROM Article a WHERE a.articleId = :id")
+    @Query("SELECT a.publisher.name FROM Article a WHERE a.id = :id")
     Optional<String> findArticleAuthorNameByArticleId(@Param("id") Long id);
 
     @Override
     @Modifying
-    @Query("DELETE FROM Article a WHERE a.articleId = :id")
+    @Query("DELETE FROM Article a WHERE a.id = :id")
     void deleteById(@NonNull @Param("id") Long articleId);
 }

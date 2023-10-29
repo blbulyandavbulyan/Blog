@@ -105,8 +105,8 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
         $scope.pageNumbers = calculatePageNumbers(pageNumber, $scope.totalPages, $scope.maxPagesToShow);
     }
     $scope.deleteItem = function (comment){
-        CommentService.deleteComment(comment.commentId)
-            .then(() => deleteItemAndGetNewPage($scope.comments, $scope.totalPages, $scope.currentPage, c => c.commentId === comment.commentId, $scope.getPage))
+        CommentService.deleteComment(comment.id)
+            .then(() => deleteItemAndGetNewPage($scope.comments, $scope.totalPages, $scope.currentPage, c => c.id === comment.id, $scope.getPage))
             .catch(function (error) {
                 showErrorToast("Ошибка", "Ошибка удаления комментария");
                 console.log(error);
@@ -118,10 +118,10 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
         document.getElementById("confirmCommentEdit").onclick = function () {
             $scope.editCommentRequestProcessed = true;
             const text = $scope.editedComment.text;
-            CommentService.editComment(comment.commentId, text)
+            CommentService.editComment(comment.id, text)
                 .then(() =>
                     $timeout(function () {
-                        const index = $scope.comments.findIndex(c => c.commentId === comment.commentId);
+                        const index = $scope.comments.findIndex(c => c.id === comment.id);
                         if (index !== -1) $scope.comments[index].text = text;
                         $scope.editCommentRequestProcessed = false;
                         editCommentDialog.hide();
