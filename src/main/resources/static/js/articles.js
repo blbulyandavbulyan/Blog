@@ -159,5 +159,4 @@ app.controller('ArticleController', function ($scope, $routeParams, $timeout, Ar
                 }, 300);
             });
     };
-    $scope.$watch()// TODO: 21.09.2023 ЧТО ЭТО ???
 });
