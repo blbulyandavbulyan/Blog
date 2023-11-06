@@ -24,6 +24,12 @@ app.service('ArticleService', function ($http) {
         },
         deleteArticle: function (articleId){
             return $http.delete(`${articlesApiPath}/${articleId}`);
+        },
+        editArticle: function (article){
+            return $http.patch(`${articlesApiPath}/${article.id}`, {
+                text: article.text,
+                title: article.title
+            });
         }
     };
 });
@@ -37,6 +43,7 @@ app.controller('ArticlesController', function ($scope, $timeout, ArticleService,
     $scope.contentLoading = false;
     $scope.loadingError = null;
     $scope.maxPagesToShow = 3; // Максимальное количество отображаемых страниц
+    $scope.editingArticle = null;
     $scope.filterArticles = function () {
         $scope.filterParams = $scope.filter;
         $scope.getPage(1);
@@ -79,11 +86,28 @@ app.controller('ArticlesController', function ($scope, $timeout, ArticleService,
             });
     }
     $scope.editItem = function (article){
-        //TODO реализовать метод редактирования статьи
+        ArticleService.getArticle(article.id)
+            .then(function (response) {
+                $scope.editingArticle = response.data
+                const editDialog = new bootstrap.Modal(document.getElementById("editArticleModal"), {});
+                document.getElementById("confirmEditArticle").onclick = function (){
+                    $scope.editArticleRequestProcessing = true;
+                    ArticleService.editArticle($scope.editingArticle)
+                        .then(() => $timeout(function () {
+                                $scope.editArticleRequestProcessing = false;
+                                editDialog.hide();
+                            }, 300))
+                        .catch(error => $timeout(function () {
+                                showErrorToast("Ошибка", "Не удалось отредактировать статью!");
+                                console.log(error);
+                                $scope.editArticleRequestProcessing = false;
+                            }, 300));
+                };
+                editDialog.show();
+            });
     }
     $scope.canEditItem = function (article) {
-        //TODO исправить эту функцию, сделать так, чтобы она реально проверяла, может ли пользователь редактировать статью
-        return false;
+        return (AuthService.isAuthenticated() && AuthService.getMyUserName() === article.publisher.name);
     }
     $scope.canDeleteItem = function (article) {
         return RoleService.isAdmin() || (AuthService.isAuthenticated() && AuthService.getMyUserName() === article.publisher.name);
