@@ -58,7 +58,7 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     $scope.maxPagesToShow = 3; // Максимальное количество отображаемых страниц
     $scope.articleId = $routeParams.articleId;
     $scope.loadMoreComments = function () {
-        if($scope.currentPage < $scope.totalPages){
+        if($scope.currentPage <= $scope.totalPages){
             $scope.contentLoading = true;
             CommentService.getComments($scope.articleId, $scope.currentPage, $scope.itemsPerPage)
                 .then(function (response) {
