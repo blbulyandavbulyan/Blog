@@ -57,26 +57,29 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     };
     $scope.maxPagesToShow = 3; // Максимальное количество отображаемых страниц
     $scope.articleId = $routeParams.articleId;
-    //функция для загрузки комментариев
-    $scope.loadComments = function (pageNumber) {
-        $scope.currentPage = pageNumber;
-        $scope.contentLoading = true;
-        CommentService.getComments($scope.articleId, pageNumber, $scope.itemsPerPage)
-            .then(function (response) {
-                $scope.comments = response.data.content;
-                $scope.totalPages = response.data.totalPages;
-                $timeout(function(){
-                    $scope.contentLoading = false;
-                    $scope.loadingError = null;
-                }, 300);
-            })
-            .catch(function (error) {
-                $scope.loadingError = 'Ошибка загрузки'
-                console.log(error);
-            });
+    $scope.loadMoreComments = function () {
+        if($scope.currentPage < $scope.totalPages){
+            $scope.contentLoading = true;
+            CommentService.getComments($scope.articleId, $scope.currentPage, $scope.itemsPerPage)
+                .then(function (response) {
+                    $timeout(() => {
+                        const newComments = response.data.content;
+                        $scope.totalPages = response.data.totalPages;
+                        $scope.comments = $scope.comments.concat(newComments);
+                        $scope.currentPage++;
+                        $scope.contentLoading = false;
+                        $scope.loadingError = null;
+                    }, 300);
+                })
+                .catch(function (error) {
+                    $scope.loadingError = 'Ошибка загрузки'
+                    console.log(error);
+                });
+        }
     };
     //функция для публикации комментария
     $scope.postComment = function () {
+        //FIXME здесь так же может всё сломаться из-за добавленного infinity scroll, добавить логику пересчёта количества страниц
         $scope.postCommentRequestProcessed = true;
         CommentService.postComment($scope.articleId, $scope.newComment.text)
             .then(function (response) {
@@ -99,14 +102,13 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
                 }, 300)
             });
     }
-    //функция для получения страницы с заданным номером
-    $scope.getPage = function (pageNumber) {
-        $scope.loadComments(pageNumber);
-        $scope.pageNumbers = calculatePageNumbers(pageNumber, $scope.totalPages, $scope.maxPagesToShow);
-    }
     $scope.deleteItem = function (comment){
+        //FIXME это место должно правильно обрабатывать тот факт, что теперь комменты удаляются с одной большой страницы(из-за infinity scroll)
+        //учесть тот факт, что после удаления коммента страниц, которые остались для загрузки может стать меньше
         CommentService.deleteComment(comment.id)
-            .then(() => deleteItemAndGetNewPage($scope.comments, $scope.totalPages, $scope.currentPage, c => c.id === comment.id, $scope.getPage))
+            .then(() => deleteItemAndGetNewPage($scope.comments, $scope.totalPages, $scope.currentPage, c => c.id === comment.id, function (number){
+                //
+            }))
             .catch(function (error) {
                 showErrorToast("Ошибка", "Ошибка удаления комментария");
                 console.log(error);
@@ -159,5 +161,15 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     $scope.$watch('newComment.text', function(){
         $scope.charactersLeftForNewComment = $scope.maxCommentLength - ($scope.newComment.text ? $scope.newComment.text.length : 0);
     });
-    $scope.getPage(1);
+    $scope.loadMoreComments();
+});
+app.directive('ngScroll', function () {
+    return function (scope, element, attrs) {
+        const raw = element[0];
+        element.bind('scroll', function () {
+            if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight) {
+                scope.$apply(attrs.ngScroll);
+            }
+        });
+    };
 });

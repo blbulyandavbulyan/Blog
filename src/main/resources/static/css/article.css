@@ -1,8 +1,8 @@
 .comment{
-    width: 50%;
-    height: 15%;
     border: 3px solid rgba(0, 0, 255, 0.5);
     border-radius: 10mm;
+    min-height: 50px;
+    min-width: 300px;
 }
 /* Скрыть радио-кнопки */
 input[type="radio"] {
@@ -34,4 +34,13 @@ input[type="radio"]:checked + .bi-hand-thumbs-up-fill {
 
 input[type="radio"]:checked + .bi-hand-thumbs-down-fill {
     color: red;
+}
+.scrollable {
+    height: 650px;
+    min-width: fit-content;
+    overflow-y: auto;
+    border: 2px solid #ccc;
+    margin-bottom: 20px;
+    padding: 5px;
+    border-radius: 10px;
 }
