@@ -79,18 +79,13 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     };
     //функция для публикации комментария
     $scope.postComment = function () {
-        //FIXME здесь так же может всё сломаться из-за добавленного infinity scroll, добавить логику пересчёта количества страниц
         $scope.postCommentRequestProcessed = true;
         CommentService.postComment($scope.articleId, $scope.newComment.text)
             .then(function (response) {
                 $timeout(function () {
                     const publishedComment = response.data;
                     $scope.newComment.text = '';
-                    if($scope.comments.length < $scope.itemsPerPage ) {
-                        if($scope.totalPages === 0)$scope.totalPages = 1
-                        $scope.comments.push(publishedComment);
-                    }
-                    else $scope.totalPages++;
+                    $scope.comments.unshift(publishedComment)
                     $scope.postCommentRequestProcessed = false;
                 }, 300)
             })
