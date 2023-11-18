@@ -156,9 +156,6 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     $scope.hasAnyActionsForItem = function (comment){
         return $scope.canEditItem(comment) || $scope.canDeleteItem(comment);
     }
-    $scope.$watch('totalPages', function () {
-        $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, $scope.maxPagesToShow);
-    });
     $scope.$watch('editedComment.text', function(){
         $scope.charactersLeftForEditedComment = $scope.maxCommentLength - ($scope.editedComment.text ? $scope.editedComment.text.length : 0);
     });
