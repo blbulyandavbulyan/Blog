@@ -58,12 +58,13 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     $scope.maxPagesToShow = 3; // Максимальное количество отображаемых страниц
     $scope.articleId = $routeParams.articleId;
     $scope.loadMoreComments = function () {
-        if($scope.currentPage <= $scope.totalPages){
+        if($scope.currentPage <= $scope.totalPages && !$scope.contentLoading){
             $scope.contentLoading = true;
             CommentService.getComments($scope.articleId, $scope.currentPage, $scope.itemsPerPage)
                 .then(function (response) {
                     $timeout(() => {
-                        const newComments = response.data.content;
+                        const currentCommentsIds = new Set($scope.comments.map(c=>c.id));
+                        const newComments = response.data.content.filter(c=>!currentCommentsIds.has(c.id));
                         $scope.totalPages = response.data.totalPages;
                         $scope.comments = $scope.comments.concat(newComments);
                         $scope.currentPage++;
@@ -98,16 +99,24 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
             });
     }
     $scope.deleteItem = function (comment){
-        //FIXME это место должно правильно обрабатывать тот факт, что теперь комменты удаляются с одной большой страницы(из-за infinity scroll)
-        //учесть тот факт, что после удаления коммента страниц, которые остались для загрузки может стать меньше
-        CommentService.deleteComment(comment.id)
-            .then(() => deleteItemAndGetNewPage($scope.comments, $scope.totalPages, $scope.currentPage, c => c.id === comment.id, function (number){
-                //
-            }))
-            .catch(function (error) {
-                showErrorToast("Ошибка", "Ошибка удаления комментария");
-                console.log(error);
-            });
+        if(!$scope.contentLoading) {
+            CommentService.deleteComment(comment.id)
+                .then(() => {
+                    const items = $scope.comments;
+                    const index = items.findIndex(c => c.id === comment.id);
+                    if (index !== -1) {
+                        items.splice(index, 1);
+                        const totalPages = Math.ceil((items.length - 1) / $scope.itemsPerPage);
+                        if (totalPages < $scope.totalPages && $scope.currentPage > 1) $scope.currentPage--;
+                        $scope.totalPages = totalPages;
+                    }
+                    if($scope.comments.length < $scope.itemsPerPage) $scope.loadMoreComments();
+                })
+                .catch(function (error) {
+                    showErrorToast("Ошибка", "Ошибка удаления комментария");
+                    console.log(error);
+                });
+        }
     }
     $scope.editItem = function (comment){
         const modalDialogElement = document.getElementById("editCommentModal");
