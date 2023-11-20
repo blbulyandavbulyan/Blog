@@ -9,12 +9,14 @@
                 <div class="modal-body">
                     <!-- Форма смены пароля -->
                     <div class="form-group">
-                        <label for="new_password">Заголовок:</label>
-                        <input type="text" class="form-control" ng-class="editArticleForm.articleTitle.$valid ? 'is-valid' : 'is-invalid'" id="new_password" name="articleTitle" ng-model="editingArticle.title" required>
+                        <label for="new-article-title">Заголовок:</label>
+                        <input type="text" class="form-control" ng-class="editArticleForm.articleTitle.$valid ? 'is-valid' : 'is-invalid'" id="new-article-title"
+                               name="articleTitle" ng-model="editingArticle.title" required>
                     </div>
                     <div class="form-group">
-                        <label for="confirmPassword">Текст:</label>
-                        <textarea type="text" rows="20" class="form-control" ng-class="editArticleForm.articleText.$valid ? 'is-valid' : 'is-invalid'" id="confirmPassword" name="articleText" ng-model="editingArticle.text" required></textarea>
+                        <label for="new-article-text">Текст:</label>
+                        <textarea type="text" rows="20" class="form-control" ng-class="editArticleForm.articleText.$valid ? 'is-valid' : 'is-invalid'" id="new-article-text"
+                                  name="articleText" ng-model="editingArticle.text" required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
