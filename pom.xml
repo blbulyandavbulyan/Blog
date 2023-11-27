@@ -133,6 +133,31 @@
 	<build>
 		<finalName>blog</finalName>
 		<plugins>
+			<!--snip-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>war</goal>
+						</goals>
+						<!--No Explicit phase needed-->
+						<configuration>
+							<failOnMissingWebXml>false</failOnMissingWebXml>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<!--
+                Do not declare an execution for jar, since it is the main artifact.
+                Doing so makes maven think you are trying to add another
+                supplemental file.
+                -->
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
