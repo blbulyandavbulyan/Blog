@@ -57,23 +57,26 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     };
     $scope.maxPagesToShow = 3; // Максимальное количество отображаемых страниц
     $scope.articleId = $routeParams.articleId;
-    //функция для загрузки комментариев
-    $scope.loadComments = function (pageNumber) {
-        $scope.currentPage = pageNumber;
-        $scope.contentLoading = true;
-        CommentService.getComments($scope.articleId, pageNumber, $scope.itemsPerPage)
-            .then(function (response) {
-                $scope.comments = response.data.content;
-                $scope.totalPages = response.data.totalPages;
-                $timeout(function(){
-                    $scope.contentLoading = false;
-                    $scope.loadingError = null;
-                }, 300);
-            })
-            .catch(function (error) {
-                $scope.loadingError = 'Ошибка загрузки'
-                console.log(error);
-            });
+    $scope.loadMoreComments = function () {
+        if($scope.currentPage <= $scope.totalPages && !$scope.contentLoading){
+            $scope.contentLoading = true;
+            CommentService.getComments($scope.articleId, $scope.currentPage, $scope.itemsPerPage)
+                .then(function (response) {
+                    $timeout(() => {
+                        const currentCommentsIds = new Set($scope.comments.map(c=>c.id));
+                        const newComments = response.data.content.filter(c=>!currentCommentsIds.has(c.id));
+                        $scope.totalPages = response.data.totalPages;
+                        $scope.comments = $scope.comments.concat(newComments);
+                        $scope.currentPage++;
+                        $scope.contentLoading = false;
+                        $scope.loadingError = null;
+                    }, 300);
+                })
+                .catch(function (error) {
+                    $scope.loadingError = 'Ошибка загрузки'
+                    console.log(error);
+                });
+        }
     };
     //функция для публикации комментария
     $scope.postComment = function () {
@@ -83,11 +86,7 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
                 $timeout(function () {
                     const publishedComment = response.data;
                     $scope.newComment.text = '';
-                    if($scope.comments.length < $scope.itemsPerPage ) {
-                        if($scope.totalPages === 0)$scope.totalPages = 1
-                        $scope.comments.push(publishedComment);
-                    }
-                    else $scope.totalPages++;
+                    $scope.comments.unshift(publishedComment)
                     $scope.postCommentRequestProcessed = false;
                 }, 300)
             })
@@ -99,18 +98,25 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
                 }, 300)
             });
     }
-    //функция для получения страницы с заданным номером
-    $scope.getPage = function (pageNumber) {
-        $scope.loadComments(pageNumber);
-        $scope.pageNumbers = calculatePageNumbers(pageNumber, $scope.totalPages, $scope.maxPagesToShow);
-    }
     $scope.deleteItem = function (comment){
-        CommentService.deleteComment(comment.id)
-            .then(() => deleteItemAndGetNewPage($scope.comments, $scope.totalPages, $scope.currentPage, c => c.id === comment.id, $scope.getPage))
-            .catch(function (error) {
-                showErrorToast("Ошибка", "Ошибка удаления комментария");
-                console.log(error);
-            });
+        if(!$scope.contentLoading) {
+            CommentService.deleteComment(comment.id)
+                .then(() => {
+                    const items = $scope.comments;
+                    const index = items.findIndex(c => c.id === comment.id);
+                    if (index !== -1) {
+                        items.splice(index, 1);
+                        const totalPages = Math.ceil((items.length - 1) / $scope.itemsPerPage);
+                        if (totalPages < $scope.totalPages && $scope.currentPage > 1) $scope.currentPage--;
+                        $scope.totalPages = totalPages;
+                    }
+                    if($scope.comments.length < $scope.itemsPerPage) $scope.loadMoreComments();
+                })
+                .catch(function (error) {
+                    showErrorToast("Ошибка", "Ошибка удаления комментария");
+                    console.log(error);
+                });
+        }
     }
     $scope.editItem = function (comment){
         const modalDialogElement = document.getElementById("editCommentModal");
@@ -150,14 +156,21 @@ app.controller('CommentController', function ($scope, $routeParams, $timeout, Co
     $scope.hasAnyActionsForItem = function (comment){
         return $scope.canEditItem(comment) || $scope.canDeleteItem(comment);
     }
-    $scope.$watch('totalPages', function () {
-        $scope.pageNumbers = calculatePageNumbers($scope.currentPage, $scope.totalPages, $scope.maxPagesToShow);
-    });
     $scope.$watch('editedComment.text', function(){
         $scope.charactersLeftForEditedComment = $scope.maxCommentLength - ($scope.editedComment.text ? $scope.editedComment.text.length : 0);
     });
     $scope.$watch('newComment.text', function(){
         $scope.charactersLeftForNewComment = $scope.maxCommentLength - ($scope.newComment.text ? $scope.newComment.text.length : 0);
     });
-    $scope.getPage(1);
+    $scope.loadMoreComments();
+});
+app.directive('ngScroll', function () {
+    return function (scope, element, attrs) {
+        const raw = element[0];
+        element.bind('scroll', function () {
+            if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight) {
+                scope.$apply(attrs.ngScroll);
+            }
+        });
+    };
 });
