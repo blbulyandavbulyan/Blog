@@ -21,6 +21,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
+
 /**
  * Конфигурация Spring Security
  */
@@ -61,21 +63,21 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/v1/articles/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/articles/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/articles/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/comments/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/comments/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/comments/**").authenticated()
-                        .requestMatchers("/api/v1/users/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/info").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/reactions/**").authenticated()
-                        .requestMatchers("/api/v1/reactions/article/{articleId}").authenticated()
-                        .requestMatchers("/api/v1/reactions/comment/{commentId}").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/reactions/**").authenticated()
+                        .requestMatchers(antMatcher(HttpMethod.POST, "/api/v1/articles/**")).authenticated()
+                        .requestMatchers(antMatcher(HttpMethod.DELETE, "/api/v1/articles/**")).authenticated()
+                        .requestMatchers(antMatcher(HttpMethod.PUT, "/api/v1/articles/**")).authenticated()
+                        .requestMatchers(antMatcher(HttpMethod.POST, "/api/v1/comments/**")).authenticated()
+                        .requestMatchers(antMatcher(HttpMethod.DELETE, "/api/v1/comments/**")).authenticated()
+                        .requestMatchers(antMatcher(HttpMethod.PUT, "/api/v1/comments/**")).authenticated()
+                        .requestMatchers(antMatcher("/api/v1/users/register")).permitAll()
+                        .requestMatchers(antMatcher(HttpMethod.POST, "/api/v1/users/**")).authenticated()
+                        .requestMatchers(antMatcher(HttpMethod.DELETE, "/api/v1/users/**")).authenticated()
+                        .requestMatchers(antMatcher(HttpMethod.PUT, "/api/v1/users/**")).authenticated()
+                        .requestMatchers(antMatcher(HttpMethod.GET, "/api/v1/users/info")).authenticated()
+                        .requestMatchers(antMatcher(HttpMethod.POST, "/api/v1/reactions/**")).authenticated()
+                        .requestMatchers(antMatcher("/api/v1/reactions/article/{articleId}")).authenticated()
+                        .requestMatchers(antMatcher("/api/v1/reactions/comment/{commentId}")).authenticated()
+                        .requestMatchers(antMatcher(HttpMethod.DELETE, "/api/v1/reactions/**")).authenticated()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
