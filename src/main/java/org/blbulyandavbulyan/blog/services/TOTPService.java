@@ -7,6 +7,7 @@ import dev.samstevens.totp.qr.QrGenerator;
 import dev.samstevens.totp.secret.SecretGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.blbulyandavbulyan.blog.exceptions.TOTPQrCodeGenerationException;
 import org.springframework.stereotype.Service;
 
 import static dev.samstevens.totp.util.Utils.getDataUriForImage;
@@ -29,7 +30,7 @@ public class TOTPService {
         try {
             imageData = qrGenerator.generate(data);
         } catch (QrGenerationException e) {
-            throw new RuntimeException(e);
+            throw new TOTPQrCodeGenerationException(e);
         }
         return getDataUriForImage(imageData, qrGenerator.getImageMimeType());
     }
