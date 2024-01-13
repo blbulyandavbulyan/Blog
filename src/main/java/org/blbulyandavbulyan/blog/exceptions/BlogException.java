@@ -13,4 +13,9 @@ public abstract class BlogException extends RuntimeException{
         super(message);
         this.httpStatus = httpStatus;
     }
+
+    public BlogException(String message, Throwable cause, HttpStatus httpStatus) {
+        super(message, cause);
+        this.httpStatus = httpStatus;
+    }
 }
