@@ -19,6 +19,12 @@
 		<jjwt.version>0.11.5</jjwt.version>
 	</properties>
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/dev.samstevens.totp/totp -->
+		<dependency>
+			<groupId>dev.samstevens.totp</groupId>
+			<artifactId>totp</artifactId>
+			<version>1.7.1</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.webjars/bootstrap -->
 		<dependency>
 			<groupId>org.webjars</groupId>
@@ -129,7 +135,16 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
+	<dependencyManagement>
+		<dependencies>
+			<!-- https://mvnrepository.com/artifact/com.beust/jcommander -->
+			<dependency>
+				<groupId>com.beust</groupId>
+				<artifactId>jcommander</artifactId>
+				<version>1.82</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<build>
 		<finalName>blog</finalName>
 		<plugins>
