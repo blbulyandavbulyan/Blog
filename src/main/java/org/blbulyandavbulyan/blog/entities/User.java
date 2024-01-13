@@ -28,6 +28,8 @@ public class User implements UserDetails {
     private String name;
     @Column(name = "password_hash")
     private String passwordHash;
+    @Column(name = "tfa_enabled")
+    private boolean tfaEnabled;
     @Column(name = "tfa_secret")
     private String tfaSecret;
     @ManyToMany
