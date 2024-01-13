@@ -34,8 +34,7 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.username(), authenticationRequest.password()));
         User user = userService.findByName(authenticationRequest.username());
-        String mfaSecret = user.getTfaSecret();
-        if (mfaSecret != null) {
+        if (user.isTfaEnabled() && user.getTfaSecret() != null) {
             return new AuthenticationResponse(secondStepMFATokenService.generateToken(authentication.getName()), true);
         }
         else {
