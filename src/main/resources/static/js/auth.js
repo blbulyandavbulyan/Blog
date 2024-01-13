@@ -63,14 +63,44 @@ app.service('TokenService', function (CookieService) {
     };
 })
 app.service('AuthService', function ($http, TokenService) {
+    const authUrl = '/blog/api/v1/auth';
+    let tfaToken = null;
+    let tfaEnabled = false;
     return {
         login: function (credentials) {
-            return $http.post('/blog/api/v1/auth', credentials).then(function (response) {
+            return $http.post(authUrl, credentials).then(function (response) {
                 // В ответе сервера должен быть токен, который вы сохраняете в переменной $scope.token
-                const token = response.data.token;
-                TokenService.setToken(token);
-                return token;
+                const data = response.data;
+                const token = data.token;
+                const tfaRequired = data.tfaRequired;
+                if(!tfaRequired) {
+                    TokenService.setToken(token);
+                }
+                else {
+                    tfaToken = token;
+                }
+                tfaEnabled = tfaRequired;
+                return tfaRequired;
             });
+        },
+        verifyAuth: function (code) {
+            return $http.post(`${authUrl}/verify`, {
+                token: tfaToken,
+                code: code
+            }).then(function (response) {
+                const data = response.data;
+                const token = data.token;
+                const tfaRequired = data.tfaRequired;
+                if(!tfaRequired) {
+                    TokenService.setToken(token);
+                }
+                else {
+                    console.error("TFA still required! This behavior is not supported")
+                }
+            });
+        },
+        isTfaEnabled: function () {
+            return tfaEnabled;
         },
         isAuthenticated: TokenService.isValidToken,
         logout: function () {
@@ -110,6 +140,7 @@ app.config(function ($httpProvider) {
 });
 app.controller('AuthController', function ($scope, $timeout, AuthService) {
     const authFormModal = bootstrap.Modal.getOrCreateInstance("#loginModal", {});
+    const authVerificationModal = bootstrap.Modal.getOrCreateInstance("#authVerifyModal", {});
     $scope.requestProcessed = false;
     $scope.credentials = {
         username: '',
@@ -120,7 +151,7 @@ app.controller('AuthController', function ($scope, $timeout, AuthService) {
         // Предполагаем, что на сервере у вас есть маршрут для аутентификации и получения токена
         // Здесь отправляем POST-запрос с данными авторизации
         $scope.requestProcessed = true;
-        AuthService.login($scope.credentials)
+        let tfaRequired = AuthService.login($scope.credentials)
             .then(() =>
                 $timeout(function () {
                     authFormModal.hide();
@@ -137,9 +168,40 @@ app.controller('AuthController', function ($scope, $timeout, AuthService) {
                         console.error('Ошибка авторизации:', error);
                     }
                 }, 300)
+                return false;
             });
+        if (tfaRequired) {
+            $timeout(function () {
+                authVerificationModal.show()
+            }, 300);
+        }
     };
     $scope.logout = AuthService.logout;
+});
+app.controller('AuthVerificationController', function ($scope, $timeout, AuthService) {
+    const authVerificationModal = bootstrap.Modal.getOrCreateInstance("#authVerifyModal", {});
+    $scope.verificationCode = "";
+    $scope.requestProcessed = false;
+    $scope.verifyAuth = function () {
+        $scope.requestProcessed = true;
+        AuthService.verifyAuth($scope.verificationCode).then(() => {
+            $timeout(function () {
+                $scope.verificationCode = "";
+                $scope.requestProcessed = false;
+                authVerificationModal.hide();
+            }, 300)
+        }).catch(function (error) {
+            $timeout(function () {
+                $scope.requestProcessed = false;
+                if (error.status === 401) {
+                    showErrorToast("Ошибка верификации", "Неверный проверочный код!");
+                }
+                else {
+                    showErrorToast(error.data.message);
+                }
+            }, 300);
+        });
+    };
 });
 app.service('RoleService', function (TokenService) {
     return {
