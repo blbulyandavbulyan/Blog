@@ -1,8 +1,8 @@
 package org.blbulyandavbulyan.blog.controllers.rest;
 
 import lombok.RequiredArgsConstructor;
+import org.blbulyandavbulyan.blog.dtos.authorization.AuthenticationRequest;
 import org.blbulyandavbulyan.blog.dtos.authorization.AuthenticationResponse;
-import org.blbulyandavbulyan.blog.dtos.authorization.JwtRequest;
 import org.blbulyandavbulyan.blog.services.TokenService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,7 +36,7 @@ public class AuthController {
      * @return ответ, содержащий JWT токен в случае успешной авторизации
      */
     @PostMapping
-    public AuthenticationResponse createAuthToken(@Validated @RequestBody JwtRequest authRequest){
+    public AuthenticationResponse createAuthToken(@Validated @RequestBody AuthenticationRequest authRequest){
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.username(), authRequest.password()));
             return new AuthenticationResponse(tokenService.generateToken(authentication.getName(), authentication.getAuthorities()));
     }
