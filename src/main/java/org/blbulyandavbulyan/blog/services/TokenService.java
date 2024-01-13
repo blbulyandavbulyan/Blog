@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.blbulyandavbulyan.blog.configs.JwtConfigurationProperties;
+import org.blbulyandavbulyan.blog.exceptions.TokenServiceParseException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
@@ -61,14 +62,28 @@ public class TokenService {
                 .signWith(secretKey).compact();
     }
 
+    /**
+     * Генерирует токен без ролей
+     * @param name имя пользователя
+     * @return сгенерированный токен
+     * @throws TokenServiceParseException если не удалось обработать токен
+     */
+    public String generateToken(String name) {
+        return generateToken(name, List.of());
+    }
     private Claims getAllClaimsFromToken(String token){
-        return parser.parseClaimsJws(token).getBody();
+        try {
+            return parser.parseClaimsJws(token).getBody();
+        } catch (Exception e) {
+            throw new TokenServiceParseException("Error during parsing token", e);
+        }
     }
 
     /**
      * Получаем имя пользователя из jwt токена
      * @param token jwt токен
      * @return имя пользователя, которое было в jwt токене
+     * @throws TokenServiceParseException если не удалось обработать токен
      */
     public String getUserName(String token) {
         return getAllClaimsFromToken(token).getSubject();
@@ -78,6 +93,7 @@ public class TokenService {
      * Получаем список ролей из jwt токена
      * @param token jwt токен, из которого будут получены роли
      * @return список ролей, которые были в jwt токене
+     * @throws TokenServiceParseException если не удалось обработать токен
      */
     public List<String> getRoles(String token) {
         return getAllClaimsFromToken(token).get("roles", List.class);

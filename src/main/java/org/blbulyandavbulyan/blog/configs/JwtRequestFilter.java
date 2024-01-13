@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.blbulyandavbulyan.blog.exceptions.TokenServiceParseException;
 import org.blbulyandavbulyan.blog.services.TokenService;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,11 +38,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 jwt = authHeader.substring(7);
                 username = tokenService.getUserName(jwt);
             }
-            catch (ExpiredJwtException e){
-                log.debug("token has expired");
-            }
-            catch (SignatureException e){
-                log.debug("incorrect signature for token");
+            catch (TokenServiceParseException e){
+                Throwable cause = e.getCause();
+                if (cause instanceof ExpiredJwtException) {
+                    log.debug("token has expired");
+                } else if (cause instanceof SignatureException) {
+                    log.debug("incorrect signature for token");
+                }
             }
         }
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
