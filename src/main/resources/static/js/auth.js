@@ -85,7 +85,7 @@ app.service('AuthService', function ($http, TokenService) {
         },
         verifyAuth: function (code) {
             return $http.post(`${authUrl}/verify`, {
-                token: tfaToken,
+                jwtToken: tfaToken,
                 code: code
             }).then(function (response) {
                 const data = response.data;
@@ -111,6 +111,26 @@ app.service('AuthService', function ($http, TokenService) {
         }
     };
 });
+app.service('TfaSettingsService', function ($http) {
+    const tfaURL = "/blog/api/v1/tfa";
+    return {
+        beginTfaSetup: function () {
+            return $http({
+                method: 'POST',
+                url: tfaURL
+            });
+        },
+        finishTFASetup: function (code) {
+            return $http({
+                method: 'PATCH',
+                url: tfaURL,
+                params: {
+                    code: code
+                }
+            });
+        }
+    };
+})
 app.factory('authInterceptor', ['$injector', '$q', function ($injector, $q) {
     const tokenService = $injector.get('TokenService');
     return {
@@ -151,13 +171,18 @@ app.controller('AuthController', function ($scope, $timeout, AuthService) {
         // Предполагаем, что на сервере у вас есть маршрут для аутентификации и получения токена
         // Здесь отправляем POST-запрос с данными авторизации
         $scope.requestProcessed = true;
-        let tfaRequired = AuthService.login($scope.credentials)
-            .then(() =>
+        AuthService.login($scope.credentials)
+            .then((isTfaRequired) =>
                 $timeout(function () {
                     authFormModal.hide();
                     $scope.requestProcessed = false;
                     $scope.credentials.username = '';
                     $scope.credentials.password = '';
+                    if(isTfaRequired){
+                        $timeout(function () {
+                            authVerificationModal.show()
+                        }, 300);
+                    }
                 }, 300))
             .catch(function (error) {
                 $timeout(function () {
@@ -167,14 +192,8 @@ app.controller('AuthController', function ($scope, $timeout, AuthService) {
                         showErrorToast("Ошибка авторизации", "Неизвестная ошибка!");
                         console.error('Ошибка авторизации:', error);
                     }
-                }, 300)
-                return false;
+                }, 300);
             });
-        if (tfaRequired) {
-            $timeout(function () {
-                authVerificationModal.show()
-            }, 300);
-        }
     };
     $scope.logout = AuthService.logout;
 });
@@ -203,6 +222,42 @@ app.controller('AuthVerificationController', function ($scope, $timeout, AuthSer
         });
     };
 });
+app.controller('TFASettingsController', function ($scope, $timeout, TfaSettingsService, AuthService) {
+    $scope.tfaEnabled = AuthService.isTfaEnabled();
+    $scope.enableCheckboxStateTFA = $scope.tfaEnabled;
+    $scope.verificationCode = "";
+    $scope.qrCode = null;
+    $scope.requestProcessed = false;
+    $scope.switchTfaEnabled = function (newTFAState) {
+        if (!$scope.tfaEnabled && newTFAState) {
+            $scope.requestProcessed = true;
+            TfaSettingsService.beginTfaSetup()
+                .then(function (response) {
+                    $timeout(function () {
+                        $scope.qrCode = response.data.qrCode;
+                        $scope.requestProcessed = false;
+                    }, 300);
+                });
+        }
+    };
+    $scope.configure = function () {
+        if ($scope.tfaEnabled !== $scope.enableCheckboxStateTFA) {
+            if (!$scope.tfaEnabled) {
+                $scope.requestProcessed = true;
+                TfaSettingsService.finishTFASetup($scope.verificationCode).then(function () {
+                        $timeout(function () {
+                            $scope.tfaEnabled = $scope.enableCheckboxStateTFA;
+                            $scope.qrCode = null;
+                            $scope.verificationCode = "";
+                            $scope.requestProcessed = false;
+                        }, 300);
+                    }).catch(function (error) {
+                        showErrorToast(error.data.message);
+                    });
+            }
+        }
+    };
+})
 app.service('RoleService', function (TokenService) {
     return {
         isCommenter: function () {
