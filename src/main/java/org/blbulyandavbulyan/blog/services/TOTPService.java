@@ -35,7 +35,7 @@ public class TOTPService {
         return getDataUriForImage(imageData, qrGenerator.getImageMimeType());
     }
 
-    public boolean verifyCode(String secret, String code) {
-        return codeVerifier.isValidCode(secret, code);
+    public boolean isNotValidCode(String secret, String code) {
+        return !codeVerifier.isValidCode(secret, code);
     }
 }

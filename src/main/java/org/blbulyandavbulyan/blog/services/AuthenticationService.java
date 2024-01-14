@@ -49,7 +49,7 @@ public class AuthenticationService {
             if (tfaSecret == null) {
                 throw new RuntimeException("TFA secret is null!");//TODO 13.01.2024: добавить здесь бросание более корректного исключения
             }
-            if (!totpService.verifyCode(tfaSecret, verificationRequest.code())) {
+            if (totpService.isNotValidCode(tfaSecret, verificationRequest.code())) {
                 throw new BadCredentialsException("Invalid verification code!");
             }
             return new AuthenticationResponse(tokenService.generateToken(user.getName(), user.getAuthorities()), false);

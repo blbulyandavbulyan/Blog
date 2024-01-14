@@ -21,7 +21,7 @@ public class TOTPSetupService {
     }
 
     private void throwIfInvalidTOTPCode(String secret, String code) {
-        if (!totpService.verifyCode(secret, code)) {
+        if (totpService.isNotValidCode(secret, code)) {
             throw new InvalidTFAVerificationCodeException(HttpStatus.BAD_REQUEST);
         }
     }
