@@ -78,6 +78,7 @@ public class SecurityConfig {
                         .requestMatchers(antMatcher("/api/v1/reactions/article/{articleId}")).authenticated()
                         .requestMatchers(antMatcher("/api/v1/reactions/comment/{commentId}")).authenticated()
                         .requestMatchers(antMatcher(HttpMethod.DELETE, "/api/v1/reactions/**")).authenticated()
+                        .requestMatchers(antMatcher("/api/v1/tfa/**")).authenticated()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
