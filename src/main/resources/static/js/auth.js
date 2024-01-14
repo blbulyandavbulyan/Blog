@@ -65,7 +65,6 @@ app.service('TokenService', function (CookieService) {
 app.service('AuthService', function ($http, TokenService) {
     const authUrl = '/blog/api/v1/auth';
     let tfaToken = null;
-    let tfaEnabled = false;
     return {
         login: function (credentials) {
             return $http.post(authUrl, credentials).then(function (response) {
@@ -79,7 +78,6 @@ app.service('AuthService', function ($http, TokenService) {
                 else {
                     tfaToken = token;
                 }
-                tfaEnabled = tfaRequired;
                 return tfaRequired;
             });
         },
@@ -99,9 +97,6 @@ app.service('AuthService', function ($http, TokenService) {
                 }
             });
         },
-        isTfaEnabled: function () {
-            return tfaEnabled;
-        },
         isAuthenticated: TokenService.isValidToken,
         logout: function () {
             TokenService.removeToken();
@@ -111,7 +106,7 @@ app.service('AuthService', function ($http, TokenService) {
         }
     };
 });
-app.service('TfaSettingsService', function ($http) {
+app.service('TfaSettingsService', function ($http, AuthService) {
     const tfaURL = "/blog/api/v1/tfa";
     return {
         beginTfaSetup: function () {
@@ -128,7 +123,18 @@ app.service('TfaSettingsService', function ($http) {
                     code: code
                 }
             });
-        }
+        },
+        isTfaEnabled: function () {
+            if (AuthService.isAuthenticated()) {
+                return $http({
+                    method: 'GET',
+                    url: `${tfaURL}/${AuthService.getMyUserName()}`
+                }).then(function (response) {
+                    return response.data.enabled;
+                });
+            }
+            else return false;
+        },
     };
 })
 app.factory('authInterceptor', ['$injector', '$q', function ($injector, $q) {
@@ -222,8 +228,8 @@ app.controller('AuthVerificationController', function ($scope, $timeout, AuthSer
         });
     };
 });
-app.controller('TFASettingsController', function ($scope, $timeout, TfaSettingsService, AuthService) {
-    $scope.tfaEnabled = AuthService.isTfaEnabled();
+app.controller('TFASettingsController', function ($scope, $timeout, TfaSettingsService) {
+    $scope.tfaEnabled = TfaSettingsService.isTfaEnabled();
     $scope.enableCheckboxStateTFA = $scope.tfaEnabled;
     $scope.verificationCode = "";
     $scope.qrCode = null;
@@ -237,6 +243,12 @@ app.controller('TFASettingsController', function ($scope, $timeout, TfaSettingsS
                         $scope.qrCode = response.data.qrCode;
                         $scope.requestProcessed = false;
                     }, 300);
+                }).catch(function (error) {
+                    $timeout(function () {
+                        console.error(error);
+                        $scope.requestProcessed = false;
+                        showErrorToast(error.data.message);
+                    }, 300);
                 });
         }
     };
@@ -245,15 +257,18 @@ app.controller('TFASettingsController', function ($scope, $timeout, TfaSettingsS
             if (!$scope.tfaEnabled) {
                 $scope.requestProcessed = true;
                 TfaSettingsService.finishTFASetup($scope.verificationCode).then(function () {
-                        $timeout(function () {
-                            $scope.tfaEnabled = $scope.enableCheckboxStateTFA;
-                            $scope.qrCode = null;
-                            $scope.verificationCode = "";
-                            $scope.requestProcessed = false;
-                        }, 300);
-                    }).catch(function (error) {
+                    $timeout(function () {
+                        $scope.tfaEnabled = $scope.enableCheckboxStateTFA;
+                        $scope.qrCode = null;
+                        $scope.verificationCode = "";
+                        $scope.requestProcessed = false;
+                    }, 300);
+                }).catch(function (error) {
+                    $timeout(function () {
+                        $scope.requestProcessed = false;
                         showErrorToast(error.data.message);
-                    });
+                    }, 300);
+                });
             }
         }
     };
