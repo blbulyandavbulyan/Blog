@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class TOTPSetupService {
+public class TOTPSettingsService {
     private final TOTPService totpService;
     private final UserService userService;
     private static boolean isTfaRequired(User user) {

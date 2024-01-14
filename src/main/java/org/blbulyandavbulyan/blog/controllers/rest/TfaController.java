@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.authorization.TFAStatus;
 import org.blbulyandavbulyan.blog.dtos.authorization.TOTPSetupResponse;
-import org.blbulyandavbulyan.blog.services.TOTPSetupService;
+import org.blbulyandavbulyan.blog.services.TOTPSettingsService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,22 +15,22 @@ import java.security.Principal;
 @RequiredArgsConstructor
 @Validated
 public class TfaController {
-    private final TOTPSetupService totpSetupService;
+    private final TOTPSettingsService totpSettingsService;
     @PostMapping
     public TOTPSetupResponse beginTfaSetup(Principal principal) {
-        return new TOTPSetupResponse(totpSetupService.beginSetupTFA(principal.getName()));
+        return new TOTPSetupResponse(totpSettingsService.beginSetupTFA(principal.getName()));
     }
     @PatchMapping
     public void finishSetup(Principal principal, @RequestParam @NotBlank String code) {
-        totpSetupService.finishTFASetup(principal.getName(), code);
+        totpSettingsService.finishTFASetup(principal.getName(), code);
     }
 
     @GetMapping("/{username}")
     public TFAStatus getTfaStatus(@PathVariable String username) {
-        return new TFAStatus(totpSetupService.isTfaEnabled(username));
+        return new TFAStatus(totpSettingsService.isTfaEnabled(username));
     }
     @DeleteMapping
     public void disableTfa(Principal principal, @RequestParam @NotBlank String code) {
-        totpSetupService.disableTFA(principal.getName(), code);
+        totpSettingsService.disableTFA(principal.getName(), code);
     }
 }
