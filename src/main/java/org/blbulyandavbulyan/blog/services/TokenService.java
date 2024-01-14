@@ -44,6 +44,21 @@ public class TokenService {
     }
 
     /**
+     * Генерирует токен с заданными claims
+     * @param name имя пользователя(subject)
+     * @param claims claims, которые нужно подложить в токен
+     * @return сгенерированный токен
+     */
+    public String generateToken(String name, Map<String, Object> claims) {
+        Date issuedDate = new Date();//время создания токена
+        Date expiredDate = new Date(issuedDate.getTime() + jwtConfigurationProperties.getLifetime().toMillis());//время истечения токена
+        return Jwts.builder().setClaims(claims)
+                .setSubject(name)
+                .setIssuedAt(issuedDate)
+                .setExpiration(expiredDate)
+                .signWith(secretKey).compact();
+    }
+    /**
      * Метод генерирует jwt токен
      * @param name имя пользователя
      * @param authorities права пользователя
@@ -53,23 +68,17 @@ public class TokenService {
         Map<String, Object> claims = new HashMap<>();
         List<String> rolesList = authorities.stream().map(GrantedAuthority::getAuthority).toList();
         claims.put("roles", rolesList);//добавляем роли
-        Date issuedDate = new Date();//время создания токена
-        Date expiredDate = new Date(issuedDate.getTime() + jwtConfigurationProperties.getLifetime().toMillis());//время истечения токена
-        return Jwts.builder().setClaims(claims)
-                .setSubject(name)
-                .setIssuedAt(issuedDate)
-                .setExpiration(expiredDate)
-                .signWith(secretKey).compact();
+        return generateToken(name, claims);
     }
 
     /**
-     * Генерирует токен без ролей
+     * Генерирует токен с пустыми claims
      * @param name имя пользователя
      * @return сгенерированный токен
      * @throws TokenServiceParseException если не удалось обработать токен
      */
     public String generateToken(String name) {
-        return generateToken(name, List.of());
+        return generateToken(name, Map.of());
     }
     private Claims getAllClaimsFromToken(String token){
         try {
