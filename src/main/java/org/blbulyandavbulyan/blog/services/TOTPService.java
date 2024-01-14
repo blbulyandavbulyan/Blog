@@ -7,7 +7,7 @@ import dev.samstevens.totp.qr.QrGenerator;
 import dev.samstevens.totp.secret.SecretGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.blbulyandavbulyan.blog.exceptions.TOTPQrCodeGenerationException;
+import org.blbulyandavbulyan.blog.exceptions.security.tfa.TOTPQrCodeGenerationException;
 import org.springframework.stereotype.Service;
 
 import static dev.samstevens.totp.util.Utils.getDataUriForImage;
