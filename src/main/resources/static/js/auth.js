@@ -125,16 +125,20 @@ app.service('TfaSettingsService', function ($http, AuthService) {
             });
         },
         isTfaEnabled: function () {
-            if (AuthService.isAuthenticated()) {
-                return $http({
-                    method: 'GET',
-                    url: `${tfaURL}/${AuthService.getMyUserName()}`
-                }).then(function (response) {
-                    return response.data.enabled;
-                });
-            }
-            else return false;
+            return $http({
+                method: 'GET',
+                url: `${tfaURL}/${AuthService.getMyUserName()}`
+            });
         },
+        disableTfa: function (code) {
+            return $http({
+                method: 'DELETE',
+                url: tfaURL,
+                params: {
+                    code: code
+                }
+            });
+        }
     };
 })
 app.factory('authInterceptor', ['$injector', '$q', function ($injector, $q) {
@@ -228,14 +232,30 @@ app.controller('AuthVerificationController', function ($scope, $timeout, AuthSer
         });
     };
 });
-app.controller('TFASettingsController', function ($scope, $timeout, TfaSettingsService) {
-    $scope.tfaEnabled = TfaSettingsService.isTfaEnabled();
+app.controller('TFASettingsController', function ($scope, $timeout, TfaSettingsService, AuthService) {
+    $scope.tfaEnabled = false;
     $scope.enableCheckboxStateTFA = $scope.tfaEnabled;
     $scope.verificationCode = "";
     $scope.qrCode = null;
     $scope.requestProcessed = false;
-    $scope.switchTfaEnabled = function (newTFAState) {
-        if (!$scope.tfaEnabled && newTFAState) {
+    $scope.updateTfaEnabled = function () {
+        if (AuthService.isAuthenticated()) {
+            TfaSettingsService.isTfaEnabled().then(function (response) {
+                $scope.tfaEnabled = response.data.enabled;
+                $scope.enableCheckboxStateTFA = $scope.tfaEnabled;
+            }).catch(function (error) {
+                $timeout(function () {
+                    let message = `Статус код ${error.status}.`;
+                    if (error.data && error.data.message) {
+                        message = `${message} ${error.data.message}`;
+                    }
+                    showErrorToast("Ошибка получения статуса TFA", message);
+                }, 300);
+            });
+        }
+    };
+    $scope.switchTfaEnabled = function () {
+        if (!$scope.tfaEnabled && $scope.enableCheckboxStateTFA) {
             $scope.requestProcessed = true;
             TfaSettingsService.beginTfaSetup()
                 .then(function (response) {
@@ -265,13 +285,33 @@ app.controller('TFASettingsController', function ($scope, $timeout, TfaSettingsS
                     }, 300);
                 }).catch(function (error) {
                     $timeout(function () {
+                        console.error(error)
                         $scope.requestProcessed = false;
-                        showErrorToast(error.data.message);
+                        showErrorToast("Ошибка включения двухфакторной аутентификации!", error.data.message);
                     }, 300);
                 });
             }
+            else {
+                $scope.requestProcessed = true;
+                TfaSettingsService.disableTfa($scope.verificationCode)
+                    .then(function () {
+                        $timeout(function () {
+                            $scope.requestProcessed = false;
+                            $scope.tfaEnabled = false;
+                        }, 300);
+                    })
+                    .catch(function (error) {
+                        $timeout(function () {
+                            console.error(error);
+                            if (error.data && error.data.message) {
+                                showErrorToast("Ошибка отключения TFA", error.data.message);
+                            }
+                        }, 300);
+                    });
+            }
         }
     };
+    $scope.updateTfaEnabled();
 })
 app.service('RoleService', function (TokenService) {
     return {
