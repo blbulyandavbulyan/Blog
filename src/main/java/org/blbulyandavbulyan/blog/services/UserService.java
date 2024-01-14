@@ -173,4 +173,9 @@ public class UserService implements UserDetailsService {
         if(userRepository.updatePasswordHashByName(passwordEncoder.encode(password), targetUsername) < 1)
             throw new UserNotFoundException("User with name " + targetUsername + " not found!");
     }
+
+    public boolean isTfaEnabled(String username) {
+        return userRepository.isTfaEnabled(username)
+                .orElseThrow(() -> new UserNotFoundException("User with username '" + username + "' not found!"));
+    }
 }
