@@ -32,7 +32,7 @@ public class TOTPSetupService {
             throw new TfaAlreadyEnabledException();
         }
         user.setTfaSecret(totpService.generateNewSecret());
-        return totpService.generateQrCodeImageUri(user.getTfaSecret());
+        return totpService.generateQrCodeImageUri(user.getTfaSecret(), username);
     }
 
     @Transactional

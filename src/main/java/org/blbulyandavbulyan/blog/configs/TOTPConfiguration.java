@@ -39,7 +39,6 @@ public class TOTPConfiguration {
     @Bean
     public QrData.Builder qrDataBuilder() {
         return new QrData.Builder()
-                .label("Blbulyandavbulyan BLOG")
                 .issuer("Blog Service")
                 .algorithm(HashingAlgorithm.SHA512)
                 .digits(6)

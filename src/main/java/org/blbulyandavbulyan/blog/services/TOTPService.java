@@ -24,8 +24,8 @@ public class TOTPService {
         return secretGenerator.generate();
     }
 
-    public String generateQrCodeImageUri(String secret) {
-        QrData data = qrDataBuilder.secret(secret).build();
+    public String generateQrCodeImageUri(String secret, String username) {
+        QrData data = qrDataBuilder.secret(secret).label(username).build();
         byte[] imageData;
         try {
             imageData = qrGenerator.generate(data);
