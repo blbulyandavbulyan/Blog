@@ -46,15 +46,13 @@ public class AuthenticationService {
             String username = secondStepMFATokenService.getUserName(verificationRequest.jwtToken());
             User user = userService.findByName(username);
             String tfaSecret = user.getTfaSecret();
-            if (tfaSecret != null) {
-                if (totpService.verifyCode(tfaSecret, verificationRequest.code())) {
-                    return new AuthenticationResponse(tokenService.generateToken(user.getName(), user.getAuthorities()), false);
-                } else {
-                    throw new BadCredentialsException("Invalid verification code!");
-                }
-            } else {
+            if (tfaSecret == null) {
                 throw new RuntimeException("TFA secret is null!");//TODO 13.01.2024: добавить здесь бросание более корректного исключения
             }
+            if (!totpService.verifyCode(tfaSecret, verificationRequest.code())) {
+                throw new BadCredentialsException("Invalid verification code!");
+            }
+            return new AuthenticationResponse(tokenService.generateToken(user.getName(), user.getAuthorities()), false);
         } catch (TokenServiceParseException exception) {
             throw new BadCredentialsException("Invalid token!", exception);
         }
