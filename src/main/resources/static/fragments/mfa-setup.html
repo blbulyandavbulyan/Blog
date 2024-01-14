@@ -7,17 +7,17 @@
             </div>
             <form name="configuretionMFAForm" id="configuration-mfa" ng-submit="configure()" class="text-center">
                 <div class="modal-body">
-                    <div class="form-group">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" ng-disabled="requestProcessed" ng-model="enableCheckboxStateTFA" ng-change="switchTfaEnabled(enableCheckboxStateTFA)" type="checkbox" role="switch" id="enableTFA">
-                            <label class="form-check-label" for="enableTFA">Двухфакторная аутентификация</label>
-                        </div>
+                    <div class="form-switch">
+                        <label for="enableTFA">
+                            <input class="form-check-input" ng-model="enableCheckboxStateTFA" ng-disabled="requestProcessed" ng-change="switchTfaEnabled()" type="checkbox" role="switch" id="enableTFA">
+                            Двухфакторная аутентификация
+                        </label>
                     </div>
                     <div ng-show="enableCheckboxStateTFA != tfaEnabled && !requestProcessed">
                         <div class="form-group" ng-show="!tfaEnabled && qrCode != null">
                             <img ng-src="{{qrCode}}" alt="Код для сканирования">
                         </div>
-                        <div class="form-group" ng-show="enableCheckboxStateTFA || qrCode != null">
+                        <div class="form-group" ng-show="!enableCheckboxStateTFA || qrCode != null">
                             <label for="tfa-setup-confirmation-code" class="form-label">Код подтверждения</label>
                             <input ng-model="verificationCode" type="password" id="tfa-setup-confirmation-code" class="form-control" aria-describedby="tfa-setup-confirm-code-help-block">
                             <div id="tfa-setup-confirm-code-help-block" class="form-text">
