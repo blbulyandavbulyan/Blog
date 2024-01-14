@@ -12,6 +12,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class AuthControllerAdvice {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<?> processBadCredential(BadCredentialsException processedException){
-        return new ResponseEntity<>(new AppError(HttpStatus.UNAUTHORIZED.value(), "Incorrect username or password!"), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new AppError(HttpStatus.UNAUTHORIZED.value(), processedException.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 }
