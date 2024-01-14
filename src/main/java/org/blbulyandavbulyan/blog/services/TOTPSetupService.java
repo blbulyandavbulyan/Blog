@@ -51,4 +51,7 @@ public class TOTPSetupService {
             user.setTfaSecret(null);
         }
     }
+    public boolean isTfaEnabled(String username) {
+        return userService.isTfaEnabled(username);
+    }
 }
