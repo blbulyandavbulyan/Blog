@@ -2,6 +2,7 @@ package org.blbulyandavbulyan.blog.controllers.rest;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.blbulyandavbulyan.blog.dtos.authorization.TFAStatus;
 import org.blbulyandavbulyan.blog.dtos.authorization.TOTPSetupResponse;
 import org.blbulyandavbulyan.blog.services.TOTPSetupService;
 import org.springframework.validation.annotation.Validated;
@@ -22,5 +23,10 @@ public class TfaController {
     @PatchMapping
     public void finishSetup(Principal principal, @RequestParam @NotBlank String code) {
         totpSetupService.finishTFASetup(principal.getName(), code);
+    }
+
+    @GetMapping("/{username}")
+    public TFAStatus getTfaStatus(@PathVariable String username) {
+        return new TFAStatus(totpSetupService.isTfaEnabled(username));
     }
 }
