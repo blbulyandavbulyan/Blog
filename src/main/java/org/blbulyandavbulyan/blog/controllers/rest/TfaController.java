@@ -29,4 +29,8 @@ public class TfaController {
     public TFAStatus getTfaStatus(@PathVariable String username) {
         return new TFAStatus(totpSetupService.isTfaEnabled(username));
     }
+    @DeleteMapping
+    public void disableTfa(Principal principal, @RequestParam @NotBlank String code) {
+        totpSetupService.disableTFA(principal.getName(), code);
+    }
 }
