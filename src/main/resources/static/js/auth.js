@@ -287,7 +287,7 @@ app.controller('TFASettingsController', function ($scope, $timeout, TfaSettingsS
                     $timeout(function () {
                         console.error(error)
                         $scope.requestProcessed = false;
-                        showErrorToast("Ошибка включения двухфакторной аутентификации!", error.data.message);
+                        showErrorToast("Ошибка включения TFA!", error.data.message);
                     }, 300);
                 });
             }
