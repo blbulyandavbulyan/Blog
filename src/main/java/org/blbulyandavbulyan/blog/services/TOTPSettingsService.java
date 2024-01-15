@@ -31,8 +31,9 @@ public class TOTPSettingsService {
         if (isTfaRequired(user)) {
             throw new TfaAlreadyEnabledException();
         }
-        user.setTfaSecret(totpService.generateNewSecret());
-        return totpService.generateQrCodeImageUri(user.getTfaSecret(), username);
+        String tfaSecret = totpService.generateNewSecret();
+        user.setTfaSecret(tfaSecret);
+        return totpService.generateQrCodeImageUri(tfaSecret, username);
     }
 
     @Transactional
