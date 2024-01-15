@@ -302,10 +302,11 @@ app.controller('TFASettingsController', function ($scope, $timeout, TfaSettingsS
                     })
                     .catch(function (error) {
                         $timeout(function () {
-                            console.error(error);
+                            $scope.requestProcessed = false;
                             if (error.data && error.data.message) {
                                 showErrorToast("Ошибка отключения TFA", error.data.message);
                             }
+                            else console.error(error);
                         }, 300);
                     });
             }
