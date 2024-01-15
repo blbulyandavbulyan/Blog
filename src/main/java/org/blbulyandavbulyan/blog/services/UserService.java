@@ -174,6 +174,11 @@ public class UserService implements UserDetailsService {
             throw new UserNotFoundException("User with name " + targetUsername + " not found!");
     }
 
+    /**
+     * Проверяет, включена ли у пользователя двухфакторная аутентификация
+     * @param username имя пользователя
+     * @return true если включена, false если выключена
+     */
     public boolean isTfaEnabled(String username) {
         return userRepository.isTfaEnabled(username)
                 .orElseThrow(() -> new UserNotFoundException("User with username '" + username + "' not found!"));
