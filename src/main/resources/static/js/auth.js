@@ -319,7 +319,11 @@ app.controller('TFASettingsController', function ($scope, $timeout, TfaSettingsS
             }
         }
     };
-    $scope.updateTfaEnabled();
+    $scope.$watch(function(){
+        return AuthService.isAuthenticated();
+    }, function () {
+        $scope.updateTfaEnabled();
+    });
 })
 app.service('RoleService', function (TokenService) {
     return {
