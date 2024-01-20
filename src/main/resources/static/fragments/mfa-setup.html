@@ -19,7 +19,7 @@
                         </div>
                         <div class="form-group" ng-show="!enableCheckboxStateTFA || qrCode != null">
                             <label for="tfa-setup-confirmation-code" class="form-label">Код подтверждения</label>
-                            <input ng-model="verificationCode" type="password" id="tfa-setup-confirmation-code" class="form-control" aria-describedby="tfa-setup-confirm-code-help-block">
+                            <input name="verificationCode" ng-class="configuretionMFAForm.verificationCode.$valid ? 'is-valid' : 'is-invalid'" ng-model="verificationCode" type="text" id="tfa-setup-confirmation-code" class="form-control" aria-describedby="tfa-setup-confirm-code-help-block" required>
                             <div id="tfa-setup-confirm-code-help-block" class="form-text">
                                 Введите код подтверждения из вашего приложения authenticator
                             </div>
