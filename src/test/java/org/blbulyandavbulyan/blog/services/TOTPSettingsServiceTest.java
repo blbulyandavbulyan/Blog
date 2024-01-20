@@ -49,7 +49,7 @@ class TOTPSettingsServiceTest {
         User user = mock(User.class);
         when(userService.findByName(username)).thenReturn(user);
         when(user.isTfaEnabled()).thenReturn(tfaEnabled);
-        if(tfaEnabled) {
+        if (tfaEnabled) {
             when(user.getTfaSecret()).thenReturn(userHasSecret ? "secret" : null);
         }
         if (tfaEnabled && userHasSecret) {
@@ -75,6 +75,7 @@ class TOTPSettingsServiceTest {
         when(userService.findByName(username)).thenReturn(user);
         assertThrows(TFASetupWasNotBeganException.class, () -> underTest.finishTFASetup(username, code));
     }
+
     @ParameterizedTest(name = "valid code = {0}")
     @ValueSource(booleans = {true, false})
     void finishTFASetupWhenUserHasSecretTest(boolean validCode) {
@@ -104,5 +105,47 @@ class TOTPSettingsServiceTest {
         assertEquals(tfaEnabled, underTest.isTfaEnabled(username));
         verifyNoMoreInteractions(userService, totpService);
     }
-    //TODO 15.01.2024: добавить тест на метод disableTfa
+
+    @ParameterizedTest(name = "tfa enabled = {0}, user has secret = {1}")
+    @CsvSource({"true,true", "true,false", "false,false", "false,true"})
+    void disableTfaWhenValidCodeOrTfaIsDisabledTest(boolean tfaEnabled, boolean userHasSecret) {
+        final String username = "testusername";
+        final String tfaSecret = "tfasecrettest";
+        final String code = "testcode";
+        User user = mock(User.class);
+        when(userService.findByName(username)).thenReturn(user);
+        when(user.isTfaEnabled()).thenReturn(tfaEnabled);
+        if (tfaEnabled) {
+            when(user.getTfaSecret()).thenReturn(userHasSecret ? tfaSecret : null);
+        }
+        if (tfaEnabled && userHasSecret) {
+            when(totpService.isNotValidCode(tfaSecret, code)).thenReturn(false);
+        }
+        assertDoesNotThrow(() -> underTest.disableTFA(username, code));
+        verify(user, times(1)).isTfaEnabled();
+        if (tfaEnabled) {
+            verify(user, atLeastOnce()).getTfaSecret();
+        }
+        if (tfaEnabled && userHasSecret) {
+            verify(user, times(1)).setTfaEnabled(false);
+            verify(user, times(1)).setTfaSecret(null);
+        } else {
+            verifyNoMoreInteractions(user);
+        }
+        verifyNoMoreInteractions(userService, totpService);
+    }
+
+    @Test
+    void disableTfaWhenItIsEnabledAndInvalidCodeTest() {
+        final String username = "testusername";
+        final String tfaSecret = "tfasecrettest";
+        final String code = "testcode";
+        User user = mock(User.class);
+        when(userService.findByName(username)).thenReturn(user);
+        when(user.isTfaEnabled()).thenReturn(true);
+        when(user.getTfaSecret()).thenReturn(tfaSecret);
+        when(totpService.isNotValidCode(tfaSecret, code)).thenReturn(true);
+        assertThrows(InvalidTFAVerificationCodeException.class, () -> underTest.disableTFA(username, code));
+        verifyNoMoreInteractions(user, totpService, userService);
+    }
 }
