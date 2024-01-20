@@ -5,6 +5,7 @@ import org.blbulyandavbulyan.blog.dtos.authorization.AuthenticationResponse;
 import org.blbulyandavbulyan.blog.dtos.authorization.VerificationRequest;
 import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.exceptions.TokenServiceParseException;
+import org.blbulyandavbulyan.blog.exceptions.security.tfa.UserHasNoTfaSecretException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -12,6 +13,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public class AuthenticationService {
@@ -45,10 +48,8 @@ public class AuthenticationService {
         try {
             String username = secondStepMFATokenService.getUserName(verificationRequest.jwtToken());
             User user = userService.findByName(username);
-            String tfaSecret = user.getTfaSecret();
-            if (tfaSecret == null) {
-                throw new RuntimeException("TFA secret is null!");//TODO 13.01.2024: добавить здесь бросание более корректного исключения
-            }
+            String tfaSecret = Optional.ofNullable(user.getTfaSecret())
+                    .orElseThrow(()-> new UserHasNoTfaSecretException(username));
             if (totpService.isNotValidCode(tfaSecret, verificationRequest.code())) {
                 throw new BadCredentialsException("Invalid verification code!");
             }
