@@ -2,11 +2,17 @@ package org.blbulyandavbulyan.blog.services;
 
 import org.blbulyandavbulyan.blog.dtos.authorization.AuthenticationRequest;
 import org.blbulyandavbulyan.blog.dtos.authorization.AuthenticationResponse;
+import org.blbulyandavbulyan.blog.dtos.authorization.VerificationRequest;
 import org.blbulyandavbulyan.blog.entities.User;
+import org.blbulyandavbulyan.blog.exceptions.TokenServiceParseException;
+import org.blbulyandavbulyan.blog.exceptions.security.tfa.UserHasNoTfaSecretException;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -27,6 +33,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @ContextConfiguration(classes = AuthenticationServiceTest.class)
 @Import(AuthenticationService.class)
+@MockitoSettings(strictness = Strictness.STRICT_STUBS)
 class AuthenticationServiceTest {
     @MockBean
     private UserService userService;
@@ -84,5 +91,57 @@ class AuthenticationServiceTest {
         }
         verifyNoInteractions(totpService);
     }
-    //TODO 15.01.2024: написать тесты на verifyAuth метод
+
+    @ParameterizedTest(name = "is valid code = {0}")
+    @ValueSource(booleans = {true, false})
+    void verifyAuthWhenUserHasSecret(boolean isValidCode) {
+        final var verificationRequest = new VerificationRequest("testtoken", "testcode");
+        final String username = "testusername";
+        final String secret = "testsecret";
+        List<? extends GrantedAuthority> expectedAuthorities = List.of();
+        User user = mock(User.class);
+        when(user.getTfaSecret()).thenReturn(secret);
+        when(secondStepMFATokenService.getUserName(verificationRequest.jwtToken())).thenReturn(username);
+        when(userService.findByName(username)).thenReturn(user);
+        when(totpService.isNotValidCode(secret, verificationRequest.code())).thenReturn(!isValidCode);
+        if (isValidCode) {
+            String expectedToken = "testrealtoken";
+            when(user.getAuthorities()).thenAnswer((invocation) -> expectedAuthorities);
+            when(user.getName()).thenReturn(username);
+            when(tokenService.generateToken(eq(username), same(expectedAuthorities))).thenReturn(expectedToken);
+            var authenticationResponse = assertDoesNotThrow(() -> underTest.verifyAuth(verificationRequest));
+            assertFalse(authenticationResponse.tfaRequired());
+            assertSame(expectedToken, authenticationResponse.token());
+            ignoreStubs(tokenService, user, secondStepMFATokenService, totpService);
+            verifyNoMoreInteractions(tokenService, user, secondStepMFATokenService, totpService);
+        } else {
+            assertThrows(BadCredentialsException.class, () -> underTest.verifyAuth(verificationRequest));
+            verifyNoInteractions(tokenService);
+            ignoreStubs(tokenService, user, secondStepMFATokenService, totpService);
+            verifyNoMoreInteractions(user, secondStepMFATokenService, totpService);
+        }
+        verifyNoInteractions(authenticationManager);
+    }
+
+    @Test
+    void verifyAuthWhenUserHasNoSecret() {
+        final var verificationRequest = new VerificationRequest("testtoken", "testcode");
+        final String username = "testusername";
+        User user = mock(User.class);
+        when(user.getTfaSecret()).thenReturn(null);
+        when(userService.findByName(username)).thenReturn(user);
+        when(secondStepMFATokenService.getUserName(verificationRequest.jwtToken())).thenReturn(username);
+        assertThrows(UserHasNoTfaSecretException.class, () -> underTest.verifyAuth(verificationRequest));
+        ignoreStubs(userService, secondStepMFATokenService);
+        verifyNoMoreInteractions(userService, secondStepMFATokenService);
+        verifyNoInteractions(totpService, tokenService, authenticationManager);
+    }
+
+    @Test
+    void verifyAuthIfInvalidToken() {
+        final var verificationRequest = new VerificationRequest("testtoken", "testcode");
+        when(secondStepMFATokenService.getUserName(verificationRequest.jwtToken())).thenThrow(TokenServiceParseException.class);
+        assertThrows(BadCredentialsException.class, () -> underTest.verifyAuth(verificationRequest));
+        verifyNoInteractions(tokenService, userService, totpService, authenticationManager);
+    }
 }
