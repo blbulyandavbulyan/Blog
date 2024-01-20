@@ -226,6 +226,7 @@ app.controller('AuthVerificationController', function ($scope, $timeout, AuthSer
             $timeout(function () {
                 $scope.requestProcessed = false;
                 if (error.status === 401) {
+                    $scope.verificationCode = "";
                     showErrorToast("Ошибка верификации", "Неверный проверочный код!");
                 }
                 else {
@@ -294,6 +295,7 @@ app.controller('TFASettingsController', function ($scope, $timeout, TfaSettingsS
                     $timeout(function () {
                         console.error(error)
                         $scope.requestProcessed = false;
+                        $scope.verificationCode = "";
                         showErrorToast("Ошибка включения TFA!", error.data.message);
                     }, 300);
                 });
@@ -304,12 +306,14 @@ app.controller('TFASettingsController', function ($scope, $timeout, TfaSettingsS
                     .then(function () {
                         $timeout(function () {
                             $scope.requestProcessed = false;
+                            $scope.verificationCode = "";
                             $scope.tfaEnabled = false;
                         }, 300);
                     })
                     .catch(function (error) {
                         $timeout(function () {
                             $scope.requestProcessed = false;
+                            $scope.verificationCode = "";
                             if (error.data && error.data.message) {
                                 showErrorToast("Ошибка отключения TFA", error.data.message);
                             }
