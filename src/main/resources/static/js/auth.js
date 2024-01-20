@@ -97,6 +97,9 @@ app.service('AuthService', function ($http, TokenService) {
                 }
             });
         },
+        cancelTfaAuth: function () {
+            tfaToken = null;
+        },
         isAuthenticated: TokenService.isValidToken,
         logout: function () {
             TokenService.removeToken();
@@ -230,6 +233,10 @@ app.controller('AuthVerificationController', function ($scope, $timeout, AuthSer
                 }
             }, 300);
         });
+    };
+    $scope.cancelAuth = function () {
+        $scope.verificationCode = "";
+        AuthService.cancelTfaAuth();
     };
 });
 app.controller('TFASettingsController', function ($scope, $timeout, TfaSettingsService, AuthService) {

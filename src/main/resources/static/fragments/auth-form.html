@@ -43,7 +43,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button"  ng-click="cancelAuth()" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
                     <button type="submit" id="confirm-login-button" class="btn btn-primary" ng-disabled="loginVerificationForm.$invalid || requestProcessed">
                         <span ng-show="requestProcessed" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
                         <span ng-show="requestProcessed" class="visually-hidden" role="status">Processing...</span>
