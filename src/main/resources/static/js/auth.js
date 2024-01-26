@@ -63,14 +63,42 @@ app.service('TokenService', function (CookieService) {
     };
 })
 app.service('AuthService', function ($http, TokenService) {
+    const authUrl = '/blog/api/v1/auth';
+    let tfaToken = null;
     return {
         login: function (credentials) {
-            return $http.post('/blog/api/v1/auth', credentials).then(function (response) {
+            return $http.post(authUrl, credentials).then(function (response) {
                 // В ответе сервера должен быть токен, который вы сохраняете в переменной $scope.token
-                const token = response.data.token;
-                TokenService.setToken(token);
-                return token;
+                const data = response.data;
+                const token = data.token;
+                const tfaRequired = data.tfaRequired;
+                if(!tfaRequired) {
+                    TokenService.setToken(token);
+                }
+                else {
+                    tfaToken = token;
+                }
+                return tfaRequired;
             });
+        },
+        verifyAuth: function (code) {
+            return $http.post(`${authUrl}/verify`, {
+                jwtToken: tfaToken,
+                code: code
+            }).then(function (response) {
+                const data = response.data;
+                const token = data.token;
+                const tfaRequired = data.tfaRequired;
+                if(!tfaRequired) {
+                    TokenService.setToken(token);
+                }
+                else {
+                    console.error("TFA still required! This behavior is not supported")
+                }
+            });
+        },
+        cancelTfaAuth: function () {
+            tfaToken = null;
         },
         isAuthenticated: TokenService.isValidToken,
         logout: function () {
@@ -81,6 +109,41 @@ app.service('AuthService', function ($http, TokenService) {
         }
     };
 });
+app.service('TfaSettingsService', function ($http, AuthService) {
+    const tfaURL = "/blog/api/v1/tfa";
+    return {
+        beginTfaSetup: function () {
+            return $http({
+                method: 'POST',
+                url: tfaURL
+            });
+        },
+        finishTFASetup: function (code) {
+            return $http({
+                method: 'PATCH',
+                url: tfaURL,
+                params: {
+                    code: code
+                }
+            });
+        },
+        isTfaEnabled: function () {
+            return $http({
+                method: 'GET',
+                url: `${tfaURL}/${AuthService.getMyUserName()}`
+            });
+        },
+        disableTfa: function (code) {
+            return $http({
+                method: 'DELETE',
+                url: tfaURL,
+                params: {
+                    code: code
+                }
+            });
+        }
+    };
+})
 app.factory('authInterceptor', ['$injector', '$q', function ($injector, $q) {
     const tokenService = $injector.get('TokenService');
     return {
@@ -110,6 +173,7 @@ app.config(function ($httpProvider) {
 });
 app.controller('AuthController', function ($scope, $timeout, AuthService) {
     const authFormModal = bootstrap.Modal.getOrCreateInstance("#loginModal", {});
+    const authVerificationModal = bootstrap.Modal.getOrCreateInstance("#authVerifyModal", {});
     $scope.requestProcessed = false;
     $scope.credentials = {
         username: '',
@@ -121,12 +185,17 @@ app.controller('AuthController', function ($scope, $timeout, AuthService) {
         // Здесь отправляем POST-запрос с данными авторизации
         $scope.requestProcessed = true;
         AuthService.login($scope.credentials)
-            .then(() =>
+            .then((isTfaRequired) =>
                 $timeout(function () {
                     authFormModal.hide();
                     $scope.requestProcessed = false;
                     $scope.credentials.username = '';
                     $scope.credentials.password = '';
+                    if(isTfaRequired){
+                        $timeout(function () {
+                            authVerificationModal.show()
+                        }, 300);
+                    }
                 }, 300))
             .catch(function (error) {
                 $timeout(function () {
@@ -136,11 +205,130 @@ app.controller('AuthController', function ($scope, $timeout, AuthService) {
                         showErrorToast("Ошибка авторизации", "Неизвестная ошибка!");
                         console.error('Ошибка авторизации:', error);
                     }
-                }, 300)
+                }, 300);
             });
     };
     $scope.logout = AuthService.logout;
 });
+app.controller('AuthVerificationController', function ($scope, $timeout, AuthService) {
+    const authVerificationModal = bootstrap.Modal.getOrCreateInstance("#authVerifyModal", {});
+    $scope.verificationCode = "";
+    $scope.requestProcessed = false;
+    $scope.verifyAuth = function () {
+        $scope.requestProcessed = true;
+        AuthService.verifyAuth($scope.verificationCode).then(() => {
+            $timeout(function () {
+                $scope.verificationCode = "";
+                $scope.requestProcessed = false;
+                authVerificationModal.hide();
+            }, 300)
+        }).catch(function (error) {
+            $timeout(function () {
+                $scope.requestProcessed = false;
+                if (error.status === 401) {
+                    $scope.verificationCode = "";
+                    showErrorToast("Ошибка верификации", "Неверный проверочный код!");
+                }
+                else {
+                    showErrorToast(error.data.message);
+                }
+            }, 300);
+        });
+    };
+    $scope.cancelAuth = function () {
+        $scope.verificationCode = "";
+        AuthService.cancelTfaAuth();
+    };
+});
+app.controller('TFASettingsController', function ($scope, $timeout, TfaSettingsService, AuthService) {
+    $scope.tfaEnabled = false;
+    $scope.enableCheckboxStateTFA = $scope.tfaEnabled;
+    $scope.verificationCode = "";
+    $scope.qrCode = null;
+    $scope.requestProcessed = false;
+    $scope.updateTfaEnabled = function () {
+        if (AuthService.isAuthenticated()) {
+            TfaSettingsService.isTfaEnabled().then(function (response) {
+                $scope.tfaEnabled = response.data.enabled;
+                $scope.enableCheckboxStateTFA = $scope.tfaEnabled;
+            }).catch(function (error) {
+                $timeout(function () {
+                    let message = `Статус код ${error.status}.`;
+                    if (error.data && error.data.message) {
+                        message = `${message} ${error.data.message}`;
+                    }
+                    showErrorToast("Ошибка получения статуса TFA", message);
+                }, 300);
+            });
+        }
+    };
+    $scope.switchTfaEnabled = function () {
+        if (!$scope.tfaEnabled && $scope.enableCheckboxStateTFA) {
+            $scope.requestProcessed = true;
+            TfaSettingsService.beginTfaSetup()
+                .then(function (response) {
+                    $timeout(function () {
+                        $scope.qrCode = response.data.qrCode;
+                        $scope.requestProcessed = false;
+                    }, 300);
+                }).catch(function (error) {
+                    $timeout(function () {
+                        console.error(error);
+                        $scope.requestProcessed = false;
+                        showErrorToast(error.data.message);
+                    }, 300);
+                });
+        }
+    };
+    $scope.configure = function () {
+        if ($scope.tfaEnabled !== $scope.enableCheckboxStateTFA) {
+            if (!$scope.tfaEnabled) {
+                $scope.requestProcessed = true;
+                TfaSettingsService.finishTFASetup($scope.verificationCode).then(function () {
+                    $timeout(function () {
+                        $scope.tfaEnabled = $scope.enableCheckboxStateTFA;
+                        $scope.qrCode = null;
+                        $scope.verificationCode = "";
+                        $scope.requestProcessed = false;
+                    }, 300);
+                }).catch(function (error) {
+                    $timeout(function () {
+                        console.error(error)
+                        $scope.requestProcessed = false;
+                        $scope.verificationCode = "";
+                        showErrorToast("Ошибка включения TFA!", error.data.message);
+                    }, 300);
+                });
+            }
+            else {
+                $scope.requestProcessed = true;
+                TfaSettingsService.disableTfa($scope.verificationCode)
+                    .then(function () {
+                        $timeout(function () {
+                            $scope.requestProcessed = false;
+                            $scope.verificationCode = "";
+                            $scope.tfaEnabled = false;
+                        }, 300);
+                    })
+                    .catch(function (error) {
+                        $timeout(function () {
+                            $scope.requestProcessed = false;
+                            $scope.verificationCode = "";
+                            if (error.data && error.data.message) {
+                                showErrorToast("Ошибка отключения TFA", error.data.message);
+                            }
+                            else console.error(error);
+                        }, 300);
+                    });
+            }
+        }
+    };
+    $scope.$watch(function(){
+        return AuthService.isAuthenticated();
+    }, function () {
+        $scope.updateTfaEnabled();
+    });
+})
 app.service('RoleService', function (TokenService) {
     return {
         isCommenter: function () {

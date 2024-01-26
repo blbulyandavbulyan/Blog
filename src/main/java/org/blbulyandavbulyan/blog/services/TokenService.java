@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.blbulyandavbulyan.blog.configs.JwtConfigurationProperties;
+import org.blbulyandavbulyan.blog.exceptions.TokenServiceParseException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +44,21 @@ public class TokenService {
     }
 
     /**
+     * Генерирует токен с заданными claims
+     * @param name имя пользователя(subject)
+     * @param claims claims, которые нужно подложить в токен
+     * @return сгенерированный токен
+     */
+    public String generateToken(String name, Map<String, Object> claims) {
+        Date issuedDate = new Date();//время создания токена
+        Date expiredDate = new Date(issuedDate.getTime() + jwtConfigurationProperties.getLifetime().toMillis());//время истечения токена
+        return Jwts.builder().setClaims(claims)
+                .setSubject(name)
+                .setIssuedAt(issuedDate)
+                .setExpiration(expiredDate)
+                .signWith(secretKey).compact();
+    }
+    /**
      * Метод генерирует jwt токен
      * @param name имя пользователя
      * @param authorities права пользователя
@@ -52,23 +68,31 @@ public class TokenService {
         Map<String, Object> claims = new HashMap<>();
         List<String> rolesList = authorities.stream().map(GrantedAuthority::getAuthority).toList();
         claims.put("roles", rolesList);//добавляем роли
-        Date issuedDate = new Date();//время создания токена
-        Date expiredDate = new Date(issuedDate.getTime() + jwtConfigurationProperties.getLifetime().toMillis());//время истечения токена
-        return Jwts.builder().setClaims(claims)
-                .setSubject(name)
-                .setIssuedAt(issuedDate)
-                .setExpiration(expiredDate)
-                .signWith(secretKey).compact();
+        return generateToken(name, claims);
     }
 
+    /**
+     * Генерирует токен с пустыми claims
+     * @param name имя пользователя
+     * @return сгенерированный токен
+     * @throws TokenServiceParseException если не удалось обработать токен
+     */
+    public String generateToken(String name) {
+        return generateToken(name, Map.of());
+    }
     private Claims getAllClaimsFromToken(String token){
-        return parser.parseClaimsJws(token).getBody();
+        try {
+            return parser.parseClaimsJws(token).getBody();
+        } catch (Exception e) {
+            throw new TokenServiceParseException("Error during parsing token", e);
+        }
     }
 
     /**
      * Получаем имя пользователя из jwt токена
      * @param token jwt токен
      * @return имя пользователя, которое было в jwt токене
+     * @throws TokenServiceParseException если не удалось обработать токен
      */
     public String getUserName(String token) {
         return getAllClaimsFromToken(token).getSubject();
@@ -78,6 +102,7 @@ public class TokenService {
      * Получаем список ролей из jwt токена
      * @param token jwt токен, из которого будут получены роли
      * @return список ролей, которые были в jwt токене
+     * @throws TokenServiceParseException если не удалось обработать токен
      */
     public List<String> getRoles(String token) {
         return getAllClaimsFromToken(token).get("roles", List.class);

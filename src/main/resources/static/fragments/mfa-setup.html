@@ -1,0 +1,40 @@
+<div class="modal fade" id="configureTwoFactorAuthModal" tabindex="-1" aria-labelledby="configureTwoFactorAuthModalLabel" aria-hidden="true" ng-controller="TFASettingsController">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="configureTwoFactorAuthModalLabel">Настройки TFA</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form name="configuretionMFAForm" id="configuration-mfa" ng-submit="configure()" class="text-center">
+                <div class="modal-body">
+                    <div class="form-switch">
+                        <label for="enableTFA">
+                            <input class="form-check-input" ng-model="enableCheckboxStateTFA" ng-disabled="requestProcessed" ng-change="switchTfaEnabled()" type="checkbox" role="switch" id="enableTFA">
+                            Двухфакторная аутентификация
+                        </label>
+                    </div>
+                    <div ng-show="enableCheckboxStateTFA != tfaEnabled && !requestProcessed">
+                        <div class="form-group" ng-show="!tfaEnabled && qrCode != null">
+                            <img ng-src="{{qrCode}}" alt="Код для сканирования">
+                        </div>
+                        <div class="form-group" ng-show="!enableCheckboxStateTFA || qrCode != null">
+                            <label for="tfa-setup-confirmation-code" class="form-label">Код подтверждения</label>
+                            <input name="verificationCode" ng-class="configuretionMFAForm.verificationCode.$valid ? 'is-valid' : 'is-invalid'" ng-model="verificationCode" type="text" id="tfa-setup-confirmation-code" class="form-control" aria-describedby="tfa-setup-confirm-code-help-block" required>
+                            <div id="tfa-setup-confirm-code-help-block" class="form-text">
+                                Введите код подтверждения из вашего приложения authenticator
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" id="confirm-mfa-setup-button" class="btn btn-primary" ng-disabled="configuretionMFAForm.$invalid || requestProcessed || tfaEnabled === enableCheckboxStateTFA">
+                        <span ng-show="requestProcessed" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                        <span ng-show="requestProcessed" class="visually-hidden" role="status">Processing...</span>
+                        <span>Подтвердить</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

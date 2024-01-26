@@ -1,5 +1,6 @@
 package org.blbulyandavbulyan.blog.entities;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,7 +9,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -28,6 +28,10 @@ public class User implements UserDetails {
     private String name;
     @Column(name = "password_hash")
     private String passwordHash;
+    @Column(name = "tfa_enabled")
+    private boolean tfaEnabled;
+    @Column(name = "tfa_secret")
+    private String tfaSecret;
     @ManyToMany
     @JoinTable(
             name = "users_roles",

@@ -10,6 +10,8 @@ import org.blbulyandavbulyan.blog.repositories.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -266,5 +268,18 @@ class UserServiceTest {
         long userId = 1L;
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
         assertThrows(UserNotFoundException.class, ()-> underTest.updateRoles(userId, List.of()));
+    }
+
+    @ParameterizedTest(name = "tfa enabled = {0}, user found = {1}")
+    @CsvSource({"true, true", "true, false", "false, true", "false, false"})
+    void isTfaEnabledTest(boolean tfaEnabled, boolean userFound) {
+        String username = "testusername";
+        when(userRepository.isTfaEnabled(username)).thenReturn(userFound ? Optional.of(tfaEnabled) : Optional.empty());
+        if (userFound) {
+            Boolean actualTfaEnabled = assertDoesNotThrow(() -> underTest.isTfaEnabled(username));
+            assertEquals(tfaEnabled, actualTfaEnabled);
+        } else {
+            assertThrows(UserNotFoundException.class, () -> underTest.isTfaEnabled(username));
+        }
     }
 }

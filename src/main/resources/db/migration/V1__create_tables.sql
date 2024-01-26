@@ -8,6 +8,8 @@ CREATE TABLE users
     user_id           bigserial PRIMARY KEY,
     name              VARCHAR(255)             NOT NULL UNIQUE,
     password_hash     VARCHAR(255)             NOT NULL,
+    tfa_secret        VARCHAR(120)             DEFAULT NULL,
+    tfa_enabled       BOOLEAN NOT NULL DEFAULT FALSE,
     registration_date TIMESTAMP WITH TIME ZONE NOT NULL
 );
 CREATE TABLE users_roles
