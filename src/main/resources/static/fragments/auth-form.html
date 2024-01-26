@@ -28,3 +28,29 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="authVerifyModal" tabindex="-1" aria-labelledby="authVerifyModalLabel" aria-hidden="true" ng-controller="AuthVerificationController">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="authVerifyModalLabel">Подтверждение входа:</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form name="loginVerificationForm" id="login-verification-form" ng-submit="verifyAuth()" class="text-center">
+                <div class="modal-body">
+                    <div>
+                        <label class="visually-hidden" for="verification-code">Код подтверждения:</label>
+                        <input name="verificationCode" type="text" id="verification-code" ng-class="loginVerificationForm.verificationCode.$valid ? 'is-valid' : 'is-invalid'" ng-model="verificationCode" class="form-control mb-2" required placeholder="Код подтверждения">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"  ng-click="cancelAuth()" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" id="confirm-login-button" class="btn btn-primary" ng-disabled="loginVerificationForm.$invalid || requestProcessed">
+                        <span ng-show="requestProcessed" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                        <span ng-show="requestProcessed" class="visually-hidden" role="status">Processing...</span>
+                        <span>Войти</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
