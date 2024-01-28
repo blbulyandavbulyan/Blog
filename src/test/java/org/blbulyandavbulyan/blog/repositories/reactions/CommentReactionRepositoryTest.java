@@ -5,6 +5,7 @@ import org.blbulyandavbulyan.blog.entities.Article;
 import org.blbulyandavbulyan.blog.entities.Comment;
 import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.entities.reactions.CommentReaction;
+import org.blbulyandavbulyan.blog.entities.reactions.ReactionId;
 import org.blbulyandavbulyan.blog.repositories.ArticleRepository;
 import org.blbulyandavbulyan.blog.repositories.CommentRepository;
 import org.blbulyandavbulyan.blog.repositories.RepositoryTestUtils;
@@ -32,9 +33,9 @@ class CommentReactionRepositoryTest {
     private CommentRepository commentRepository;
 
     private void assertEqualReactions(CommentReaction actual, CommentReaction expected){
-        assertThat(actual.getId()).isEqualTo(expected.getId());
         assertThat(actual.getTarget()).isEqualTo(expected.getTarget());
         assertThat(actual.getLiker()).isEqualTo(expected.getLiker());
+        assertThat(actual.isLiked()).isEqualTo(expected.isLiked());
     }
 
     private Article createAndSaveArticle(User author){
@@ -84,11 +85,19 @@ class CommentReactionRepositoryTest {
         CommentReaction deletingReaction = createAndSaveReaction(commentAuthor, comment1);
         CommentReaction notDeletingReaction1 = createAndSaveReaction(otherUser, comment1);
         CommentReaction notDeletingReaction2 = createAndSaveReaction(otherUser, comment2);
-        Long deletingReactionId = deletingReaction.getId();
         underTest.deleteByTargetIdAndLikerName(deletingReaction.getTarget().getId(), deletingReaction.getLiker().getName());
-        assertThat(commentReactionRepository.existsById(deletingReactionId)).isFalse();
-        assertThat(commentReactionRepository.existsById(notDeletingReaction1.getId())).isTrue();
-        assertThat(commentReactionRepository.existsById(notDeletingReaction2.getId())).isTrue();
+        assertThat(commentReactionRepository.existsById(new ReactionId(
+                deletingReaction.getTarget().getId(),
+                deletingReaction.getLiker().getUserId()
+        ))).isFalse();
+        assertThat(commentReactionRepository.existsById(new ReactionId(
+                notDeletingReaction1.getTarget().getId(),
+                notDeletingReaction1.getLiker().getUserId()
+        ))).isTrue();
+        assertThat(commentReactionRepository.existsById(new ReactionId(
+                notDeletingReaction2.getTarget().getId(),
+                notDeletingReaction2.getLiker().getUserId()
+        ))).isTrue();
     }
 
     @Test
