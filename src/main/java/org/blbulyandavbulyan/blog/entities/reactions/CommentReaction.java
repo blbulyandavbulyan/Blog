@@ -12,14 +12,13 @@ import org.blbulyandavbulyan.blog.entities.User;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CommentReaction implements IReaction{
+@IdClass(ReactionId.class)
+public class CommentReaction implements IReaction {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id", nullable = false)
+    @JoinColumn(name = "target_id", nullable = false)
     private Comment target;
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "liker_id", nullable = false)
     private User liker;

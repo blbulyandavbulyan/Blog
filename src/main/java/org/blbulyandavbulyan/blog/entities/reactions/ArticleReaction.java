@@ -12,17 +12,17 @@ import org.blbulyandavbulyan.blog.entities.User;
 @Getter
 @Setter
 @NoArgsConstructor
+@IdClass(ReactionId.class)
 public class ArticleReaction implements IReaction{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "article_id", nullable = false)
+    @JoinColumn(name = "target_id", nullable = false)
     private Article target;
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "liker_id", nullable = false)
     private User liker;
+
     @Column(name = "liked", nullable = false)
     private boolean liked;
     public ArticleReaction(Article target, User liker) {
