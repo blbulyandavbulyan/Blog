@@ -4,6 +4,7 @@ import org.blbulyandavbulyan.blog.dtos.reactions.ReactionStatistics;
 import org.blbulyandavbulyan.blog.entities.Article;
 import org.blbulyandavbulyan.blog.entities.User;
 import org.blbulyandavbulyan.blog.entities.reactions.ArticleReaction;
+import org.blbulyandavbulyan.blog.entities.reactions.ReactionId;
 import org.blbulyandavbulyan.blog.repositories.ArticleRepository;
 import org.blbulyandavbulyan.blog.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -49,9 +50,9 @@ class ArticleReactionRepositoryTest {
         Optional<ArticleReaction> actualReactionOptional = underTest.findByTargetIdAndLikerName(target.getId(), liker.getName());
         assertThat(actualReactionOptional).isPresent();
         ArticleReaction actual = actualReactionOptional.get();
-        assertThat(actual.getId()).isEqualTo(expectedReaction.getId());
         assertThat(actual.getLiker()).isEqualTo(expectedReaction.getLiker());
         assertThat(actual.getTarget()).isEqualTo(expectedReaction.getTarget());
+        assertThat(actual.isLiked()).isEqualTo(expectedReaction.isLiked());
     }
 
     @Test
@@ -68,9 +69,18 @@ class ArticleReactionRepositoryTest {
         ArticleReaction expectedNotDeletedReaction1 = createAndSaveReaction(target, createAndSaveUser(userRepository, "testuser2"));
         ArticleReaction expectedNotDeletedReaction2 = createAndSaveReaction(createAndSaveArticle(createAndSaveUser(userRepository, "testuser3")), liker);
         underTest.deleteByTargetIdAndLikerName(target.getId(), liker.getName());
-        assertThat(articleReactionRepository.existsById(expectedDeletedReaction.getId())).isFalse();
-        assertThat(articleReactionRepository.existsById(expectedNotDeletedReaction1.getId())).isTrue();
-        assertThat(articleReactionRepository.existsById(expectedNotDeletedReaction2.getId())).isTrue();
+        assertThat(articleReactionRepository.existsById(new ReactionId(
+                expectedDeletedReaction.getTarget().getId(),
+                expectedDeletedReaction.getLiker().getUserId()
+        ))).isFalse();
+        assertThat(articleReactionRepository.existsById(new ReactionId(
+                expectedNotDeletedReaction1.getTarget().getId(),
+                expectedNotDeletedReaction1.getLiker().getUserId()
+        ))).isTrue();
+        assertThat(articleReactionRepository.existsById(new ReactionId(
+                expectedNotDeletedReaction2.getTarget().getId(),
+                expectedNotDeletedReaction2.getLiker().getUserId()
+        ))).isTrue();
     }
 
     @Test
