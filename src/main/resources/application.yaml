@@ -1,8 +1,5 @@
 spring:
   flyway:
     target: 4
-server:
-  port: 8080
-  servlet.context-path: /blog
 jwt:
   lifetime: 10m
