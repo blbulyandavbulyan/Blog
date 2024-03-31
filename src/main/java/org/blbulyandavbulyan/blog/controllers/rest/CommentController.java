@@ -1,5 +1,6 @@
 package org.blbulyandavbulyan.blog.controllers.rest;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.annotations.validation.article.ValidArticleId;
 import org.blbulyandavbulyan.blog.annotations.validation.comment.ValidCommentId;
@@ -25,6 +26,7 @@ import java.security.Principal;
 @RequestMapping("/api/v1/comments")
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "comment")
 public class CommentController {
     /**
      * Сервис для работы с комментариями

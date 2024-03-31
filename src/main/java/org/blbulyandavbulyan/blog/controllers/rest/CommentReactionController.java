@@ -1,5 +1,7 @@
 package org.blbulyandavbulyan.blog.controllers.rest;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.annotations.validation.comment.ValidCommentId;
 import org.blbulyandavbulyan.blog.dtos.reactions.CommentReactionDTO;
@@ -16,6 +18,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/reactions/comment")
+@Tags({@Tag(name = "reaction"), @Tag(name = "comment")})
 public class CommentReactionController {
     private final CommentReactionService commentReactionService;
 
@@ -32,9 +35,9 @@ public class CommentReactionController {
     public ReactionStatistics getReactionStatistics(@PathVariable @ValidCommentId Long commentId){
         return commentReactionService.getStatistics(commentId);
     }
-    @GetMapping("/{articleId}")
-    public ReactionResponse findReaction(@PathVariable @ValidCommentId Long articleId, Principal principal){
-        return commentReactionService.getReaction(articleId, principal.getName()).
+    @GetMapping("/{commentId}")
+    public ReactionResponse findReaction(@PathVariable @ValidCommentId Long commentId, Principal principal){
+        return commentReactionService.getReaction(commentId, principal.getName()).
                 map(r->new ReactionResponse(r.isLiked(), true))
                 .orElseGet(()->new ReactionResponse(false, false));
     }

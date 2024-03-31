@@ -1,5 +1,6 @@
 package org.blbulyandavbulyan.blog.controllers.rest;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.annotations.validation.article.ValidArticleId;
 import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageNumber;
@@ -27,6 +28,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/articles")
 @Validated
+@Tag(name = "article")
 public class ArticleController {
     /**
      * Ссылка на сервис для статей

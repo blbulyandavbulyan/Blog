@@ -1,5 +1,6 @@
 package org.blbulyandavbulyan.blog.controllers.rest;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageNumber;
 import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageSize;
@@ -28,6 +29,7 @@ import java.security.Principal;
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "user")
 public class UserController {
     /**
      * Сервис для управления пользователями

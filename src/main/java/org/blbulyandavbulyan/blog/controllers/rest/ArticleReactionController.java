@@ -1,5 +1,7 @@
 package org.blbulyandavbulyan.blog.controllers.rest;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.annotations.validation.article.ValidArticleId;
 import org.blbulyandavbulyan.blog.dtos.reactions.ArticleReactionDTO;
@@ -16,6 +18,7 @@ import java.security.Principal;
 @RequestMapping("/api/v1/reactions/article")
 @RequiredArgsConstructor
 @Validated
+@Tags({@Tag(name = "reaction"), @Tag(name = "article")})
 public class ArticleReactionController {
     private final ArticleReactionService articleReactionService;
     @PostMapping

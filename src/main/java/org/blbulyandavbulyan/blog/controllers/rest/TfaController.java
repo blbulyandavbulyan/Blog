@@ -1,5 +1,7 @@
 package org.blbulyandavbulyan.blog.controllers.rest;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.authorization.TFAStatus;
@@ -14,6 +16,7 @@ import java.security.Principal;
 @RequestMapping("/api/v1/tfa")
 @RequiredArgsConstructor
 @Validated
+@Tags({@Tag(name="auth"), @Tag(name="tfa")})
 public class TfaController {
     private final TOTPSettingsService totpSettingsService;
     @PostMapping

@@ -1,5 +1,6 @@
 package org.blbulyandavbulyan.blog.controllers.rest;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.dtos.authorization.AuthenticationRequest;
 import org.blbulyandavbulyan.blog.dtos.authorization.AuthenticationResponse;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Tag(name = "auth")
 public class AuthController {
     private final AuthenticationService authenticationService;
 
