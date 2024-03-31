@@ -1,5 +1,5 @@
 app.service('ArticleReactionsService', function ($http) {
-    const articleReactionsApiPath = `${contextPath}/api/v1/reactions/article`
+    const articleReactionsApiPath = `/api/v1/reactions/article`
     return {
         react: function (articleId, liked) {
             return $http.post(articleReactionsApiPath, {
@@ -19,7 +19,7 @@ app.service('ArticleReactionsService', function ($http) {
     }
 });
 app.service('CommentReactionService', function ($http) {
-    const commentReactionsApiPath = `${contextPath}/api/v1/reactions/comment`;
+    const commentReactionsApiPath = `/api/v1/reactions/comment`;
     return {
         react: function (commentId, liked) {
             return $http.post(commentReactionsApiPath, {

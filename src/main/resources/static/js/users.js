@@ -1,5 +1,5 @@
 app.service('UserService', function ($http) {
-    const usersApiPath = contextPath + '/api/v1/users';
+    const usersApiPath = '/api/v1/users';
     return {
         //получение информации о пользователях для администраторов
         getUserInfoAboutAllUsers: function (filterParams, pageNumber, pageSize) {
