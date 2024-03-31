@@ -3,3 +3,5 @@ spring:
     target: 4
 jwt:
   lifetime: 10m
+springdoc:
+  packages-to-scan: org.blbulyandavbulyan.blog
