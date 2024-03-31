@@ -23,7 +23,7 @@ import java.security.Principal;
  * Контроллер для работы с комментариями
  */
 @RestController
-@RequestMapping("/api/v1/comments")
+@RequestMapping("/api/v1/comments")//TODO 31.03.2024: возможно придётся убрать Request mapping, т.к. не все пути будут начинаться здесь с /api/v1/comments
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "comment")
@@ -44,6 +44,7 @@ public class CommentController {
     public Page<CommentResponse> getAllCommentsForArticle(@ValidArticleId @PathVariable Long articleId,
                                                           @ValidPageNumber @RequestParam(name = "p", defaultValue = "1") Integer pageNumber,
                                                           @ValidPageSize @RequestParam(name = "s", defaultValue = "10") Integer pageSize){
+        //TODO 31.03.2024: сменить path для этого ednpoint на /api/v1/articles/{articleId}/comments, либо переместить этот метод в контроллер ArticleController
         return commentService.getCommentDTOsForArticleId(articleId, pageNumber - 1, pageSize);
     }
 
@@ -56,6 +57,7 @@ public class CommentController {
     @PostMapping("/article")
     @ResponseStatus(HttpStatus.CREATED)
     public CommentResponse publishComment(@Validated @RequestBody CreateCommentRequest commentForPublishing, Principal principal){
+        //TODO 31.03.2024: периеменовать этот endpoint, убрать article с конца
         return commentService.publishComment(principal.getName(), commentForPublishing.articleId(), commentForPublishing.text());
     }
     @DeleteMapping("/{commentId}")
@@ -64,6 +66,7 @@ public class CommentController {
     }
     @PatchMapping
     public void editComment(@Validated @RequestBody EditCommentRequest editCommentRequest, Principal principal){
+        //TODO 31.03.2024: возможно стоит вынести commentId в path variable здесь
         commentService.editComment(editCommentRequest.commentId(), editCommentRequest.text(), principal.getName());
     }
 }

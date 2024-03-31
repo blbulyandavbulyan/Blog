@@ -78,6 +78,9 @@ public class ArticleController {
     public Page<ArticleInfoDTO> getInfoAboutAllArticles(@ValidPageSize @RequestParam(defaultValue = "5", name = "s") Integer pageSize,
                                                         @ValidPageNumber @RequestParam(defaultValue = "1", name = "p") Integer pageNumber,
                                                         @RequestParam Map<String, String> requestParams) {
+        //TODO 31.03.2024: Убрать этот endpoint и объединить с GET /api/v1/articles,
+        // либо добавить доп параметр вроде loadText (boolean),
+        // либо добавить параметр fields который будет указывать какие поля нужны тому кто делает запрос
         return articleService.getInfoAboutAll(new ArticleSpecifications(requestParams).getArticleSpecification(), pageSize, pageNumber - 1);
     }
     @PatchMapping("/{articleId}")
