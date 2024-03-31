@@ -6,7 +6,6 @@ import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageNumber;
 import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageSize;
 import org.blbulyandavbulyan.blog.annotations.validation.user.ValidRawPassword;
 import org.blbulyandavbulyan.blog.annotations.validation.user.ValidUserId;
-import org.blbulyandavbulyan.blog.dtos.authorization.RegistrationUser;
 import org.blbulyandavbulyan.blog.dtos.roles.UpdateRolesRequest;
 import org.blbulyandavbulyan.blog.dtos.user.UserCreateRequest;
 import org.blbulyandavbulyan.blog.dtos.user.UserCreatedResponse;
@@ -35,16 +34,6 @@ public class UserController {
      * Сервис для управления пользователями
      */
     private final UserService userService;
-
-    /**
-     * Метод обрабатывает запрос о регистрации пользователя
-     * @param registrationUser запрос на регистрацию пользователя, с необходимыми данными
-     */
-    @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void registerUser(@Validated @RequestBody RegistrationUser registrationUser) {
-        userService.registerUser(registrationUser.username(), registrationUser.password());
-    }
 
     /**
      * Обрабатывает запрос на удаления пользователя(доступно только админам)
