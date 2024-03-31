@@ -19,22 +19,20 @@ app.service('ArticleReactionsService', function ($http) {
     }
 });
 app.service('CommentReactionService', function ($http) {
-    const commentReactionsApiPath = `/api/v1/reactions/comment`;
     return {
         react: function (commentId, liked) {
-            return $http.post(commentReactionsApiPath, {
-                commentId: commentId,
+            return $http.post(`/api/v1/comments/${commentId}/reactions`, {
                 liked: liked
             });
         },
         removeReaction(commentId) {
-            return $http.delete(`${commentReactionsApiPath}/${commentId}`);
+            return $http.delete(`/api/v1/comments/${commentId}/reactions`);
         },
         getStatistics: function (commentId) {
-            return $http.get(`${commentReactionsApiPath}/statistics/${commentId}`);
+            return $http.get(`/api/v1/comments/${commentId}/reactions/statistics`);
         },
         getMyReaction: function (commentId) {
-            return $http.get(`${commentReactionsApiPath}/${commentId}`);
+            return $http.get(`/api/v1/comments/${commentId}/reactions/my`);
         }
     }
 });
