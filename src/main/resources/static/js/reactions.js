@@ -1,20 +1,18 @@
 app.service('ArticleReactionsService', function ($http) {
-    const articleReactionsApiPath = `/api/v1/reactions/article`
     return {
         react: function (articleId, liked) {
-            return $http.post(articleReactionsApiPath, {
-                articleId: articleId,
+            return $http.post(`/api/v1/articles/${articleId}/reactions`, {
                 liked: liked
             });
         },
         removeReaction: function (articleId) {
-            return $http.delete(`${articleReactionsApiPath}/${articleId}`);
+            return $http.delete(`/api/v1/articles/${articleId}/reactions`);
         },
         getStatistics: function (articleId) {
-            return $http.get(`${articleReactionsApiPath}/statistics/${articleId}`);
+            return $http.get(`/api/v1/articles/${articleId}/reactions/statistics`);
         },
         getMyReaction: function (articleId) {
-            return $http.get(`${articleReactionsApiPath}/${articleId}`);
+            return $http.get(`/api/v1/articles/${articleId}/reactions/my`);
         }
     }
 });
