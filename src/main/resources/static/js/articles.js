@@ -1,5 +1,5 @@
 app.service('ArticleService', function ($http) {
-    const articlesApiPath = contextPath + '/api/v1/articles';
+    const articlesApiPath = '/api/v1/articles';
     return {
         getArticlesInfo: function (filterParams, pageNumber, pageSize) {
             const httpParams = generatePageParamsAndFilterParams(filterParams, pageNumber, pageSize);

@@ -1,5 +1,5 @@
 app.service('CommentService', ['$http', function ($http) {
-    const commentsApiPath = contextPath + '/api/v1/comments';
+    const commentsApiPath = '/api/v1/comments';
     return {
         getComments: function (articleId, pageNumber, size) {
             const httpParams = {

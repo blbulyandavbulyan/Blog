@@ -63,7 +63,7 @@ app.service('TokenService', function (CookieService) {
     };
 })
 app.service('AuthService', function ($http, TokenService) {
-    const authUrl = '/blog/api/v1/auth';
+    const authUrl = '/api/v1/auth';
     let tfaToken = null;
     return {
         login: function (credentials) {
@@ -110,7 +110,7 @@ app.service('AuthService', function ($http, TokenService) {
     };
 });
 app.service('TfaSettingsService', function ($http, AuthService) {
-    const tfaURL = "/blog/api/v1/tfa";
+    const tfaURL = "/api/v1/tfa";
     return {
         beginTfaSetup: function () {
             return $http({

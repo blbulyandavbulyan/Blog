@@ -15,5 +15,3 @@ app.config(function ($routeProvider) {
         })
         .otherwise({redirectTo: '/articles'});
 });
-// Определение интерцептора
-const contextPath = window.location.origin + '/blog';
