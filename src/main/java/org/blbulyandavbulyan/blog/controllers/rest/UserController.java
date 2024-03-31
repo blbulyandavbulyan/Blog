@@ -1,12 +1,13 @@
 package org.blbulyandavbulyan.blog.controllers.rest;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageNumber;
 import org.blbulyandavbulyan.blog.annotations.validation.page.ValidPageSize;
 import org.blbulyandavbulyan.blog.annotations.validation.user.ValidRawPassword;
 import org.blbulyandavbulyan.blog.annotations.validation.user.ValidUserId;
-import org.blbulyandavbulyan.blog.dtos.roles.UpdateRolesRequest;
 import org.blbulyandavbulyan.blog.dtos.user.UserCreateRequest;
 import org.blbulyandavbulyan.blog.dtos.user.UserCreatedResponse;
 import org.blbulyandavbulyan.blog.dtos.user.UserInfoDTO;
@@ -20,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 /**
  * Контроллер для управления пользователями
@@ -83,13 +85,14 @@ public class UserController {
     }
     /**
      * Обновляет привилегии у пользователя
-     * @param updateRolesRequest DTO содержащее ИД пользователя, роли которого нужно обновить и набор новых ролей
+     * @param userId user id
+     * @param rolesNames список ролей, которые будут присвоены пользователю
      */
     @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("/roles")
-    public void updateUserPrivileges(@Validated @RequestBody UpdateRolesRequest updateRolesRequest){
-        userService.updateRoles(updateRolesRequest.userId(), updateRolesRequest.rolesNames());
+    @PatchMapping("/{userId}/roles")
+    public void updateUserPrivileges(@PathVariable @ValidUserId Long userId, @RequestBody @NotNull List<@NotBlank String> rolesNames){
+        userService.updateRoles(userId, rolesNames);
     }
     @PatchMapping("/password")
     public void updateUserPassword(@RequestParam(name = "password") @ValidRawPassword String password, Principal principal){

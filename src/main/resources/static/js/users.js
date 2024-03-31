@@ -23,11 +23,7 @@ app.service('UserService', function ($http) {
             return $http.delete(`${usersApiPath}/${userId}`);
         },
         updateRoles: function (userId, rolesNames) {
-            const httpData = {
-                userId: userId,
-                rolesNames: rolesNames
-            };
-            return $http.patch(`${usersApiPath}/roles`, httpData);
+            return $http.patch(`${usersApiPath}/${userId}/roles`, rolesNames);
         },
         changePassword: function (password){
             return $http.patch(`${usersApiPath}/password`, null, {params: {password: password}});
