@@ -23,7 +23,6 @@ import java.security.Principal;
  * Контроллер для работы с комментариями
  */
 @RestController
-@RequestMapping("/api/v1/comments")//TODO 31.03.2024: возможно придётся убрать Request mapping, т.к. не все пути будут начинаться здесь с /api/v1/comments
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "comment")
@@ -40,11 +39,10 @@ public class CommentController {
      * @param pageSize размер страницы
      * @return страницу, содержащую комментарии к заданной статье
      */
-    @GetMapping("/article/{articleId}")
+    @GetMapping("/api/v1/articles/{articleId}/comments")
     public Page<CommentResponse> getAllCommentsForArticle(@ValidArticleId @PathVariable Long articleId,
                                                           @ValidPageNumber @RequestParam(name = "p", defaultValue = "1") Integer pageNumber,
                                                           @ValidPageSize @RequestParam(name = "s", defaultValue = "10") Integer pageSize){
-        //TODO 31.03.2024: сменить path для этого ednpoint на /api/v1/articles/{articleId}/comments, либо переместить этот метод в контроллер ArticleController
         return commentService.getCommentDTOsForArticleId(articleId, pageNumber - 1, pageSize);
     }
 
@@ -54,19 +52,17 @@ public class CommentController {
      * @param principal ссылка на principal, в котором будет имя авторизованного пользователя
      */
     @Secured({"ROLE_COMMENTER"})
-    @PostMapping("/article")
+    @PostMapping("/api/v1/articles/{articleId}/comments")
     @ResponseStatus(HttpStatus.CREATED)
-    public CommentResponse publishComment(@Validated @RequestBody CreateCommentRequest commentForPublishing, Principal principal){
-        //TODO 31.03.2024: периеменовать этот endpoint, убрать article с конца
-        return commentService.publishComment(principal.getName(), commentForPublishing.articleId(), commentForPublishing.text());
+    public CommentResponse publishComment(@PathVariable @ValidArticleId Long articleId, @Validated @RequestBody CreateCommentRequest commentForPublishing, Principal principal){
+        return commentService.publishComment(principal.getName(), articleId, commentForPublishing.text());
     }
-    @DeleteMapping("/{commentId}")
+    @DeleteMapping("/api/v1/comments/{commentId}")
     public void deleteComment(@PathVariable @ValidCommentId Long commentId, Authentication authentication){
         commentService.deleteComment(commentId, authentication);
     }
-    @PatchMapping
-    public void editComment(@Validated @RequestBody EditCommentRequest editCommentRequest, Principal principal){
-        //TODO 31.03.2024: возможно стоит вынести commentId в path variable здесь
-        commentService.editComment(editCommentRequest.commentId(), editCommentRequest.text(), principal.getName());
+    @PatchMapping("/api/v1/comments/{commentId}")
+    public void editComment(@PathVariable @ValidCommentId Long commentId, @Validated @RequestBody EditCommentRequest editCommentRequest, Principal principal){
+        commentService.editComment(commentId, editCommentRequest.text(), principal.getName());
     }
 }

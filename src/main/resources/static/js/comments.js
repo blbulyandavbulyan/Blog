@@ -1,36 +1,23 @@
 app.service('CommentService', ['$http', function ($http) {
-    const commentsApiPath = '/api/v1/comments';
     return {
         getComments: function (articleId, pageNumber, size) {
-            const httpParams = {
-                p: pageNumber,
-                s: size
-            };
-            const getQuery = {
-                method: 'GET',
-                url: commentsApiPath + '/article/' + articleId
-            };
-            getQuery["params"] = httpParams;
-            return $http(getQuery);
+            return $http.get(`/api/v1/articles/${articleId}/comments`, {
+                params: {
+                    p: pageNumber,
+                    s: size
+                }
+            });
         },
         postComment: function (articleId, text) {
-            const httpParams = {
-                articleId: articleId,
+            return $http.post(`/api/v1/articles/${articleId}/comments`, {
                 text: text
-            };
-            const postQuery = {
-                method: 'POST',
-                url: commentsApiPath + '/article'
-            };
-            postQuery["data"] = httpParams;
-            return $http(postQuery);
+            });
         },
         deleteComment: function(commentId){
-            return $http.delete(`${commentsApiPath}/${commentId}`);
+            return $http.delete(`/api/v1/comments/${commentId}`);
         },
         editComment: function (commentId, text){
-            return $http.patch(commentsApiPath, {
-               commentId: commentId,
+            return $http.patch(`/api/v1/comments/${commentId}`, {
                text: text
             });
         }
