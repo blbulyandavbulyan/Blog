@@ -22,11 +22,11 @@ import java.security.Principal;
 public class CommentReactionController {
     private final CommentReactionService commentReactionService;
 
-    @DeleteMapping
+    @DeleteMapping("/my")
     public void removeReaction(@PathVariable @ValidCommentId Long commentId, Principal principal) {
         commentReactionService.removeReaction(commentId, principal.getName());
     }
-    @PostMapping
+    @PostMapping("/my")
     @ResponseStatus(HttpStatus.CREATED)
     public void createOrAlterReaction(@PathVariable @ValidCommentId Long commentId, @Validated @RequestBody CommentReactionDTO commentReactionDTO, Principal principal){
         commentReactionService.react(commentId, principal.getName(), commentReactionDTO.liked());

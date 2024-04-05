@@ -1,12 +1,12 @@
 app.service('ArticleReactionsService', function ($http) {
     return {
         react: function (articleId, liked) {
-            return $http.post(`/api/v1/articles/${articleId}/reactions`, {
+            return $http.post(`/api/v1/articles/${articleId}/reactions/my`, {
                 liked: liked
             });
         },
         removeReaction: function (articleId) {
-            return $http.delete(`/api/v1/articles/${articleId}/reactions`);
+            return $http.delete(`/api/v1/articles/${articleId}/reactions/my`);
         },
         getStatistics: function (articleId) {
             return $http.get(`/api/v1/articles/${articleId}/reactions/statistics`);
@@ -19,12 +19,12 @@ app.service('ArticleReactionsService', function ($http) {
 app.service('CommentReactionService', function ($http) {
     return {
         react: function (commentId, liked) {
-            return $http.post(`/api/v1/comments/${commentId}/reactions`, {
+            return $http.post(`/api/v1/comments/${commentId}/reactions/my`, {
                 liked: liked
             });
         },
         removeReaction(commentId) {
-            return $http.delete(`/api/v1/comments/${commentId}/reactions`);
+            return $http.delete(`/api/v1/comments/${commentId}/reactions/my`);
         },
         getStatistics: function (commentId) {
             return $http.get(`/api/v1/comments/${commentId}/reactions/statistics`);

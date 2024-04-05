@@ -21,12 +21,12 @@ import java.security.Principal;
 @Tags({@Tag(name = "reaction"), @Tag(name = "article")})
 public class ArticleReactionController {
     private final ArticleReactionService articleReactionService;
-    @PostMapping
+    @PostMapping("/my")
     @ResponseStatus(HttpStatus.CREATED)
     public void createOrAlterReaction(@PathVariable @ValidArticleId Long articleId, @RequestBody @Validated ArticleReactionDTO articleReactionDTO, Principal principal){
         articleReactionService.react(articleId, principal.getName(), articleReactionDTO.liked());
     }
-    @DeleteMapping
+    @DeleteMapping("/my")
     public void removeReaction(@PathVariable @ValidArticleId Long articleId, Principal principal){
         articleReactionService.removeReaction(articleId, principal.getName());
     }
