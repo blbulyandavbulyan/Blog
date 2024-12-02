@@ -3,8 +3,8 @@ steps:
     args:
       - build
       - '-t'
-      - ${_IMAGE_REPO_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_IMAGE_REPO_NAME}:blog:${COMMIT_HASH}
+      - ${_IMAGE_REPO_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_IMAGE_REPO_NAME}:blog:${REVISION_ID}
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - push
-      - ${_IMAGE_REPO_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_IMAGE_REPO_NAME}:blog:${COMMIT_HASH}
+      - ${_IMAGE_REPO_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_IMAGE_REPO_NAME}:blog:${REVISION_ID}
