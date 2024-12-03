@@ -2,11 +2,13 @@ options:
   logging: CLOUD_LOGGING_ONLY
 steps:
   - name: 'gcr.io/cloud-builders/docker'
+    env: 'DOCKER_BUILDKIT=1'
     args:
       - build
       - '-t'
       - ${_IMAGE_REPO_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_IMAGE_REPO_NAME}/blog:${REVISION_ID}
       - '.'
+
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - push
