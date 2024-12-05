@@ -3,3 +3,14 @@ spring:
     target: 4
 jwt:
   lifetime: 10m
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
