@@ -19,6 +19,11 @@
 		<jjwt.version>0.11.5</jjwt.version>
 	</properties>
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/dev.samstevens.totp/totp -->
 		<dependency>
 			<groupId>dev.samstevens.totp</groupId>
