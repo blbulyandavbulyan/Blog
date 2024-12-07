@@ -2,7 +2,10 @@ spring:
   flyway:
     target: 4
 jwt:
-  lifetime: 10m
+  mainTokenLifetime: 2h
+  mainKeyBytes: ${MAIN_JWT_SIGN_KEY_BYTES:}
+  tfaSecondStepLifetime: 5m
+  tfaSecondStepKeyBytes: ${TFA_SECOND_STEP_JWT_SIGN_KEY_BYTES:}
 
 management:
   endpoint:
