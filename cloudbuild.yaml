@@ -29,8 +29,8 @@ steps:
         result=$(eval helm ls | grep ${_CHART_NAME})
         if [ $? -ne "0" ]; then
         echo "Installing Helm Chart"
-        helm install ${_CHART_NAME} deploy-templates/ -f deploy-templates/values.yaml --set-string image.repository="${_IMAGE_REPO_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_IMAGE_REPO_NAME}/blog:latest"
+        helm install ${_CHART_NAME} deploy-templates/ -f deploy-templates/values.yaml --set-string image.repository="${_IMAGE_REPO_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_IMAGE_REPO_NAME}/blog"
         else
         echo "Upgrading Helm Chart"
-        helm upgrade ${_CHART_NAME} deploy-templates/ -f deploy-templates/values.yaml --set-string image.repository="${_IMAGE_REPO_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_IMAGE_REPO_NAME}/blog:latest"
+        helm upgrade ${_CHART_NAME} deploy-templates/ -f deploy-templates/values.yaml --set-string image.repository="${_IMAGE_REPO_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_IMAGE_REPO_NAME}/blog"
         fi
