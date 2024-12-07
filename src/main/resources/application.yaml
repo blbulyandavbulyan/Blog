@@ -6,3 +6,14 @@ jwt:
   mainKeyBytes: ${MAIN_JWT_SIGN_KEY_BYTES:}
   tfaSecondStepLifetime: 5m
   tfaSecondStepKeyBytes: ${TFA_SECOND_STEP_JWT_SIGN_KEY_BYTES:}
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
