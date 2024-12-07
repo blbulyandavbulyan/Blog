@@ -16,4 +16,7 @@ server:
   port: 8080
   servlet.context-path: /blog
 jwt:
-  lifetime: 10m
+  mainTokenLifetime: 2h
+  mainKeyBytes: ${MAIN_JWT_SIGN_KEY_BYTES:}
+  tfaSecondStepLifetime: 5m
+  tfaSecondStepKeyBytes: ${TFA_SECOND_STEP_JWT_SIGN_KEY_BYTES:}
