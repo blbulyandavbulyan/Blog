@@ -10,5 +10,8 @@ import java.time.Duration;
 @ConfigurationProperties(prefix = "jwt")
 @Component
 public class JwtConfigurationProperties {
-    private Duration lifetime;
+    private Duration mainTokenLifetime;
+    private String mainKeyBytes;
+    private Duration tfaSecondStepLifetime;
+    private String tfaSecondStepKeyBytes;
 }

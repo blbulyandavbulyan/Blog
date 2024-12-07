@@ -3,14 +3,12 @@ package org.blbulyandavbulyan.blog.services;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import org.blbulyandavbulyan.blog.configs.JwtConfigurationProperties;
 import org.blbulyandavbulyan.blog.exceptions.TokenServiceParseException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.Duration;
 import java.util.*;
 
 /**
@@ -21,7 +19,7 @@ public class TokenService {
     /**
      * Время жизни jwt токена
      */
-    private final JwtConfigurationProperties jwtConfigurationProperties;
+    private final Duration lifetime;
     /**
      * Ключ для подписи jwt токена
      */
@@ -32,14 +30,12 @@ public class TokenService {
     private final JwtParser parser;
 
     /**
-     * Создаёт экземпляр сервиса
-     * @param jwtConfigurationProperties класс, содержащий конфигурационные свойства для jwt
+     * @param lifetime время жизни токена
+     * @param secretKey ключ подписи
      */
-    public TokenService(JwtConfigurationProperties jwtConfigurationProperties) {
-        this.jwtConfigurationProperties = jwtConfigurationProperties;
-        //задаём ключ подписи
-        secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256); //or HS384 or HS512
-        //создаём парсер
+    public TokenService(Duration lifetime, Key secretKey) {
+        this.lifetime = lifetime;
+        this.secretKey = secretKey;
         parser = Jwts.parserBuilder().setSigningKey(secretKey).build();
     }
 
@@ -51,7 +47,7 @@ public class TokenService {
      */
     public String generateToken(String name, Map<String, Object> claims) {
         Date issuedDate = new Date();//время создания токена
-        Date expiredDate = new Date(issuedDate.getTime() + jwtConfigurationProperties.getLifetime().toMillis());//время истечения токена
+        Date expiredDate = new Date(issuedDate.getTime() + lifetime.toMillis());//время истечения токена
         return Jwts.builder().setClaims(claims)
                 .setSubject(name)
                 .setIssuedAt(issuedDate)
