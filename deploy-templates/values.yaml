@@ -9,7 +9,7 @@ replicaCount: 1
 image: #todo probably this should be deleted from this values file, because the image will be provided through command line arguments, test it if it works
   repository: nginx
   # This sets the pull policy for images.
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
 
