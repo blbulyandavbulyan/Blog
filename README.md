@@ -23,3 +23,25 @@
 * Так же пользователи могут менять свой пароль
 * Редактировать и удалять свою статью
 * Редактировать и удалять свои комментарии
+## Deployment
+This application is possible to deploy in GKE using CloudBuild.
+HELM is used here. You can find its templates and other stuff in `deploy-templates` folder
+
+### Steps in cloud build pipeline:
+* __Image build__,
+  the image builds with two tags, one of them is __latest__ and another is your __commit hash__ (which triggered the pipeline in CloudBuild)
+* __Image push__ to Google Artifact Registry(with those two tags)
+* __Deploy image to GKE cluster__,
+  latest version of the app will be deployed to GKE
+
+### Parameters for cloudbuild.yaml
+* `_IMAGE_REPO_LOCATION` - region of your Google Artifact Registry Repository
+* `_IMAGE_REPO_NAME` - name of your GAR repository
+* `-GKE_CLUSTER_NAME` - name of your GKE cluster
+  For GKE cluster the region of your CloudBuild trigger will be used
+* `_CHART_NAME` - HELM chart name of the application (you can choose any name)
+
+For deploying in GKE my custom image is used, which is a combination of __gcloud__, __kubectl__ and __helm__.
+You can find `Dockerfile` for this image in `ci-cd-images` folder in the project
+
+
