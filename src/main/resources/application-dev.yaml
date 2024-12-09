@@ -17,5 +17,3 @@ spring:
   web:
     resources:
       static-locations: file:./src/main/resources/static
-jwt:
-  lifetime: 10m

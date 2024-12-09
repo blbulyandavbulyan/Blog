@@ -10,5 +10,3 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   flyway:
     target: 4
-jwt:
-  lifetime: 10m
