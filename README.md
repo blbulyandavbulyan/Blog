@@ -40,8 +40,10 @@ HELM is used here. You can find its templates and other stuff in `deploy-templat
 * `-GKE_CLUSTER_NAME` - name of your GKE cluster
   For GKE cluster the region of your CloudBuild trigger will be used
 * `_CHART_NAME` - HELM chart name of the application (you can choose any name)
-* `_DB_USERNAME_SECRET_NAME` - secret name in Google Secrets Manager for database username
-* `_DB_PASSWORD_SECRET_NAME` - secret name in Google Secrets Manager for database password
+* `_DB_USERNAME_SECRET_NAME` - secret version name in Google Secrets Manager for database username
+* `_DB_PASSWORD_SECRET_NAME` - secret version name in Google Secrets Manager for database password
+
+About secrets in Cloud Build you can find the docs [here](https://cloud.google.com/build/docs/securing-builds/use-secrets#:~:text=You%20can%20get%20the%20secret%20version%20by%20clicking%20on%20a,in%20the%20Google%20Cloud%20console.)
 
 For deploying in GKE my custom image is used, which is a combination of __gcloud__, __kubectl__ and __helm__.
 You can find `Dockerfile` for this image in `ci-cd-images` folder in the project
