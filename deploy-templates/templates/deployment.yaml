@@ -36,6 +36,37 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: SPRING_PROFILES_ACTIVE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "blog.fullname" . }}
+                key: active_profile
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "blog.fullname" . }}
+                key: db_user
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "blog.fullname" . }}
+                key: db_password
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "blog.fullname" . }}
+                key: db_host
+          - name: DB_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "blog.fullname" . }}
+                key: db_name
+          - name: DB_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "blog.fullname" . }}
+                key: db_port
           ports:
             - name: http
               containerPort: 8080

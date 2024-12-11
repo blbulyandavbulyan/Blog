@@ -25,12 +25,10 @@ steps:
     args:
       - '-c'
       - |
+        echo "Retrieving kubernetes cluster credentials" 
         gcloud container clusters get-credentials ${_GKE_CLUSTER_NAME} --region ${LOCATION} --project ${PROJECT_ID}
-        result=$(eval helm ls | grep ${_CHART_NAME})
-        if [ $? -ne "0" ]; then
-        echo "Installing Helm Chart"
-        helm install ${_CHART_NAME} deploy-templates/ -f deploy-templates/values.yaml --set-string image.repository="${_IMAGE_REPO_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_IMAGE_REPO_NAME}/blog"
-        else
-        echo "Upgrading Helm Chart"
-        helm upgrade ${_CHART_NAME} deploy-templates/ -f deploy-templates/values.yaml --set-string image.repository="${_IMAGE_REPO_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_IMAGE_REPO_NAME}/blog"
-        fi
+        echo "Retrieving secrets for database"
+        export DB_USERNAME=$(gcloud secrets versions access latest --secret=${_DB_USERNAME_SECRET_NAME})
+        export DB_PASSWORD=$(gcloud secrets versions access latest --secret=${_DB_PASSWORD_SECRET_NAME})
+        echo "Deploying application to GKE"
+        helm upgrade -i ${_CHART_NAME} deploy-templates/ -f deploy-templates/values.yaml --set image.repository="${_IMAGE_REPO_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_IMAGE_REPO_NAME}/blog" --set-literal db.user="$$DB_USERNAME" --set-literal db.password="$$DB_PASSWORD"
