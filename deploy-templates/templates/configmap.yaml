@@ -3,8 +3,7 @@ kind: ConfigMap
 metadata:
   name: {{ include "blog.fullname" . }}
 data:
-  # db configuration
   db_port: "5432"
-  db_host: "10.22.33.3"
+  db_host: {{ if .Values.db.cloud.sql.proxy.create }}"localhost"{{ else }}"10.22.33.3"{{end}}
   db_name: "blog"
   active_profile: "prod"
