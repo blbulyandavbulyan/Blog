@@ -1,11 +1,8 @@
 pipeline {
-    // We use a Docker agent to provide a consistent and isolated environment.
-    // The maven:3.8.6-openjdk-17 image contains both Maven and the required Java 17 JDK.
     agent {
         docker {
-            image 'maven:3.8.6-openjdk-17'
-            // Use alwaysPull to ensure the latest image is used
-            args '-v $HOME/.m2:/root/.m2' // Cache Maven dependencies
+            image 'maven:3.8.5-openjdk-17'
+            args '-v $HOME/.m2:/root/.m2'
         }
     }
 
