@@ -7,12 +7,6 @@ pipeline {
     }
 
     stages {
-        stage('Clone') {
-            steps {
-                echo 'Cloning the Git repository...'
-                git url: env.GIT_REPO_URL, branch: env.GIT_BRANCH
-            }
-        }
 
         stage('Compile') {
             steps {
